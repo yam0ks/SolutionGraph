@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center_vertical">
 
@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/text_lines"
-            android:text="@string/restrictionsDescription"
+            android:text="Заголовок"
             android:textSize="14sp"
             android:paddingBottom="5dp"
             android:textColor="@color/black" />
@@ -35,7 +35,11 @@
 
             <Spinner
                 android:id="@+id/variablesCountSpin"
-                style="@style/Spinner" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:textAlignment="viewEnd" />
 
         </LinearLayout>
 
@@ -54,14 +58,38 @@
 
             <Spinner
                 android:id="@+id/restrictionsCountSpin"
-                style="@style/Spinner"  />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp" />
 
         </LinearLayout>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/FirstNextButton"
-        style="@style/NextButton"
-        android:layout_alignParentBottom="true" />
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/NextButton"
+            style="@style/NextButton" />
+
+        <Button
+            android:id="@+id/PrevButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:onClick="PrevStep"
+            android:text="назад"
+            android:textSize="10dp"
+            android:textColor="#128DC1"
+            android:elevation="1dp"
+            android:stateListAnimator="@null"
+            android:translationZ="4dp"/>
+
+    </LinearLayout>
 
 </RelativeLayout>
