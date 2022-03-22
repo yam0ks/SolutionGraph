@@ -1,17 +1,9 @@
 public class InputData {
-    public Fraction[][] restrictionsCoeff;
-    public Fraction[] mainFuncCoeff;
-    public Simplex.Sign[] comparisonSings;
-    public boolean findMax;
+    public Fraction[][] restrictionsCoeff; //матрица коэффициентов ограничений(строка - одно уравнение)
+    public Fraction[] mainFuncCoeff; //коэффициеты вычисляемой функции
+    public Simplex.Sign[] comparisonSings; //столбик знаков неравенства задаются через enum Simplex.Sign
+    public boolean findMax; //true если ищем максимум false если минимум
 
 
-    public InputData() {
-    }
-
-    public InputData(Fraction[][] restrictionsCoeff, Fraction[] mainFuncCoeff, Simplex.Sign[] comparisonSings, boolean findMax) {
-        this.restrictionsCoeff = restrictionsCoeff;
-        this.mainFuncCoeff = mainFuncCoeff;
-        this.comparisonSings = comparisonSings;
-        this.findMax = findMax;
-    }
+    public InputData() {}
 }

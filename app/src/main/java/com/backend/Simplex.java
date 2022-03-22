@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Simplex {
     private Fraction[][] simplexMatrix;
     private OutputData workingSteps;
@@ -19,17 +21,25 @@ public class Simplex {
         this.inputData = data;
     }
 
-    public void startWork() {
+    public OutputData startWork() {
         this.workingSteps = new OutputData();
+        workingSteps.normalizeData = new ArrayList<>();
+        workingSteps.solutionData = new ArrayList<>();
 
         initSimplexMatrix();
 
         if(!normalizationMatrix()){
-            return;
+            return this.workingSteps;
         }
+        findDelta(this.simplexMatrix);
 
         if(solutionMatrix()){
             workingSteps.setAnswers(getAnswers());
+            printArray(getAnswers());
+            return this.workingSteps;
+        }
+        else {
+            return this.workingSteps;
         }
     }
 
@@ -57,7 +67,7 @@ public class Simplex {
 
     private void initBases() { //test func
         int biasBases = this.inputData.restrictionsCoeff[0].length - 1;
-        indBases = new int[this.inputData.restrictionsCoeff.length - sumEquals(inputData.comparisonSings)];
+        indBases = new int[this.inputData.restrictionsCoeff[0].length - 1];
 
         for (int i = 1; i < this.simplexMatrix.length; i++)
             for (int j = biasBases; j < this.simplexMatrix[0].length - 1; j++)
@@ -174,7 +184,7 @@ public class Simplex {
 
     private boolean normalizationMatrix(){
         NormalizeSimplexData current_step;
-        boolean flag = false;
+        boolean flag = true;
         while (isNegativeInLastColumn()){
             int row = getRowWithBiggestAmount();
             this.lastBasedRow = row - 1;
@@ -254,20 +264,19 @@ public class Simplex {
             ind = 1;
 
         for (int i = 1; i < fractions.length; i++) {
-            if (!fractions[ind].isAbsMore(fractions[i]) && lastInd != i)
+            if (!fractions[ind].isAbsMore(fractions[i]) && lastInd != i && fractions[ind].getNumerator() < 0)
                 ind = i;
         }
         return ind;
     }
 
     private boolean solutionMatrix(){
-
         finalMatrix = new Fraction[simplexMatrix.length+1][simplexMatrix[0].length];
         findDelta(simplexMatrix);
         for(int i = 0; i < simplexMatrix.length; i++)
             System.arraycopy(simplexMatrix[i], 0, finalMatrix[i], 0, simplexMatrix[0].length);
         System.arraycopy(deltas, 0, finalMatrix[finalMatrix.length - 1], 0, deltas.length);
-        do{
+        while (!deltaIsOk()){
             SolutionSimplexData current_step = new SolutionSimplexData();
             current_step.matrix = new Fraction[simplexMatrix.length+1][simplexMatrix[0].length];
             findDelta(finalMatrix);
@@ -291,21 +300,21 @@ public class Simplex {
                 workingSteps.getSolutionData().add(current_step);
                 return false;
             }
-        }while (!deltaIsOk());
+        };
         return true;
     }
 
     private void findDelta(Fraction [][] matrix) {
         deltas = new Fraction[matrix[0].length];
-            for(int j = 0; j < matrix[0].length; j++){
-                deltas[j] = new Fraction(0);
-                int row = 1;
-                for (int indBase : this.indBases) {
-                    deltas[j] = deltas[j].getSum(matrix[0][indBase].getMultiply(matrix[row][j]));
-                    row++;
-                }
-                deltas[j] = deltas[j].getMinus(matrix[0][j]);
+        for(int j = 0; j < matrix[0].length; j++){
+            deltas[j] = new Fraction(0);
+            int row = 1;
+            for (int indBase : this.indBases) {
+                deltas[j] = deltas[j].getSum(matrix[0][indBase].getMultiply(matrix[row][j]));
+                row++;
             }
+            deltas[j] = deltas[j].getMinus(matrix[0][j]);
+        }
     }
 
     private boolean deltaIsOk() {

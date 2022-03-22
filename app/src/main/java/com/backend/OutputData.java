@@ -1,16 +1,13 @@
 import java.util.ArrayList;
 
 public class OutputData {
-    private InitSimplexData initData;
-    private ArrayList<NormalizeSimplexData> normalizeData;
-    private ArrayList<SolutionSimplexData> solutionData;
-    private Fraction[] answers;
+    public InitSimplexData initData; //Раздел Начальная симплекс матрийа
+    public ArrayList<NormalizeSimplexData> normalizeData; //Раздел ищем начальное базисное решение
+    public ArrayList<SolutionSimplexData> solutionData; //Раздел вычисляем дельты
+    public Fraction[] answers; // Ответ от 0 до length-2 - коэффициенты при соответветсвующих иксах последний элемент - ответ
 
-    OutputData()
-    {
-        normalizeData = new ArrayList<>();
-        solutionData = new ArrayList<>();
-    }
+    OutputData(){}
+
     public InitSimplexData getInitData(){
         return initData;
     }
