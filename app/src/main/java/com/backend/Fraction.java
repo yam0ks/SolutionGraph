@@ -5,6 +5,7 @@ public class Fraction {
     public Fraction(int numerator, int denominator) {
         this.numerator = numerator;
         this.denominator = denominator;
+        normalizeFraction();
     }
 
     public Fraction(int integer) {
@@ -17,12 +18,48 @@ public class Fraction {
         this.denominator = fraction.getDenominator();
     }
 
+    public Fraction(double number){
+        String str = String.valueOf(number);
+        str.indexOf('.');
+        int denominator = (int)Math.pow(10, str.length() - str.indexOf('.') - 1);
+        this.denominator = denominator;
+        this.numerator = (int)(number*denominator);
+        normalizeFraction();
+    }
+
     public int getNumerator() {
         return numerator;
     }
 
     public int getDenominator() {
         return denominator;
+    }
+
+    private void normalizeFraction(){
+        int i = 2;
+        while (i <= Math.abs(this.denominator) && i <= Math.abs(this.numerator))
+            for (i = 2; i <= Math.abs(this.denominator) && i <= Math.abs(this.numerator); i++) {
+                if (this.numerator % i == 0 && this.denominator % i == 0) {
+                    this.numerator = this.numerator / i;
+                    this.denominator = this.denominator / i;
+                    break;
+                }
+            }
+
+        if (this.numerator == 0)
+            this.denominator = 1;
+
+        if (this.denominator == 0)
+            this.numerator = 0;
+
+        if (this.numerator < 0 && this.denominator < 0) {
+            this.numerator *= -1;
+            this.denominator *= -1;
+        }
+        if (this.numerator > 0 && this.denominator < 0) {
+            this.numerator *= -1;
+            this.denominator *= -1;
+        }
     }
 
     private Fraction normalizeFraction(Fraction fraction) {
@@ -102,7 +139,6 @@ public class Fraction {
     }
 
     public String getFraction() {
-
         String str;
         if (this.numerator == 0)
             str = String.valueOf(this.numerator);
@@ -127,5 +163,9 @@ public class Fraction {
 
     public boolean isLess(Fraction f){
         return this.numerator * f.denominator < f.numerator * this.denominator;
+    }
+
+    public double getDouble(){
+        return (float)numerator/(float)denominator;
     }
 }
