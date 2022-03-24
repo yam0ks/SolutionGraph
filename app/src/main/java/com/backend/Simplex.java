@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Simplex {
     private Fraction[][] simplexMatrix;
     private OutputData workingSteps;
-    private final InputData inputData;
+    private InputData inputData;
     private int lastBasedRow = -1;
     private int lastBasedColumn = -1;
     private int[] indBases;
@@ -17,7 +17,9 @@ public class Simplex {
         EQUAL
     }
 
-    public Simplex(InputData data) {
+    public Simplex() {}
+
+    public void SetInputData(InputData data){
         this.inputData = data;
     }
 
