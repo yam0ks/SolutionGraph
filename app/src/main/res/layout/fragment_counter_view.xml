@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/MainLayout"
-    tools:context=".MainActivity">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CounterView">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_vertical">
 
@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/text_lines"
-            android:text="Заголовок"
+            android:text="@string/restrictionsDescription"
             android:textSize="14sp"
             android:paddingBottom="5dp"
             android:textColor="@color/black" />
@@ -35,11 +35,8 @@
 
             <Spinner
                 android:id="@+id/variablesCountSpin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:minHeight="48dp"
-                android:textAlignment="viewEnd" />
+                android:layout_weight="2"
+                style="@style/Spinner" />
 
         </LinearLayout>
 
@@ -58,38 +55,10 @@
 
             <Spinner
                 android:id="@+id/restrictionsCountSpin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:minHeight="48dp" />
+                android:layout_weight="2"
+                style="@style/Spinner"  />
 
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
-
-        <Button
-            android:id="@+id/NextButton"
-            style="@style/NextButton" />
-
-        <Button
-            android:id="@+id/PrevButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:onClick="PrevStep"
-            android:text="назад"
-            android:textSize="10dp"
-            android:textColor="#128DC1"
-            android:elevation="1dp"
-            android:stateListAnimator="@null"
-            android:translationZ="4dp"/>
-
-    </LinearLayout>
-
-</RelativeLayout>
+</FrameLayout>
