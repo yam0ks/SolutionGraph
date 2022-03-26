@@ -1,3 +1,5 @@
+package com.backend;
+
 public class NormalizeSimplexData {
     public Fraction[][] matrix;// симплекс матрица на текущем шаге (0 строка - коэффициенты при главной функции, последний столбец свободные коэффы b)
     public int oldBase;//номер старого базиса смещенного на -1

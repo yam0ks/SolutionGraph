@@ -1,3 +1,5 @@
+package com.backend;
+
 public class InputData {
     public Fraction[][] restrictionsCoeff; //матрица коэффициентов ограничений(строка - одно уравнение)
     public Fraction[] mainFuncCoeff; //коэффициеты вычисляемой функции

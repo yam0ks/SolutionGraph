@@ -1,3 +1,5 @@
+package com.backend;
+
 public class SolutionSimplexData {
 
     public Fraction[][] matrix; // симплекс матрица на текущем шаге (0 строка - коэффициенты при главной функции, последний столбец свободные коэффы b)
