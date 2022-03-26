@@ -3,4 +3,8 @@
     <string name="restrictionsDescription">Выберите количество переменных и количество ограничений</string>
     <string name="variablesCount">Количество переменных:</string>
     <string name="restrictionsCount">Количество ограничений:</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="coeff_header">Заполните коэффициенты при переменных в ограничениях</string>
+    <string name="welcome_messages">Hello, %1$s! You have %2$d new messages.</string>
 </resources>

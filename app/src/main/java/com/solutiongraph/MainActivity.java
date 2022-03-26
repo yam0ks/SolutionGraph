@@ -1,42 +1,55 @@
 package com.solutiongraph;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import android.view.View;
-import android.widget.Spinner;
-import android.widget.ArrayAdapter;
 import android.os.Bundle;
 
-import java.lang.reflect.Field;
-
 public class MainActivity extends AppCompatActivity {
-    Activities activities = Activities.getInstance();
+    private static final Stepper STEPPER = new Stepper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(activities.Get());
-
-        SetSpinnerRange(R.id.variablesCountSpin, 11);
-        SetSpinnerRange(R.id.restrictionsCountSpin, 11);
+        setContentView(R.layout.activity_main);
+        setCurrentFragment(STEPPER.getStep());
     }
 
-    private void SetSpinnerRange(int spinnerID, Integer max) {
-        String[] count = new String[max];
-        for (int i = 0; i < max; i++) {
-            count[i] = String.valueOf(i + 1);
-        }
-        Spinner spinner = findViewById(spinnerID);
-        ArrayAdapter<String> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, count);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
+
+    private void setCurrentFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment_container_view, fragment, "MAIN_FRAGMENT")
+                .commit();
+    }
+
     public void NextStep(View view) {
-        if (!activities.Next()) return;
-        setContentView(activities.Get());
+        if (!STEPPER.Next()) return;
+        if (!STEPPER.isFirst())
+            findViewById(R.id.PrevButton).setVisibility(View.VISIBLE);
+
+        switch (STEPPER.getIndex()) {
+            case Stepper.COUNTS:
+                break;
+            case Stepper.COEFFS:
+                Bundle bundle = new Bundle();
+                //TODO: Передать кол-во ограничений
+                bundle.putInt(CoeffView.RESTRICTIONS_NUMBER, 3);
+                //TODO: Передать кол-во переменных
+                bundle.putInt(CoeffView.VARIABLES_NUMBER, 3);
+                STEPPER.getStep().setArguments(bundle);
+                break;
+        }
+        setCurrentFragment(STEPPER.getStep());
     }
     public void PrevStep(View view) {
-        if (!activities.Prev()) return;
-        setContentView(activities.Get());
+        if (!STEPPER.Prev()) return;
+        if (STEPPER.isFirst())
+            findViewById(R.id.PrevButton).setVisibility(View.INVISIBLE);
+        setCurrentFragment(STEPPER.getStep());
     }
 }
