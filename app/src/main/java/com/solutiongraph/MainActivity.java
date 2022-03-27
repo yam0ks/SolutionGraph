@@ -2,15 +2,22 @@ package com.solutiongraph;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.View;
 import android.os.Bundle;
 
+import com.viewmodel.MainViewModel;
+
 public class MainActivity extends AppCompatActivity {
+    private ViewModel vModel;
     private static final Stepper STEPPER = new Stepper();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        vModel = new ViewModelProvider(this).get(MainViewModel.class);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setCurrentFragment(STEPPER.getStep());
