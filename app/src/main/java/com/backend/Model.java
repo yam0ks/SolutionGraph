@@ -2,8 +2,8 @@ package com.backend;
 
 public class Model {
     private Simplex simplex;
-    private InputData inputData;
-    private OutputData outputData;
+    private Simplex.InputData inputData;
+    private Simplex.OutputData outputData;
     private int restrictionCount;
     private int variableCount;
 
@@ -18,8 +18,8 @@ public class Model {
     }
 
     private void initializeData(){
-        inputData = new InputData();
-        outputData = new OutputData();
+        inputData = new Simplex.InputData();
+        outputData = new Simplex.OutputData();
     }
 
     private void setCounts(int restrictionCount, int variableCount){
@@ -27,7 +27,7 @@ public class Model {
         this.variableCount = variableCount;
     }
 
-    private OutputData getSimplexSolution(double[][] rawRestrictions, double[] rawMainFunc){
+    private Simplex.OutputData getSimplexSolution(double[][] rawRestrictions, double[] rawMainFunc){
         initializeData();
         rawDataToFraction(rawRestrictions, rawMainFunc);
         simplex.SetInputData(inputData);
@@ -35,7 +35,7 @@ public class Model {
         return outputData;
     }
 
-    private OutputData getGraphSolution(double[][] rawRestrictions, double[] rawMainFunc){
+    private Simplex.OutputData getGraphSolution(double[][] rawRestrictions, double[] rawMainFunc){
         //Надо сначала сделать graph
         return outputData;
     }

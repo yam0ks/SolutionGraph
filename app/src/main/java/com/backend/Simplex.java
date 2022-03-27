@@ -4,14 +4,80 @@ import java.util.ArrayList;
 
 public class Simplex {
     private Fraction[][] simplexMatrix;
-    private OutputData workingSteps;
-    private InputData inputData;
+
     private int lastBasedRow = -1;
     private int lastBasedColumn = -1;
     private int[] indBases;
     private int[] changedRows;
     private Fraction[] deltas;
     private Fraction[][] finalMatrix;
+
+    public static class InputData {
+        public Fraction[][] restrictionsCoeff; //матрица коэффициентов ограничений(строка - одно уравнение)
+        public Fraction[] mainFuncCoeff; //коэффициеты вычисляемой функции
+        public Simplex.Sign[] comparisonSings; //столбик знаков неравенства задаются через enum Simplex.Sign
+        public boolean findMax; //true если ищем максимум false если минимум
+
+        public InputData() {}
+    }
+
+
+    public static class OutputData {
+        public InitSimplexData initData; //Раздел Начальная симплекс матрийа
+        public ArrayList<NormalizeSimplexData> normalizeData; //Раздел ищем начальное базисное решение
+        public ArrayList<SolutionSimplexData> solutionData; //Раздел вычисляем дельты
+        public Fraction[] answers; // Ответ от 0 до length-2 - коэффициенты при соответветсвующих иксах последний элемент - ответ
+
+        OutputData(){}
+
+        public InitSimplexData getInitData(){
+            return initData;
+        }
+        public ArrayList<NormalizeSimplexData> getNormalizeData(){
+            return normalizeData;
+        }
+        public ArrayList<SolutionSimplexData> getSolutionData(){ return solutionData; }
+        public int[] getAnswers(int[] answers){ return answers; }
+        public void setInitData(InitSimplexData initData){ this.initData = initData; }
+        public void setAnswers(Fraction[] answers){ this.answers = answers; }
+
+        public static class InitSimplexData { //первый раздел (исходная симплекс матрица)
+            public Fraction[][] matrix; // симплекс матрица на текущем шаге (0 строка - коэффициенты при главной функции, последний столбец свободные коэффы b)
+            public int[] bases; //Номера базисов смещенных на -1 (x1 - 0, x4 - 3 и т.д.)
+            public int[] changedRowsSign; //строки, знаки которых менялись было >= стало <=
+
+            InitSimplexData(){}
+        }
+
+        public static class NormalizeSimplexData { //второй раздел (приведение матрицы к каноническому виду)
+            public Fraction[][] matrix;// симплекс матрица на текущем шаге (0 строка - коэффициенты при главной функции, последний столбец свободные коэффы b)
+            public int oldBase;//номер старого базиса смещенного на -1
+            public int newBase;//номер нового базиса смещенного на -1
+            public int supportElementColumn;//колонка опорного элемента
+            public int supportElementRow;//строка опорного элемента
+            public Fraction element;//значение опорного элемента
+            public boolean matrixCanBeNormalized;//если false прекращается работа алгоритма, функция не ограничена, решения нет
+
+            NormalizeSimplexData(){}
+        }
+
+        public static class SolutionSimplexData { //раздел решения
+            public Fraction[][] matrix; // симплекс матрица на текущем шаге (0 строка - коэффициенты при главной функции, последний столбец свободные коэффы b)
+            public boolean matrixCanBeSolved; //если false прекращается работа алгоритма, функция не ограничена, решения нет
+            public int supportColumn;//колонка опорного элемента
+            public int supportRow;//строка опорного элемента
+            public Fraction element;//значение опорного элемента
+            public int oldBase;//номер старого базиса смещенного на -1
+            public int newBase;//номер нового базиса смещенного на -1
+            public Fraction[] SimplexRelations;//Столбец симплекс-отношений Q (-1 - симлекс отношения нет)
+
+            SolutionSimplexData(){}
+        }
+
+    }
+
+    private OutputData outputData;
+    private InputData inputData;
 
     public enum Sign {
         MORE,
@@ -26,24 +92,23 @@ public class Simplex {
     }
 
     public OutputData startWork() {
-        this.workingSteps = new OutputData();
-        workingSteps.normalizeData = new ArrayList<>();
-        workingSteps.solutionData = new ArrayList<>();
+        this.outputData = new OutputData();
+        outputData.normalizeData = new ArrayList<>();
+        outputData.solutionData = new ArrayList<>();
 
         initSimplexMatrix();
-
         if(!normalizationMatrix()){
-            return this.workingSteps;
+            return this.outputData;
         }
         findDelta(this.simplexMatrix);
 
         if(solutionMatrix()){
-            workingSteps.setAnswers(getAnswers());
-            printArray(getAnswers());
-            return this.workingSteps;
+            outputData.setAnswers(getAnswers());
+            printMatrix(this.finalMatrix);
+            return this.outputData;
         }
         else {
-            return this.workingSteps;
+            return this.outputData;
         }
     }
 
@@ -51,7 +116,7 @@ public class Simplex {
         int countRestrictions = this.inputData.restrictionsCoeff.length;
         int countVariables = this.inputData.restrictionsCoeff[0].length;
         this.simplexMatrix = new Fraction[countRestrictions + 1][countRestrictions + countVariables - sumEquals(inputData.comparisonSings)];
-        InitSimplexData initSimplexData = new InitSimplexData();
+        Simplex.OutputData.InitSimplexData initSimplexData = new OutputData.InitSimplexData();
         canonizeData();
         initRestrictionsCoeff();
         initMainFuncCoeff();
@@ -59,7 +124,8 @@ public class Simplex {
         initSimplexData.bases = indBases.clone();
         initSimplexData.matrix = this.simplexMatrix.clone();
         initSimplexData.changedRowsSign = this.changedRows.clone();
-        workingSteps.setInitData(initSimplexData);
+        outputData.initData = new OutputData.InitSimplexData();
+        outputData.initData = initSimplexData;
     }
 
     private void initRestrictionsCoeff() {
@@ -187,14 +253,14 @@ public class Simplex {
     }
 
     private boolean normalizationMatrix(){
-        NormalizeSimplexData current_step;
+        OutputData.NormalizeSimplexData current_step;
         boolean flag = true;
         while (isNegativeInLastColumn()){
             int row = getRowWithBiggestAmount();
             this.lastBasedRow = row - 1;
             if(isNegativeInRow(row)){
                 int column = getColumnWithBiggestAmount(row);
-                current_step = new NormalizeSimplexData();
+                current_step = new OutputData.NormalizeSimplexData();
                 current_step.oldBase = indBases[row - 1];
                 current_step.newBase = column;
                 indBases[row - 1] = column;
@@ -204,15 +270,15 @@ public class Simplex {
                 this.lastBasedColumn = column;
                 transformMatrixByGauss(this.simplexMatrix, this.simplexMatrix[row][column],row,column);
                 current_step.matrix = this.simplexMatrix.clone();
-                this.workingSteps.getNormalizeData().add(current_step);
+                this.outputData.getNormalizeData().add(current_step);
                 current_step.matrixCanBeNormalized = true;
                 flag = true;
             }
             else{
-                current_step = new NormalizeSimplexData();
+                current_step = new OutputData.NormalizeSimplexData();
                 current_step.matrix = this.simplexMatrix.clone();
                 current_step.matrixCanBeNormalized = false;
-                this.workingSteps.getNormalizeData().add(current_step);
+                this.outputData.getNormalizeData().add(current_step);
                 flag = false;
                 break;
             }
@@ -281,7 +347,7 @@ public class Simplex {
             System.arraycopy(simplexMatrix[i], 0, finalMatrix[i], 0, simplexMatrix[0].length);
         System.arraycopy(deltas, 0, finalMatrix[finalMatrix.length - 1], 0, deltas.length);
         while (!deltaIsOk()){
-            SolutionSimplexData current_step = new SolutionSimplexData();
+            OutputData.SolutionSimplexData current_step = new OutputData.SolutionSimplexData();
             current_step.matrix = new Fraction[simplexMatrix.length+1][simplexMatrix[0].length];
             findDelta(finalMatrix);
             int column = getSuitableColumn();
@@ -296,12 +362,12 @@ public class Simplex {
                 current_step.matrixCanBeSolved = true;
                 transformMatrixByGauss(finalMatrix, finalMatrix[row][column], row, column);
                 current_step.matrix = finalMatrix.clone();
-                workingSteps.getSolutionData().add(current_step);
+                outputData.getSolutionData().add(current_step);
 
             }
             else {
                 current_step.matrixCanBeSolved = false;
-                workingSteps.getSolutionData().add(current_step);
+                outputData.getSolutionData().add(current_step);
                 return false;
             }
         };
@@ -359,7 +425,7 @@ public class Simplex {
         return ind;
     }
 
-    private int getSuitableRow(int column, SolutionSimplexData data){
+    private int getSuitableRow(int column, OutputData.SolutionSimplexData data){
         data.SimplexRelations = new Fraction[finalMatrix.length-2];
         int row = -1;
         Fraction minQ = new Fraction(-1);
