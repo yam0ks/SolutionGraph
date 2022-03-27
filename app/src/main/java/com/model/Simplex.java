@@ -1,4 +1,4 @@
-package com.backend;
+package com.model;
 
 import java.util.ArrayList;
 
@@ -78,12 +78,6 @@ public class Simplex {
 
     private OutputData outputData;
     private InputData inputData;
-
-    public enum Sign {
-        MORE,
-        LESS,
-        EQUAL
-    }
 
     public Simplex() {}
 
