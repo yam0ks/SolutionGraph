@@ -85,7 +85,7 @@ public class Simplex {
         this.inputData = data;
     }
 
-    public OutputData startWork() {
+    public OutputData getResult() {
         this.outputData = new OutputData();
         outputData.normalizeData = new ArrayList<>();
         outputData.solutionData = new ArrayList<>();
