@@ -1,4 +1,4 @@
-package com.backend;
+package com.model;
 
 public class Fraction {
     private int numerator;

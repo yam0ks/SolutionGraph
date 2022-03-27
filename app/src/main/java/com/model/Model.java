@@ -1,4 +1,4 @@
-package com.backend;
+package com.model;
 
 public class Model {
     private Simplex simplex;
