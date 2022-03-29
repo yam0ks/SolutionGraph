@@ -17,7 +17,7 @@ public class Model {
         return simplexOutputData;
     }
 
-    private Graph.OutputData getGraphSolution(Restriction[] Restrictions, MainFunc mainFunc){
+    private void getGraphSolution(Restriction[] Restrictions, MainFunc mainFunc){
         //Надо сначала сделать graph
         //graphOutputData = new Graph.OutputData();
         //graphOutputData = graph.getResult(Restrictions, mainFunc);

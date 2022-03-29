@@ -14,6 +14,6 @@ public class SimplexTest extends TestCase {
         Simplex.OutputData outputData = simplex.getResult(restrictions, mainFunc);
         double result = (double)outputData.answers[outputData.answers.length - 1].getNumerator() /
                 (double)outputData.answers[outputData.answers.length - 1].getDenominator();
-        assertEquals(123.2, result);
+        assertEquals(128, result, 10);
     }
 }
