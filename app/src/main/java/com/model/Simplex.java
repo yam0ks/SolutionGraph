@@ -1,5 +1,3 @@
-package com.model;
-
 import java.util.ArrayList;
 
 public class Simplex {
@@ -8,18 +6,8 @@ public class Simplex {
     private int lastBasedRow = -1;
     private int lastBasedColumn = -1;
     private int[] indBases;
-    private int[] changedRows;
     private Fraction[] deltas;
     private Fraction[][] finalMatrix;
-
-    public static class InputData {
-        public Fraction[][] restrictionsCoeff; //матрица коэффициентов ограничений(строка - одно уравнение)
-        public Fraction[] mainFuncCoeff; //коэффициеты вычисляемой функции
-        public Simplex.Sign[] comparisonSings; //столбик знаков неравенства задаются через enum Simplex.Sign
-        public boolean findMax; //true если ищем максимум false если минимум
-
-        public InputData() {}
-    }
 
 
     public static class OutputData {
@@ -29,17 +17,7 @@ public class Simplex {
         public Fraction[] answers; // Ответ от 0 до length-2 - коэффициенты при соответветсвующих иксах последний элемент - ответ
 
         OutputData(){}
-
-        public InitSimplexData getInitData(){
-            return initData;
-        }
-        public ArrayList<NormalizeSimplexData> getNormalizeData(){
-            return normalizeData;
-        }
-        public ArrayList<SolutionSimplexData> getSolutionData(){ return solutionData; }
-        public int[] getAnswers(int[] answers){ return answers; }
-        public void setInitData(InitSimplexData initData){ this.initData = initData; }
-        public void setAnswers(Fraction[] answers){ this.answers = answers; }
+        private void setAnswers(Fraction[] answers){ this.answers = answers; }
 
         public static class InitSimplexData { //первый раздел (исходная симплекс матрица)
             public Fraction[][] matrix; // симплекс матрица на текущем шаге (0 строка - коэффициенты при главной функции, последний столбец свободные коэффы b)
@@ -77,103 +55,111 @@ public class Simplex {
     }
 
     private OutputData outputData;
-    private InputData inputData;
 
     public Simplex() {}
 
-    public void SetInputData(InputData data){
-        this.inputData = data;
-    }
-
-    public OutputData getResult() {
+    public OutputData getResult(Restriction[] restrictions, MainFunc mainFunc) {
         this.outputData = new OutputData();
         outputData.normalizeData = new ArrayList<>();
         outputData.solutionData = new ArrayList<>();
 
-        initSimplexMatrix();
+        formSimplexMatrix(restrictions,mainFunc);
+        printMatrix(simplexMatrix);
+
         if(!normalizationMatrix()){
             return this.outputData;
         }
         findDelta(this.simplexMatrix);
-
-        if(solutionMatrix()){
-            outputData.setAnswers(getAnswers());
-            printMatrix(this.finalMatrix);
-            return this.outputData;
+        if(solutionMatrix(mainFunc.minMax)){
+            outputData.setAnswers(getAnswers(mainFunc));
         }
-        else {
-            return this.outputData;
-        }
-    }
+        printArray(getAnswers(mainFunc));
 
-    private void initSimplexMatrix() {
-        int countRestrictions = this.inputData.restrictionsCoeff.length;
-        int countVariables = this.inputData.restrictionsCoeff[0].length;
-        this.simplexMatrix = new Fraction[countRestrictions + 1][countRestrictions + countVariables - sumEquals(inputData.comparisonSings)];
-        Simplex.OutputData.InitSimplexData initSimplexData = new OutputData.InitSimplexData();
-        canonizeData();
-        initRestrictionsCoeff();
-        initMainFuncCoeff();
-        initBases();
-        initSimplexData.bases = indBases.clone();
-        initSimplexData.matrix = this.simplexMatrix.clone();
-        initSimplexData.changedRowsSign = this.changedRows.clone();
-        outputData.initData = new OutputData.InitSimplexData();
-        outputData.initData = initSimplexData;
+        return this.outputData;
     }
-
-    private void initRestrictionsCoeff() {
+    private void formSimplexMatrix(Restriction[] restrictions, MainFunc mainFunc){
+        int countRestrictions = restrictions.length;
+        int countVariables = restrictions[0].coeffs.length;
+        this.simplexMatrix = new Fraction[countRestrictions + 1][countRestrictions + countVariables - sumEquals(restrictions) + 1];
+        this.outputData.initData = new OutputData.InitSimplexData();
+        canonizeData(restrictions, this.outputData.initData);
         for (int i = 1; i < this.simplexMatrix.length; i++) {
-            System.arraycopy(this.inputData.restrictionsCoeff[i - 1], 0, this.simplexMatrix[i], 0, this.inputData.restrictionsCoeff[0].length);
-            this.simplexMatrix[i][this.simplexMatrix[0].length - 1] = this.inputData.restrictionsCoeff[i - 1][this.inputData.restrictionsCoeff[0].length - 1];
+            System.arraycopy(restrictions[i-1].coeffs, 0, this.simplexMatrix[i], 0, restrictions[i-1].coeffs.length);
+            this.simplexMatrix[i][this.simplexMatrix[0].length - 1] = restrictions[i-1].result;
         }
+        for (int j = 0; j < this.simplexMatrix[0].length; j++){
+            if(j < mainFunc.coeffs.length){
+                this.simplexMatrix[0][j] = mainFunc.coeffs[j];
+            }
+            else {
+                this.simplexMatrix[0][j] = new Fraction(0);
+            }
+        }
+        int[] bases = new int[countVariables];
+        int biasBases = restrictions[0].coeffs.length;
+        for (int i = 1; i < this.simplexMatrix.length; i++) {
+            for(int j = biasBases; j < this.simplexMatrix[0].length - 1; j++){
+                simplexMatrix[i][j] = new Fraction(0);
+            }
+        }
+        int k = 0;
+        int chosenBases = 0;
+        for (int i = 1; i < this.simplexMatrix.length; i++) {
+            if(restrictions[i-1].sign == Restriction.Sign.EQUAL){
+                int column = getBaseColumn(i, restrictions);
+                transformMatrixByGauss(simplexMatrix, simplexMatrix[i][column], i, column);
+                bases[k] = column;
+                k++;
+                chosenBases++;
+                continue;
+            }
+            for(int j = biasBases; j < this.simplexMatrix[0].length; j++){
+                if(j-biasBases == i - 1 && restrictions[i - 1].sign != Restriction.Sign.EQUAL) {
+                    simplexMatrix[i][biasBases + k - chosenBases] = new Fraction(1);
+                    bases[k] = j;
+                    k++;
+                }
+            }
+        }
+        indBases = bases;
+        this.outputData.initData.bases = indBases.clone();
+        this.outputData.initData.matrix = simplexMatrix.clone();
     }
 
-    private void initBases() { //test func
-        int biasBases = this.inputData.restrictionsCoeff[0].length - 1;
-        indBases = new int[this.inputData.restrictionsCoeff[0].length - 1];
-
-        for (int i = 1; i < this.simplexMatrix.length; i++)
-            for (int j = biasBases; j < this.simplexMatrix[0].length - 1; j++)
-                if (i - 1 == j - biasBases) {
-                    if (inputData.comparisonSings[j - biasBases] == Sign.EQUAL) {
-                        int baseColumn = getBaseColumn(i);
-
-                        indBases[j - biasBases] = baseColumn; //test
-                        transformMatrixByGauss(this.simplexMatrix, this.simplexMatrix[i][baseColumn], baseColumn, i);
-
-                    } else {
-                        this.simplexMatrix[i][j] = new Fraction(1);
-                        indBases[j - biasBases] = j;
-                    }
-                } else
-                    this.simplexMatrix[i][j] = new Fraction(0);
+    private int sumEquals(Restriction[] restrictions) {
+        int num = 0;
+        for (Restriction restriction : restrictions)
+            if (restriction.sign == Restriction.Sign.EQUAL)
+                num += 1;
+        return num;
     }
 
-    private int getBaseColumn(int row) {
-        if(findReadyBase(row) != -1)
-            return findReadyBase(row);
+    private int getBaseColumn(int row, Restriction[] restrictions) {
+        if(findReadyBase(row, restrictions) != -1)
+            return findReadyBase(row, restrictions);
         else
-            if(findColumnWithZeros(row) != -1)
-                return findColumnWithZeros(row);
+            if(findColumnWithZeros(row, restrictions) != -1)
+                return findColumnWithZeros(row, restrictions);
             else
-                return findFirstNoZerosColumn(row);
+                return findFirstNoZerosColumn(row, restrictions);
     }
 
-    private int findReadyBase(int row) {
+    private int findReadyBase(int row, Restriction[] restrictions) {
         int column = -1;
-        for (int j = 0; j < this.inputData.restrictionsCoeff.length - 1; j++) {
+        for (int j = 0; j < restrictions[0].coeffs.length; j++) {
             boolean zerosInColumn = true;
 
-            if (this.simplexMatrix[row][j].getNumerator() == 1)
-                for (int i = 1; i < this.inputData.restrictionsCoeff.length + 1; i++) {
+            if (this.simplexMatrix[row][j].getNumerator() == 1 && this.simplexMatrix[row][j].getDenominator() == 1)
+                for (int i = 1; i < this.simplexMatrix.length; i++) {
                     if (i == row)
                         continue;
                     if (this.simplexMatrix[i][j].getNumerator() != 0) {
                         zerosInColumn = false;
-                        break;
                     }
                 }
+            else{
+                zerosInColumn = false;
+            }
 
             if (zerosInColumn)
                 return j;
@@ -181,20 +167,22 @@ public class Simplex {
         return column;
     }
 
-    private int findColumnWithZeros(int row) {
+    private int findColumnWithZeros(int row, Restriction[] restrictions) {
         int column = -1;
-        for (int j = 0; j < this.inputData.restrictionsCoeff.length - 1; j++) {
+        for (int j = 0; j < restrictions[0].coeffs.length; j++) {
             boolean zerosInColumn = true;
 
             if (this.simplexMatrix[row][j].getNumerator() != 0)
-                for (int i = 1; i < this.inputData.restrictionsCoeff.length + 1; i++) {
+                for (int i = 1; i < this.simplexMatrix.length; i++) {
                     if (i == row)
                         continue;
                     if (this.simplexMatrix[i][j].getNumerator() != 0) {
-                        zerosInColumn = false;
                         break;
                     }
                 }
+            else{
+                zerosInColumn = false;
+            }
 
             if (zerosInColumn)
                 return j;
@@ -202,47 +190,35 @@ public class Simplex {
         return column;
     }
 
-    private int findFirstNoZerosColumn(int row) {
-        for (int j = 0; j < this.inputData.restrictionsCoeff.length - 1; j++) {
+    private int findFirstNoZerosColumn(int row, Restriction[] restrictions) {
+        for (int j = 0; j < restrictions[0].coeffs.length; j++) {
             if (this.simplexMatrix[row][j].getNumerator() != 0)
                 return j;
         }
         return -1;
     }
 
-    private void initMainFuncCoeff() {
-        System.arraycopy(this.inputData.mainFuncCoeff, 0, this.simplexMatrix[0], 0, this.inputData.mainFuncCoeff.length);
-        for (int j = this.inputData.mainFuncCoeff.length; j < this.simplexMatrix[0].length; j++)
-            this.simplexMatrix[0][j] = new Fraction(0);
-    }
-
-    private void canonizeData() {
-        changedRows = new int[sumMore(inputData.comparisonSings)];
+    private void canonizeData(Restriction[] restrictions, OutputData.InitSimplexData initSimplexData) {
+        int[] changedRows = new int[sumMore(restrictions)];
         int k = 0;
-        for (int i = 0; i < this.inputData.comparisonSings.length; i++)
-            if (this.inputData.comparisonSings[i] == Sign.MORE){
-                changedRows[k] = i;
+        for (int i = 0; i < restrictions.length; i++)
+            if (restrictions[i].sign == Restriction.Sign.MORE){
+                changedRows[k] = i + 1;
                 k++;
-                for (int j = 0; j < this.inputData.restrictionsCoeff[0].length; j++) {
-                    this.inputData.restrictionsCoeff[i][j] = this.inputData.restrictionsCoeff[i][j].getMultiply(-1);
-                    this.inputData.comparisonSings[i] = Sign.LESS;
+                for (int j = 0; j < restrictions[i].coeffs.length; j++) {
+                    restrictions[i].coeffs[j] = restrictions[i].coeffs[j].getMultiply(-1);
+                    restrictions[i].sign = Restriction.Sign.LESS;
                 }
             }
+        initSimplexData.changedRowsSign = changedRows;
     }
 
-    private int sumEquals(Sign[] signs) {
+    private int sumMore(Restriction[] restrictions){
         int num = 0;
-        for (Sign sign : signs)
-            if (sign == Sign.EQUAL)
+        for (Restriction restriction : restrictions) {
+            if (restriction.sign == Restriction.Sign.MORE)
                 num += 1;
-        return num;
-    }
-
-    private int sumMore(Sign[] signs){
-        int num = 0;
-        for (Sign sign : signs)
-            if (sign == Sign.MORE)
-                num += 1;
+        }
         return num;
     }
 
@@ -264,15 +240,14 @@ public class Simplex {
                 this.lastBasedColumn = column;
                 transformMatrixByGauss(this.simplexMatrix, this.simplexMatrix[row][column],row,column);
                 current_step.matrix = this.simplexMatrix.clone();
-                this.outputData.getNormalizeData().add(current_step);
                 current_step.matrixCanBeNormalized = true;
-                flag = true;
+                this.outputData.normalizeData.add(current_step);
             }
             else{
                 current_step = new OutputData.NormalizeSimplexData();
                 current_step.matrix = this.simplexMatrix.clone();
                 current_step.matrixCanBeNormalized = false;
-                this.outputData.getNormalizeData().add(current_step);
+                this.outputData.normalizeData.add(current_step);
                 flag = false;
                 break;
             }
@@ -334,17 +309,16 @@ public class Simplex {
         return ind;
     }
 
-    private boolean solutionMatrix(){
+    private boolean solutionMatrix(boolean findMax){
         finalMatrix = new Fraction[simplexMatrix.length+1][simplexMatrix[0].length];
         findDelta(simplexMatrix);
         for(int i = 0; i < simplexMatrix.length; i++)
             System.arraycopy(simplexMatrix[i], 0, finalMatrix[i], 0, simplexMatrix[0].length);
         System.arraycopy(deltas, 0, finalMatrix[finalMatrix.length - 1], 0, deltas.length);
-        while (!deltaIsOk()){
+        while (!deltaIsOk(findMax)){
             OutputData.SolutionSimplexData current_step = new OutputData.SolutionSimplexData();
             current_step.matrix = new Fraction[simplexMatrix.length+1][simplexMatrix[0].length];
-            findDelta(finalMatrix);
-            int column = getSuitableColumn();
+            int column = getSuitableColumn(findMax);
             current_step.supportColumn = column;
             int row = getSuitableRow(column, current_step);
             if(row != -1){
@@ -356,15 +330,15 @@ public class Simplex {
                 current_step.matrixCanBeSolved = true;
                 transformMatrixByGauss(finalMatrix, finalMatrix[row][column], row, column);
                 current_step.matrix = finalMatrix.clone();
-                outputData.getSolutionData().add(current_step);
-
+                outputData.solutionData.add(current_step);
+                findDelta(finalMatrix);
             }
             else {
                 current_step.matrixCanBeSolved = false;
-                outputData.getSolutionData().add(current_step);
+                outputData.solutionData.add(current_step);
                 return false;
             }
-        };
+        }
         return true;
     }
 
@@ -381,9 +355,9 @@ public class Simplex {
         }
     }
 
-    private boolean deltaIsOk() {
+    private boolean deltaIsOk(boolean findMax) {
         boolean deltaIsOk = true;
-        if(inputData.findMax) {
+        if(findMax) {
             for (int i = 0; i < deltas.length-1; i++)
                 if (!deltas[i].isPositive() && deltas[i].getNumerator() != 0)
                     deltaIsOk = false;
@@ -396,9 +370,9 @@ public class Simplex {
         return deltaIsOk;
     }
 
-    private int getSuitableColumn(){
+    private int getSuitableColumn(boolean findMax){
         int ind = 0;
-        if(!inputData.findMax){
+        if(!findMax){
             Fraction max = deltas[0];
             for(int j = 1; j < deltas.length - 1; j++){
                 if(deltas[j].isMore(max) && getIndex(indBases, j) == -1){
@@ -463,9 +437,9 @@ public class Simplex {
         }
     }
 
-    private Fraction[] getAnswers(){
-        Fraction[] ans = new Fraction[inputData.restrictionsCoeff[0].length];
-        for(int j = 0; j < inputData.restrictionsCoeff[0].length - 1; j++){
+    private Fraction[] getAnswers(MainFunc mainFunc){
+        Fraction[] ans = new Fraction[mainFunc.coeffs.length + 1];
+        for(int j = 0; j < mainFunc.coeffs.length + 1; j++){
             if(getIndex(indBases, j) != -1){
                 ans[j] = finalMatrix[getIndex(indBases, j) + 1][finalMatrix[0].length - 1];
             }
@@ -490,5 +464,4 @@ public class Simplex {
         for(Fraction element : array)
             System.out.print(element.getFraction() + "\t");
     }
-
 }
