@@ -35,7 +35,6 @@ public class Simplex {
             public int supportElementRow;//строка опорного элемента
             public Fraction element;//значение опорного элемента
             public boolean matrixCanBeNormalized;//если false прекращается работа алгоритма, функция не ограничена, решения нет
-
             NormalizeSimplexData(){}
         }
 
@@ -64,7 +63,6 @@ public class Simplex {
         outputData.solutionData = new ArrayList<>();
 
         formSimplexMatrix(restrictions,mainFunc);
-        printMatrix(simplexMatrix);
 
         if(!normalizationMatrix()){
             return this.outputData;
@@ -72,9 +70,7 @@ public class Simplex {
         findDelta(this.simplexMatrix);
         if(solutionMatrix(mainFunc.minMax)){
             outputData.setAnswers(getAnswers(mainFunc));
-        }
-        printArray(getAnswers(mainFunc));
-
+            }
         return this.outputData;
     }
     private void formSimplexMatrix(Restriction[] restrictions, MainFunc mainFunc){
@@ -162,7 +158,7 @@ public class Simplex {
             }
 
             if (zerosInColumn)
-                return j;
+                column = j;
         }
         return column;
     }
@@ -185,7 +181,7 @@ public class Simplex {
             }
 
             if (zerosInColumn)
-                return j;
+                column = j;
         }
         return column;
     }
