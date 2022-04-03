@@ -8,7 +8,9 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/main_fragment_container_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="2.5in"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toTopOf="@+id/NextButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

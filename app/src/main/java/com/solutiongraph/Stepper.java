@@ -6,7 +6,7 @@ public final class Stepper {
     private int index = 0;
     private final Fragment[] STEPS = {
             CounterView.newInstance(constants.MAX_RESTRICTIONS_NUMBER, constants.MAX_VARIABLES_NUMBER),
-            CoeffView.newInstance(0, 0)
+            RestrictionsView.newInstance(0, 0)
     };
 
     public final static int COUNTS = 0;
