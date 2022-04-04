@@ -21,4 +21,16 @@ public class BaseExpression{
         Fraction result = new Fraction(num);
         return result;
     }
+
+    public Fraction[] getFractionCoeffs() {
+        return coeffs;
+    }
+
+    public double[] getDoubleCoeffs() {
+        double[] arr = new double[coeffs.length];
+        for (int i = 0; i < coeffs.length; i++) {
+            arr[i] = coeffs[i].getDouble();
+        }
+        return arr;
+    }
 }

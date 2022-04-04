@@ -11,9 +11,9 @@ public class Restriction extends BaseExpression{
     public Sign sign; //знак
     public Fraction result; //число после знака
 
-    Restriction(double[] coeffs, double f_coef, Sign s, double res) {
+    public Restriction(double[] coeffs, double f_coeff, Sign s, double res) {
         super(coeffs);
-        freeCoeff = ConvertToFraction(f_coef);
+        freeCoeff = ConvertToFraction(f_coeff);
         sign = s;
         result = ConvertToFraction(res);
     }

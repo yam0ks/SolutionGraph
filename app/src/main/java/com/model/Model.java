@@ -16,12 +16,12 @@ public class Model {
         simplexOutputData = simplex.getResult(Restrictions, mainFunc);
         return simplexOutputData;
     }
-
-    private void getGraphSolution(Restriction[] Restrictions, MainFunc mainFunc){
+/*
+    private Graph.OutputData getGraphSolution(Restriction[] Restrictions, MainFunc mainFunc){
         //Надо сначала сделать graph
         //graphOutputData = new Graph.OutputData();
         //graphOutputData = graph.getResult(Restrictions, mainFunc);
         //return graphOutputData;
     }
-
+*/
 }

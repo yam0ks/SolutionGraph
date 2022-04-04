@@ -19,6 +19,8 @@ public class CounterView extends Fragment {
     private int maxRest;
     private int maxVar;
 
+    private View root;
+
     public CounterView() {}
 
     public static CounterView newInstance(int maxRest, int maxVar) {
@@ -42,19 +44,18 @@ public class CounterView extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View root = inflater.inflate(R.layout.fragment_counter_view, container, false);
-
-        Spinner spinner = root.findViewById(R.id.restrictionsCountSpin);
-        SetSpinnerRange(root, spinner, maxRest);
-        spinner = root.findViewById(R.id.variablesCountSpin);
-        SetSpinnerRange(root, spinner, maxVar);
+        this.root = inflater.inflate(R.layout.fragment_counter_view, container, false);
         return inflater.inflate(R.layout.fragment_counter_view, container, false);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        Spinner spinner = root.findViewById(R.id.restrictionsCountSpin);
+        SetSpinnerRange(root, spinner, maxRest);
+        spinner = root.findViewById(R.id.variablesCountSpin);
+        SetSpinnerRange(root, spinner, maxVar);
     }
 
     private void SetSpinnerRange(View view, Spinner spinner, Integer max) {

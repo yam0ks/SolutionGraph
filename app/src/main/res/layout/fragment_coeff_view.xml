@@ -3,14 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CoeffView">
+    tools:context=".RestrictionsView">
 
     <LinearLayout
         android:id="@+id/root_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical" >
 
         <TextView
             android:layout_width="match_parent"
@@ -21,10 +21,10 @@
             android:paddingBottom="5dp"
             android:textColor="@color/black" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragment_container_view"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/restrictionRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="400dp" />
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

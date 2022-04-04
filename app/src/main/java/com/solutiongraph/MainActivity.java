@@ -13,6 +13,7 @@ import com.viewmodel.MainViewModel;
 public class MainActivity extends AppCompatActivity {
     private ViewModel vModel;
     private static final Stepper STEPPER = new Stepper();
+    int mainFragmentID = R.id.main_fragment_container_view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setCurrentFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_fragment_container_view, fragment, "MAIN_FRAGMENT")
+                .replace(mainFragmentID, fragment, "MAIN_FRAGMENT")
                 .commit();
     }
 
@@ -39,16 +40,20 @@ public class MainActivity extends AppCompatActivity {
         if (!STEPPER.isFirst())
             findViewById(R.id.PrevButton).setVisibility(View.VISIBLE);
 
+        Bundle bundle = new Bundle();
         switch (STEPPER.getIndex()) {
             case Stepper.COUNTS:
                 break;
             case Stepper.COEFFS:
-                Bundle bundle = new Bundle();
                 //TODO: Передать кол-во ограничений
-                bundle.putInt(CoeffView.RESTRICTIONS_NUMBER, 3);
+                bundle.putInt(RestrictionsView.RESTRICTIONS_NUMBER, 2);
                 //TODO: Передать кол-во переменных
-                bundle.putInt(CoeffView.VARIABLES_NUMBER, 3);
+                bundle.putInt(RestrictionsView.VARIABLES_NUMBER, 4);
                 STEPPER.getStep().setArguments(bundle);
+
+                setCurrentFragment(STEPPER.getStep());
+
+
                 break;
         }
         setCurrentFragment(STEPPER.getStep());
