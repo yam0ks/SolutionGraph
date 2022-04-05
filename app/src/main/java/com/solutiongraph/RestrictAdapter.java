@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,11 +40,22 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
         double[] coeffs = restrict.getDoubleCoeffs();
         double freeCoeff = restrict.freeCoeff.getDouble();
         double result = restrict.result.getDouble();
+        Restriction.Sign sign = restrict.sign;
 
-        //TODO: добавить определение знака
         holder.result.setText(String.valueOf(result));
         holder.freeCoeffView.setText(String.valueOf(freeCoeff));
-        holder.setHeader(coeffs, freeCoeff, Restriction.Sign.LESS, result);
+        switch (sign.name()){
+            case ("LESS"):
+                holder.signView.check(R.id.radioLess);
+                break;
+            case ("EQUAL"):
+                holder.signView.check(R.id.radioEqual);
+                break;
+            case ("MORE"):
+                holder.signView.check(R.id.radioMore);
+                break;
+        }
+        holder.setHeader(coeffs, freeCoeff, sign, result);
     }
 
     @Override
