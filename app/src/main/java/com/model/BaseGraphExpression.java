@@ -6,10 +6,10 @@ public class BaseGraphExpression { //Базовый класс для огран
     protected Float result_coeff; //Свободный коэффициент в правой части выражения
     protected String string_expression; //Строковое представление выражения
 
-    protected BaseGraphExpression(Float x_c, Float y_c, Float r_c) {
-        x_coeff = x_c;
-        y_coeff = y_c;
-        result_coeff = r_c;
+    protected BaseGraphExpression(Float input_x_coeff, Float input_y_coeff, Float input_result_coeff) {
+        x_coeff = input_x_coeff;
+        y_coeff = input_y_coeff;
+        result_coeff = input_result_coeff;
     }
 
     public Float CalculateX(Float y_value){ //Расчет значения X при известном Y

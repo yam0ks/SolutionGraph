@@ -28,10 +28,10 @@ public class GraphSolver { //Ядро графического метода
     private  List<GraphRestriction> restrictions; //Список ограничений
     private GraphObjective objective; //Целевая функция
 
-    private Float r_bound = -1 * Float.MIN_VALUE; //Наибольшее значение среди точек по оси X
-    private Float l_bound = Float.MAX_VALUE; //Наименьшее значение среди точек по оси X
-    private Float t_bound = -1 * Float.MIN_VALUE; //Наибольшее значение среди точек по оси Y
-    private Float b_bound = Float.MAX_VALUE; //Наименьшее значение среди точек по оси Y
+    private Float right_bound = -1 * Float.MIN_VALUE; //Наибольшее значение среди точек по оси X
+    private Float left_bound = Float.MAX_VALUE; //Наименьшее значение среди точек по оси X
+    private Float top_bound = -1 * Float.MIN_VALUE; //Наибольшее значение среди точек по оси Y
+    private Float bottom_bound = Float.MAX_VALUE; //Наименьшее значение среди точек по оси Y
 
     public GraphSolver(){}
 
@@ -45,10 +45,10 @@ public class GraphSolver { //Ядро графического метода
         }
 
         public List<Expression> expressions; //Список полученных функций
-        public Float r_bound;
-        public Float l_bound;
-        public Float t_bound;
-        public Float b_bound;
+        public Float right_bound;
+        public Float left_bound;
+        public Float top_bound;
+        public Float bottom_bound;
         public Float x_solution; //X координата точки решения
         public Float y_solution; //Y координата точки решения
         public Float value_solution; //Результат оптимизации
@@ -56,10 +56,10 @@ public class GraphSolver { //Ядро графического метода
 
         public OutputData(ErrorType type){
             expressions = new ArrayList<>();
-            r_bound = 0F;
-            l_bound = 0F;
-            t_bound = 0F;
-            b_bound = 0F;
+            right_bound = 0F;
+            left_bound = 0F;
+            top_bound = 0F;
+            bottom_bound = 0F;
             x_solution = 0F;
             y_solution = 0F;
             value_solution = 0F;
@@ -68,21 +68,21 @@ public class GraphSolver { //Ядро графического метода
 
         public OutputData(){
             expressions = new ArrayList<>();
-            r_bound = 0F;
-            l_bound = 0F;
-            t_bound = 0F;
-            b_bound = 0F;
+            right_bound = 0F;
+            left_bound = 0F;
+            top_bound = 0F;
+            bottom_bound = 0F;
             x_solution = 0F;
             y_solution = 0F;
             value_solution = 0F;
             error = ErrorType.NOERROR;
         }
 
-        public void SetBounds(Float r_b, Float l_b, Float t_b, Float b_b){
-            r_bound = r_b;
-            l_bound = l_b;
-            t_bound = t_b;
-            b_bound = b_b;
+        public void SetBounds(Float input_right_bound, Float input_left_bound, Float input_top_bound, Float input_bottom_bound){
+            right_bound = input_right_bound;
+            left_bound = input_left_bound;
+            top_bound = input_top_bound;
+            bottom_bound = input_bottom_bound;
         }
 
         public void SetSolution(double x_value, double y_value, double result_value){
@@ -91,8 +91,8 @@ public class GraphSolver { //Ядро графического метода
             value_solution = (float)result_value;
         }
 
-        public void SetExpressions(List<Expression> i_expressions){
-            expressions = i_expressions;
+        public void SetExpressions(List<Expression> input_expressions){
+            expressions = input_expressions;
         }
 
         public void SetError(ErrorType type){
@@ -111,17 +111,17 @@ public class GraphSolver { //Ядро графического метода
             public String str_expression; //Строковое представление выражения
             public Type type; //Тип графика
 
-            public Expression(List<Entry> i_points, GraphRestriction.Sign s, String i_str_expression, Type i_type){
-                points = i_points;
+            public Expression(List<Entry> input_points, GraphRestriction.Sign s, String input_str_expression, Type input_type){
+                points = input_points;
                 sign = s;
-                str_expression = i_str_expression;
-                type = i_type;
+                str_expression = input_str_expression;
+                type = input_type;
             }
 
-            public Expression(List<Entry> i_points, String i_str_expression, Type i_type){
-                points = i_points;
-                str_expression = i_str_expression;
-                type = i_type;
+            public Expression(List<Entry> input_points, String input_str_expression, Type input_type){
+                points = input_points;
+                str_expression = input_str_expression;
+                type = input_type;
                 sign = GraphRestriction.Sign.EQ;
             }
         }
@@ -129,10 +129,10 @@ public class GraphSolver { //Ядро графического метода
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public OutputData CalculateGraph(List<GraphRestriction> i_restrictions, GraphObjective i_main_func){ //Основной метод для расчета всех значений
+    public OutputData CalculateGraph(List<GraphRestriction> input_restrictions, GraphObjective input_main_func){ //Основной метод для расчета всех значений
 
-        restrictions = i_restrictions;
-        objective = i_main_func;
+        restrictions = input_restrictions;
+        objective = input_main_func;
 
         List<OutputData.Expression> expressions = new ArrayList<>();
 
@@ -159,7 +159,7 @@ public class GraphSolver { //Ядро графического метода
             return new OutputData(OutputData.ErrorType.INCORECTDATA);
         }
 
-        data.SetBounds(r_bound, l_bound, t_bound, b_bound);
+        data.SetBounds(right_bound, left_bound, top_bound, bottom_bound);
         data.SetExpressions(expressions);
         data.SetError(error);
 
@@ -179,21 +179,21 @@ public class GraphSolver { //Ядро графического метода
 
         for(int i = 0; i < inters.size(); ++i){
             if(restrictions.get(i).y_coeff == 0){
-                Float restr_min_x = restrictions.get(i).CalculateX(b_bound);
-                inters.get(i).points.add(0, new Entry(restr_min_x, b_bound));
+                Float restr_min_x = restrictions.get(i).CalculateX(bottom_bound);
+                inters.get(i).points.add(0, new Entry(restr_min_x, bottom_bound));
 
-                Float restr_max_x = restrictions.get(i).CalculateX(t_bound);
-                inters.get(i).points.add(new Entry(restr_max_x, t_bound));
+                Float restr_max_x = restrictions.get(i).CalculateX(top_bound);
+                inters.get(i).points.add(new Entry(restr_max_x, top_bound));
 
                 result.add(inters.get(i));
                 result.add(MakeArtificialExpression(inters.get(i)));
             }
             else{
-                Float restr_min_y = restrictions.get(i).CalculateY(l_bound);
-                inters.get(i).points.add(0, new Entry(l_bound, restr_min_y));
+                Float restr_min_y = restrictions.get(i).CalculateY(left_bound);
+                inters.get(i).points.add(0, new Entry(left_bound, restr_min_y));
 
-                Float restr_max_y =  restrictions.get(i).CalculateY(r_bound);
-                inters.get(i).points.add(new Entry(r_bound, restr_max_y));
+                Float restr_max_y =  restrictions.get(i).CalculateY(right_bound);
+                inters.get(i).points.add(new Entry(right_bound, restr_max_y));
 
                 result.add(inters.get(i));
             }
@@ -239,14 +239,14 @@ public class GraphSolver { //Ядро графического метода
     }
 
     private void UpdateBounds(Float x_value, Float y_value){ //Обновление крайних значений по всем осям
-        if(x_value > r_bound)
-            r_bound = x_value;
-        if(x_value < l_bound)
-            l_bound = x_value;
-        if(y_value > t_bound)
-            t_bound = y_value;
-        if(y_value < b_bound)
-            b_bound = y_value;
+        if(x_value > right_bound)
+            right_bound = x_value;
+        if(x_value < left_bound)
+            left_bound = x_value;
+        if(y_value > top_bound)
+            top_bound = y_value;
+        if(y_value < bottom_bound)
+            bottom_bound = y_value;
     }
 
     private OutputData.Expression MakeArtificialExpression(OutputData.Expression line_data){ //Создание искусственной прямой
@@ -258,18 +258,18 @@ public class GraphSolver { //Ядро графического метода
         r_points.add(new Entry(x_coord, y_coord));
 
         if(line_data.sign == GraphRestriction.Sign.GEQ)
-            r_points.add(new Entry(r_bound, y_coord));
+            r_points.add(new Entry(right_bound, y_coord));
         else
-            r_points.add(new Entry(l_bound, y_coord));
+            r_points.add(new Entry(left_bound, y_coord));
 
         return new OutputData.Expression(r_points, line_data.sign, "", OutputData.Expression.Type.ARTIFICIAL);
     }
 
     private void MakeOffsets(){ //Добавление отступов к крайним значениям
-        r_bound += 10F;
-        l_bound -= 10F;
-        t_bound += 10F;
-        b_bound -= 10F;
+        right_bound += 10F;
+        left_bound -= 10F;
+        top_bound += 10F;
+        bottom_bound -= 10F;
     }
 
     private void MakeExpressions(List<OutputData.Expression> expressions){ //Создание графиков при параллельных прямых
@@ -308,12 +308,12 @@ public class GraphSolver { //Ядро графического метода
         objective.Normalize();
 
         if(objective.y_coeff == 0){
-            points.add(new Entry(objective.CalculateX(b_bound), b_bound));
-            points.add(new Entry(objective.CalculateX(t_bound), t_bound));
+            points.add(new Entry(objective.CalculateX(bottom_bound), bottom_bound));
+            points.add(new Entry(objective.CalculateX(top_bound), top_bound));
         }
         else{
-            points.add(new Entry(l_bound, objective.CalculateY(l_bound)));
-            points.add(new Entry(r_bound, objective.CalculateY(r_bound)));
+            points.add(new Entry(left_bound, objective.CalculateY(left_bound)));
+            points.add(new Entry(right_bound, objective.CalculateY(right_bound)));
         }
 
         return new OutputData.Expression(points, objective.string_expression, OutputData.Expression.Type.OBJECTIVE);

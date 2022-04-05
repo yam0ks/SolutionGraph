@@ -10,14 +10,14 @@ public class GraphObjective extends BaseGraphExpression{ //Класс для п�
 
     public GoalType goal_type; //Направление целевой функции
 
-    public GraphObjective(Float x_c, Float y_c, GoalType type){
-        super(x_c, y_c, 0F);
+    public GraphObjective(Float input_x_coeff, Float input_y_coeff, GoalType type){
+        super(input_x_coeff, input_y_coeff, 0F);
         goal_type = type;
         string_expression = AsString();
     }
 
-    public void SetR_coeff(Float r_c){
-        result_coeff = r_c;
+    public void SetR_coeff(Float input_result_coeff){
+        result_coeff = input_result_coeff;
     }
 
     @Override

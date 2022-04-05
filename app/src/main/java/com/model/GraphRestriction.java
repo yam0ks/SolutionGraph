@@ -11,10 +11,9 @@ public class GraphRestriction extends BaseGraphExpression { //Класс для 
 
     public Sign sign; //Знак ограничения
 
-    public GraphRestriction(Float x_c, Float y_c, Sign s, Float r_c) {
-        super(x_c, y_c, r_c);
+    public GraphRestriction(Float input_x_coeff, Float input_y_coeff, Sign s, Float input_result_coeff) {
+        super(input_x_coeff, input_y_coeff, input_result_coeff);
         sign = s;
-        result_coeff = r_c;
         string_expression = AsString();
         Normalize();
     }
