@@ -38,6 +38,11 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
             toggle = !toggle;
             view.findViewById(R.id.expressionExpandArrow).setRotation(toggle ? 180 : 0);
         };
+
+        View.OnFocusChangeListener toggleChange  = (view, hasFocus) -> {
+            if (hasFocus) return;
+            
+        };
         header.setOnClickListener(toggleRestrict);
         createCoeffsRecyclerView(numbersCount);
     }
@@ -73,13 +78,13 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         if (free != 0)
             text = text.concat(free < 0 ? " - " : " + ").concat(stringFromNumber(Math.abs(free)));
         switch (sign) {
-            case LEQ:
+            case LESS:
                 text = text.concat(" < ");
                 break;
-            case EQ:
+            case EQUALS:
                 text = text.concat(" = ");
                 break;
-            case GEQ:
+            case MORE:
                 text = text.concat(" > ");
                 break;
         }

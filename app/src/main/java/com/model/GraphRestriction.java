@@ -18,7 +18,7 @@ public class GraphRestriction extends BaseGraphExpression { //Класс для 
             x_coeff *= -1;
             y_coeff *= -1;
             result_coeff *= -1;
-            sign = (sign == constants.Sign.GEQ) ? constants.Sign.LEQ : constants.Sign.GEQ;
+            sign = (sign == constants.Sign.MORE) ? constants.Sign.LESS : constants.Sign.MORE;
         }
         if (y_coeff == 0 && x_coeff < 0) {
             x_coeff *= -1;
@@ -57,7 +57,7 @@ public class GraphRestriction extends BaseGraphExpression { //Класс для 
                 result += Utils.formatNumber(y_coeff, (y_coeff % 1 == 0) ? 0 : 1, false) + "y ";
         }
 
-        if (sign == constants.Sign.GEQ)
+        if (sign == constants.Sign.MORE)
             result += "≥ " + Utils.formatNumber(result_coeff, (result_coeff % 1 == 0) ? 0 : 1, false);
         else
             result += "≤ " + Utils.formatNumber(result_coeff, (result_coeff % 1 == 0) ? 0 : 1, false);

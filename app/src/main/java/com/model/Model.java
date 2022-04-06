@@ -1,27 +1,33 @@
 package com.model;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import java.util.List;
+
 public class Model {
     private Simplex simplex;
     private Simplex.OutputData simplexOutputData;
-    //private Graph.OutputData graphOutputData;
-    //private Graph graph;
+    private GraphSolver.OutputData graphOutputData;
+    private GraphSolver graph;
 
-    public Model(){
+    public Model() {
         simplex = new Simplex();
-        //graph = new Graph();
+        graph = new GraphSolver();
     }
 
-    private Simplex.OutputData getSimplexSolution(Restriction[] Restrictions, Objective objective){
+    private Simplex.OutputData getSimplexSolution(Restriction[] Restrictions, Objective objective) {
         simplexOutputData = new Simplex.OutputData();
         simplexOutputData = simplex.getResult(Restrictions, objective);
         return simplexOutputData;
     }
-/*
-    private Graph.OutputData getGraphSolution(Restriction[] Restrictions, MainFunc mainFunc){
-        //Надо сначала сделать graph
-        //graphOutputData = new Graph.OutputData();
-        //graphOutputData = graph.getResult(Restrictions, mainFunc);
-        //return graphOutputData;
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private GraphSolver.OutputData getGraphSolution(List<GraphRestriction> graphRestrictList,
+                                                    GraphObjective graphObjective) {
+        graphOutputData = new GraphSolver.OutputData();
+        graphOutputData = graph.CalculateGraph(graphRestrictList, graphObjective);
+        return graphOutputData;
     }
-*/
 }

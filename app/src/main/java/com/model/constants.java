@@ -2,9 +2,9 @@ package com.model;
 
 public class constants {
     public enum Sign{
-        EQ,
-        GEQ,
-        LEQ
+        EQUALS,
+        MORE,
+        LESS
     }
 
     public enum GoalType{

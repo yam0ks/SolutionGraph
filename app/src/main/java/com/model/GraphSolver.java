@@ -124,7 +124,7 @@ public class GraphSolver { //Ядро графического метода
                 points = input_points;
                 str_expression = input_str_expression;
                 type = input_type;
-                sign = constants.Sign.EQ;
+                sign = constants.Sign.EQUALS;
             }
         }
 
@@ -259,7 +259,7 @@ public class GraphSolver { //Ядро графического метода
 
         r_points.add(new Entry(x_coord, y_coord));
 
-        if(line_data.sign == constants.Sign.GEQ)
+        if(line_data.sign == constants.Sign.MORE)
             r_points.add(new Entry(right_bound, y_coord));
         else
             r_points.add(new Entry(left_bound, y_coord));
@@ -293,7 +293,7 @@ public class GraphSolver { //Ядро графического метода
         Collection<LinearConstraint> constraints = new ArrayList<>();
 
         for (GraphRestriction restriction : restrictions) {
-            Relationship sign = (restriction.sign == constants.Sign.GEQ) ? Relationship.GEQ : Relationship.LEQ;
+            Relationship sign = (restriction.sign == constants.Sign.MORE) ? Relationship.GEQ : Relationship.LEQ;
 
             constraints.add(new LinearConstraint(new double[]{restriction.x_coeff, restriction.y_coeff}, sign, restriction.result_coeff));
         }

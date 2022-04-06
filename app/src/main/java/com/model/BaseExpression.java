@@ -26,6 +26,10 @@ public class BaseExpression{
         return coeffs;
     }
 
+    public void setFractionCoeffs (Fraction[] coeffs) {
+        this.coeffs = coeffs;
+    }
+
     public double[] getDoubleCoeffs() {
         double[] arr = new double[coeffs.length];
         for (int i = 0; i < coeffs.length; i++) {
