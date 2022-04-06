@@ -11,9 +11,9 @@ public class Model {
         //graph = new Graph();
     }
 
-    private Simplex.OutputData getSimplexSolution(Restriction[] Restrictions, MainFunc mainFunc){
+    private Simplex.OutputData getSimplexSolution(Restriction[] Restrictions, Objective objective){
         simplexOutputData = new Simplex.OutputData();
-        simplexOutputData = simplex.getResult(Restrictions, mainFunc);
+        simplexOutputData = simplex.getResult(Restrictions, objective);
         return simplexOutputData;
     }
 /*

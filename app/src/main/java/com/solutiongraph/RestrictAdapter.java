@@ -4,12 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.model.Restriction;
+import com.model.constants;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
         double[] coeffs = restrict.getDoubleCoeffs();
         double freeCoeff = restrict.freeCoeff.getDouble();
         double result = restrict.result.getDouble();
-        Restriction.Sign sign = restrict.sign;
+        constants.Sign sign = restrict.sign;
 
         holder.result.setText(String.valueOf(result));
         holder.freeCoeffView.setText(String.valueOf(freeCoeff));
