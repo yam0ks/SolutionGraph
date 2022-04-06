@@ -3,14 +3,10 @@ package com.model;
 import com.github.mikephil.charting.utils.Utils;
 
 public class GraphObjective extends BaseGraphExpression{ //Класс для представления целевой функции
-    public enum GoalType{ //Перечисление с информацией о направлении целевой функции
-        MAXIMIZE,
-        MINIMIZE
-    }
 
-    public GoalType goal_type; //Направление целевой функции
+    public constants.GoalType goal_type; //Направление целевой функции
 
-    public GraphObjective(Float input_x_coeff, Float input_y_coeff, GoalType type){
+    public GraphObjective(Float input_x_coeff, Float input_y_coeff, constants.GoalType type){
         super(input_x_coeff, input_y_coeff, 0F);
         goal_type = type;
         string_expression = AsString();
@@ -66,7 +62,7 @@ public class GraphObjective extends BaseGraphExpression{ //Класс для п�
                 result += Utils.formatNumber(y_coeff, (y_coeff % 1 == 0) ? 0 : 1, false) + "y ";
         }
 
-        if(goal_type == GoalType.MAXIMIZE)
+        if(goal_type == constants.GoalType.MAXIMIZE)
             result += "-> max";
         else
             result += "-> min";
