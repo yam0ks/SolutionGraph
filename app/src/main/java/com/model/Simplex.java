@@ -103,7 +103,7 @@ public class Simplex {
         int k = 0;
         int chosenBases = 0;
         for (int i = 1; i < this.simplexMatrix.length; i++) {
-            if(restrictions[i-1].sign == constants.Sign.EQ){
+            if(restrictions[i-1].sign == constants.Sign.EQUALS){
                 int column = getBaseColumn(i, restrictions);
                 transformMatrixByGauss(simplexMatrix, simplexMatrix[i][column], i, column);
                 bases[k] = column;
@@ -112,7 +112,7 @@ public class Simplex {
                 continue;
             }
             for(int j = biasBases; j < this.simplexMatrix[0].length; j++){
-                if(j-biasBases == i - 1 && restrictions[i - 1].sign != constants.Sign.EQ) {
+                if(j-biasBases == i - 1 && restrictions[i - 1].sign != constants.Sign.EQUALS) {
                     simplexMatrix[i][biasBases + k - chosenBases] = new Fraction(1);
                     bases[k] = j;
                     k++;
@@ -127,7 +127,7 @@ public class Simplex {
     private int sumEquals(Restriction[] restrictions) {
         int num = 0;
         for (Restriction restriction : restrictions)
-            if (restriction.sign == constants.Sign.EQ)
+            if (restriction.sign == constants.Sign.EQUALS)
                 num += 1;
         return num;
     }
@@ -200,12 +200,12 @@ public class Simplex {
         int[] changedRows = new int[sumMore(restrictions)];
         int k = 0;
         for (int i = 0; i < restrictions.length; i++)
-            if (restrictions[i].sign == constants.Sign.GEQ){
+            if (restrictions[i].sign == constants.Sign.MORE){
                 changedRows[k] = i + 1;
                 k++;
                 for (int j = 0; j < restrictions[i].coeffs.length; j++) {
                     restrictions[i].coeffs[j] = restrictions[i].coeffs[j].getMultiply(-1);
-                    restrictions[i].sign = constants.Sign.LEQ;
+                    restrictions[i].sign = constants.Sign.LESS;
                 }
             }
         initSimplexData.changedRowsSign = changedRows;
@@ -214,7 +214,7 @@ public class Simplex {
     private int sumMore(Restriction[] restrictions){
         int num = 0;
         for (Restriction restriction : restrictions) {
-            if (restriction.sign == constants.Sign.GEQ)
+            if (restriction.sign == constants.Sign.MORE)
                 num += 1;
         }
         return num;

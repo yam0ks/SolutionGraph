@@ -71,7 +71,7 @@ public class RestrictionsView extends Fragment {
         List<Restriction> restrictionList = new ArrayList<>();
         for (int i = 0; i < restNumber; i++) {
             restrictionList.add(
-                    new Restriction(new double[varblNumber], 0, constants.Sign.GEQ, 0));
+                    new Restriction(new double[varblNumber], 0, constants.Sign.MORE, 0));
         }
         return restrictionList;
     }
