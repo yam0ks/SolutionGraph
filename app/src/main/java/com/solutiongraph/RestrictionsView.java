@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.model.Restriction;
+import com.model.constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +71,7 @@ public class RestrictionsView extends Fragment {
         List<Restriction> restrictionList = new ArrayList<>();
         for (int i = 0; i < restNumber; i++) {
             restrictionList.add(
-                    new Restriction(new double[varblNumber], 0, Restriction.Sign.MORE, 0));
+                    new Restriction(new double[varblNumber], 0, constants.Sign.GEQ, 0));
         }
         return restrictionList;
     }

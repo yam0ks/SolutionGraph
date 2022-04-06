@@ -3,15 +3,9 @@ package com.model;
 import com.github.mikephil.charting.utils.Utils;
 
 public class GraphRestriction extends BaseGraphExpression { //Класс для представления ограничения
-    public enum Sign { //Перечисление с информацией о знаке ограничения
-        EQ,
-        GEQ,
-        LEQ
-    }
+    public constants.Sign sign; //Знак ограничения
 
-    public Sign sign; //Знак ограничения
-
-    public GraphRestriction(Float input_x_coeff, Float input_y_coeff, Sign s, Float input_result_coeff) {
+    public GraphRestriction(Float input_x_coeff, Float input_y_coeff, constants.Sign s, Float input_result_coeff) {
         super(input_x_coeff, input_y_coeff, input_result_coeff);
         sign = s;
         string_expression = AsString();
@@ -24,7 +18,7 @@ public class GraphRestriction extends BaseGraphExpression { //Класс для 
             x_coeff *= -1;
             y_coeff *= -1;
             result_coeff *= -1;
-            sign = (sign == Sign.GEQ) ? Sign.LEQ : Sign.GEQ;
+            sign = (sign == constants.Sign.GEQ) ? constants.Sign.LEQ : constants.Sign.GEQ;
         }
         if (y_coeff == 0 && x_coeff < 0) {
             x_coeff *= -1;
@@ -63,7 +57,7 @@ public class GraphRestriction extends BaseGraphExpression { //Класс для 
                 result += Utils.formatNumber(y_coeff, (y_coeff % 1 == 0) ? 0 : 1, false) + "y ";
         }
 
-        if (sign == Sign.GEQ)
+        if (sign == constants.Sign.GEQ)
             result += "≥ " + Utils.formatNumber(result_coeff, (result_coeff % 1 == 0) ? 0 : 1, false);
         else
             result += "≤ " + Utils.formatNumber(result_coeff, (result_coeff % 1 == 0) ? 0 : 1, false);

@@ -1,5 +1,7 @@
 package com.model;
 
+import static com.model.constants.GRAPH_OFFSET;
+
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -107,11 +109,11 @@ public class GraphSolver { //Ядро графического метода
             }
 
             public List<Entry> points; //Список с точками графика
-            public GraphRestriction.Sign sign; //Знак ограничения
+            public constants.Sign sign; //Знак ограничения
             public String str_expression; //Строковое представление выражения
             public Type type; //Тип графика
 
-            public Expression(List<Entry> input_points, GraphRestriction.Sign s, String input_str_expression, Type input_type){
+            public Expression(List<Entry> input_points, constants.Sign s, String input_str_expression, Type input_type){
                 points = input_points;
                 sign = s;
                 str_expression = input_str_expression;
@@ -122,7 +124,7 @@ public class GraphSolver { //Ядро графического метода
                 points = input_points;
                 str_expression = input_str_expression;
                 type = input_type;
-                sign = GraphRestriction.Sign.EQ;
+                sign = constants.Sign.EQ;
             }
         }
 
@@ -257,7 +259,7 @@ public class GraphSolver { //Ядро графического метода
 
         r_points.add(new Entry(x_coord, y_coord));
 
-        if(line_data.sign == GraphRestriction.Sign.GEQ)
+        if(line_data.sign == constants.Sign.GEQ)
             r_points.add(new Entry(right_bound, y_coord));
         else
             r_points.add(new Entry(left_bound, y_coord));
@@ -266,10 +268,10 @@ public class GraphSolver { //Ядро графического метода
     }
 
     private void MakeOffsets(){ //Добавление отступов к крайним значениям
-        right_bound += 10F;
-        left_bound -= 10F;
-        top_bound += 10F;
-        bottom_bound -= 10F;
+        right_bound += GRAPH_OFFSET;
+        left_bound -= GRAPH_OFFSET;
+        top_bound += GRAPH_OFFSET;
+        bottom_bound -= GRAPH_OFFSET;
     }
 
     private void MakeExpressions(List<OutputData.Expression> expressions){ //Создание графиков при параллельных прямых
@@ -291,12 +293,12 @@ public class GraphSolver { //Ядро графического метода
         Collection<LinearConstraint> constraints = new ArrayList<>();
 
         for (GraphRestriction restriction : restrictions) {
-            Relationship sign = (restriction.sign == GraphRestriction.Sign.GEQ) ? Relationship.GEQ : Relationship.LEQ;
+            Relationship sign = (restriction.sign == constants.Sign.GEQ) ? Relationship.GEQ : Relationship.LEQ;
 
             constraints.add(new LinearConstraint(new double[]{restriction.x_coeff, restriction.y_coeff}, sign, restriction.result_coeff));
         }
 
-        GoalType type = (objective.goal_type == GraphObjective.GoalType.MAXIMIZE) ? GoalType.MAXIMIZE : GoalType.MINIMIZE;
+        GoalType type = (objective.goal_type == constants.GoalType.MAXIMIZE) ? GoalType.MAXIMIZE : GoalType.MINIMIZE;
 
         return new SimplexSolver().optimize(f, new LinearConstraintSet(constraints), type);
     }
