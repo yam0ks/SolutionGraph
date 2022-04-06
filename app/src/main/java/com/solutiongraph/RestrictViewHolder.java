@@ -38,6 +38,11 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
             toggle = !toggle;
             view.findViewById(R.id.expressionExpandArrow).setRotation(toggle ? 180 : 0);
         };
+
+        View.OnFocusChangeListener toggleChange  = (view, hasFocus) -> {
+            if (hasFocus) return;
+            
+        };
         header.setOnClickListener(toggleRestrict);
         createCoeffsRecyclerView(numbersCount);
     }
