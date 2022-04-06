@@ -12,4 +12,12 @@ public class Restriction extends BaseExpression{
         sign = s;
         result = ConvertToFraction(res);
     }
+
+    public double FreeCoeffAsDouble(){
+        return freeCoeff.getDouble();
+    }
+
+    public double ResultCoeffAsDouble(){
+        return result.getDouble();
+    }
 }
