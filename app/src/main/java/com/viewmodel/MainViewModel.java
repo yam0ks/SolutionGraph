@@ -1,19 +1,20 @@
 package com.viewmodel;
 
+
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import android.os.Bundle;
+import com.model.MainFunc;
+import com.model.Restriction;
+import java.util.List;
 
-public class MainViewModel extends ViewModel{
+public class MainViewModel extends ViewModel {
 
-    //private LiveData<Integer> coef; -- Все поля с информацией для view будут в таком виде
+    private MutableLiveData<List<Restriction>> restrictsMutable;
+    public LiveData<List<Restriction>> restricts = restrictsMutable;
 
-    public void SimplexSolution(Bundle bundle){
-
-    }
-
-    public void GraphSolution(Bundle bundle){
-        //Работа с графиком
-    }
+    private MutableLiveData<MainFunc> mainFunctionMutable;
+    public LiveData<MainFunc> mainFunction = mainFunctionMutable;
 
 }
