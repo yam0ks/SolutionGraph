@@ -1,4 +1,4 @@
-package com.model;
+package com.model.graphdata;
 
 public class BaseGraphExpression { //Базовый класс для ограничений и целевой функции
     protected Float xCoeff; //Коэффициент при х
@@ -31,7 +31,23 @@ public class BaseGraphExpression { //Базовый класс для огран
 
     }
 
-    protected String asString(){return "";} //Виртуальная функция для перевода выражения в строковое представление
+    public Float getXCoeff(){
+        return  xCoeff;
+    }
 
-    protected void Normalize(){} //Виртуальная функция для канонизации выражения
+    public Float getYCoeff(){
+        return yCoeff;
+    }
+
+    public Float getResultCoeff(){
+        return resultCoeff;
+    }
+
+    public String getStringExpression(){
+        return stringExpression;
+    }
+
+    protected String getExpressionAsString(){return "";} //Виртуальная функция для перевода выражения в строковое представление
+
+    protected void normalize(){} //Виртуальная функция для канонизации выражения
 }

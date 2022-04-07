@@ -9,15 +9,17 @@ import androidx.lifecycle.ViewModel;
 import android.os.Build;
 
 import com.model.Fraction;
-import com.model.GraphSolver;
+import com.model.graphdata.GraphOutputData;
+import com.model.simplexdata.SimplexOutputData;
+import com.usecase.GraphSolver;
 import com.model.Model;
-import com.model.Restriction;
+import com.model.simplexdata.Restriction;
 import java.util.List;
-import com.model.GraphObjective;
-import com.model.GraphRestriction;
-import com.model.Objective;
-import com.model.Simplex;
-import com.model.constants;
+import com.model.graphdata.GraphObjective;
+import com.model.graphdata.GraphRestriction;
+import com.model.simplexdata.Objective;
+import com.usecase.Simplex;
+import com.utils.Constants;
 import java.util.ArrayList;
 
 public class SharedViewModel extends ViewModel {
@@ -52,7 +54,7 @@ public class SharedViewModel extends ViewModel {
             Float xValue = (float)coeffs[0];
             Float yValue = (float)coeffs[1];
             Float resultValue = (float)restric.getResultCoeffAsDouble() - (float)restric.getFreeCoeffAsDouble();
-            constants.Sign sign = restric.sign;
+            Constants.Sign sign = restric.getSign();
 
             result.add(new GraphRestriction(xValue, yValue, sign, resultValue));
         }
@@ -69,48 +71,48 @@ public class SharedViewModel extends ViewModel {
 
         Float xValue = (float)coeffs[0];
         Float yValue = (float)coeffs[1];
-        constants.GoalType goal = objective.goalType;
+        Constants.GoalType goal = objective.getGoalType();
 
         return new GraphObjective(xValue, yValue, goal);
     }
 
     public void changeRestrictCoeffs(int restrictIndex, int coeffIndex, double newValue) {
         Restriction[] restrictsNormal = restrictsMutable.getValue();
-        Fraction[] fracsNormal = restrictsNormal[restrictIndex].getFractionCoeffs();
+        Fraction[] fracsNormal = restrictsNormal[restrictIndex].getCoeffs();
         fracsNormal[coeffIndex] = new Fraction(newValue);
-        restrictsNormal[restrictIndex].setFractionCoeffs(fracsNormal);
+        restrictsNormal[restrictIndex].setCoeffs(fracsNormal);
         restrictsMutable.setValue(restrictsNormal);
     }
 
     public void changeRestrictFreeCoeff(int restrictIndex, double newValue) {
         Restriction[] restrictionsNormal = restrictsMutable.getValue();
-        restrictionsNormal[restrictIndex].freeCoeff = new Fraction(newValue);
+        restrictionsNormal[restrictIndex].setFreeCoeff(new Fraction(newValue));
         restrictsMutable.setValue(restrictionsNormal);
     }
 
     public void changeRestrictRes(int restrictIndex, double newValue) {
         Restriction[] restrictionsNormal = restrictsMutable.getValue();
-        restrictionsNormal[restrictIndex].result = new Fraction(newValue);
+        restrictionsNormal[restrictIndex].setResult(new Fraction(newValue));
         restrictsMutable.setValue(restrictionsNormal);
     }
 
-    public void changeRestrictSign(int restrictIndex, constants.Sign newSign) {
+    public void changeRestrictSign(int restrictIndex, Constants.Sign newSign) {
         Restriction[] restrictionsNormal = restrictsMutable.getValue();
-        restrictionsNormal[restrictIndex].sign = newSign;
+        restrictionsNormal[restrictIndex].setSign(newSign);
         restrictsMutable.setValue(restrictionsNormal);
     }
 
     public void changeMainFuncCoeff(int coeffIndex, double newValue) {
         Objective mainFunc = mainFunctionMutable.getValue();
-        Fraction[] fracsNormal = mainFunc.getFractionCoeffs();
+        Fraction[] fracsNormal = mainFunc.getCoeffs();
         fracsNormal[coeffIndex] = new Fraction(newValue);
-        mainFunc.setFractionCoeffs(fracsNormal);
+        mainFunc.setCoeffs(fracsNormal);
         mainFunctionMutable.setValue(mainFunc);
     }
 
-    public void changeMainFuncGoalType(constants.GoalType goal) {
+    public void changeMainFuncGoalType(Constants.GoalType goal) {
         Objective mainFunc = mainFunctionMutable.getValue();
-        mainFunc.goalType = goal;
+        mainFunc.setGoalType(goal);
         mainFunctionMutable.setValue(mainFunc);
     }
 
@@ -121,7 +123,7 @@ public class SharedViewModel extends ViewModel {
             sampleCoeffs[i] = 1;
         }
         for (int i = 0; i < restrictionCount; i++) {
-            restrictionList[restrictionCount] = new Restriction(sampleCoeffs, 0, constants.Sign.EQUALS, 0);
+            restrictionList[i] = new Restriction(sampleCoeffs, 0, Constants.Sign.EQUALS, 0);
         }
         restrictsMutable.setValue(restrictionList);
     }
@@ -131,7 +133,7 @@ public class SharedViewModel extends ViewModel {
         for (int i = 0; i < variableCount; i++) {
             sampleCoeffs[i] = 1;
         }
-        Objective mainFunc = new Objective(sampleCoeffs, constants.GoalType.MAXIMIZE);
+        Objective mainFunc = new Objective(sampleCoeffs, Constants.GoalType.MAXIMIZE);
         mainFunctionMutable.setValue(mainFunc);
     }
 
@@ -141,18 +143,17 @@ public class SharedViewModel extends ViewModel {
         Objective mainFunctionNormal = mainFunctionMutable.getValue();
         switch (task) {
             case SIMPLEX:
-                Simplex.OutputData simplexOutputData = new Simplex.OutputData();
+                SimplexOutputData simplexOutputData = new SimplexOutputData();
                 simplexOutputData = model.getSimplexSolution(restrictionsNormal, mainFunctionNormal);
             case GRAPHICAL:
-                Object restrictionConversionResult = new ArrayList<>(restrictionsNormal.length);
+                Object restrictionConversionResult;
                 Object objectiveConversionResult;
                 restrictionConversionResult = convertToGraphRestriction(restrictionsNormal);
                 objectiveConversionResult = convertToGraphObjective(mainFunctionNormal);
                 if (!(restrictionConversionResult instanceof Boolean) && !(objectiveConversionResult instanceof Boolean)) {
                     List<GraphRestriction> restrictionsGraph = (List<GraphRestriction>)restrictionConversionResult;
                     GraphObjective mainFunctionGraph = (GraphObjective)objectiveConversionResult;
-                    GraphSolver.OutputData graphOutputData = new GraphSolver.OutputData();
-                    graphOutputData = model.getGraphSolution(restrictionsGraph, mainFunctionGraph);
+                    GraphOutputData graphOutputData = model.getGraphSolution(restrictionsGraph, mainFunctionGraph);
                 }
 
         }

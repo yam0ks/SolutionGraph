@@ -1,34 +1,25 @@
-package com.model;
+package com.model.graphdata;
 
 import com.github.mikephil.charting.utils.Utils;
+import com.utils.Constants;
 
 public class GraphRestriction extends BaseGraphExpression { //Класс для представления ограничения
-    public constants.Sign sign; //Знак ограничения
+    private Constants.Sign sign; //Знак ограничения
 
-    public GraphRestriction(Float inputXCoeff, Float inputYCoeff, constants.Sign sign,
+    public GraphRestriction(Float inputXCoeff, Float inputYCoeff, Constants.Sign sign,
                             Float inputResultCoeff) {
         super(inputXCoeff, inputYCoeff, inputResultCoeff);
         this.sign = sign;
-        stringExpression = asString();
-        Normalize();
+        stringExpression = getExpressionAsString();
+        normalize();
+    }
+
+    public Constants.Sign getSign() {
+        return sign;
     }
 
     @Override
-    protected void Normalize() {
-        if (yCoeff < 0) {
-            xCoeff *= -1;
-            yCoeff *= -1;
-            resultCoeff *= -1;
-            sign = (sign == constants.Sign.MORE) ? constants.Sign.LESS : constants.Sign.MORE;
-        }
-        if (yCoeff == 0 && xCoeff < 0) {
-            xCoeff *= -1;
-            resultCoeff *= -1;
-        }
-    }
-
-    @Override
-    public String asString() {
+    public String getExpressionAsString() {
         String result = "";
 
         if (xCoeff != 0) {
@@ -62,7 +53,7 @@ public class GraphRestriction extends BaseGraphExpression { //Класс для 
                                                  false) + "y ";
         }
 
-        if (sign == constants.Sign.MORE)
+        if (sign == Constants.Sign.MORE)
             result += "≥ " + Utils.formatNumber(resultCoeff, (resultCoeff % 1 == 0) ? 0 : 1,
                                                                      false);
         else
@@ -70,5 +61,19 @@ public class GraphRestriction extends BaseGraphExpression { //Класс для 
                                                                      false);
 
         return result;
+    }
+
+    @Override
+    protected void normalize() {
+        if (yCoeff < 0) {
+            xCoeff *= -1;
+            yCoeff *= -1;
+            resultCoeff *= -1;
+            sign = (sign == Constants.Sign.MORE) ? Constants.Sign.LESS : Constants.Sign.MORE;
+        }
+        if (yCoeff == 0 && xCoeff < 0) {
+            xCoeff *= -1;
+            resultCoeff *= -1;
+        }
     }
 }

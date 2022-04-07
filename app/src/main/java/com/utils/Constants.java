@@ -1,6 +1,6 @@
-package com.model;
+package com.utils;
 
-public class constants {
+public class Constants {
     public enum Sign{
         EQUALS,
         MORE,
@@ -13,4 +13,6 @@ public class constants {
     }
 
     public static final Float GRAPH_OFFSET = 10F;
+    public static final int MAX_RESTRICTIONS_NUMBER = 5;
+    public static final int MAX_VARIABLES_NUMBER = 5;
 }

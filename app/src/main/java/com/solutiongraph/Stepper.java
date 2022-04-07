@@ -2,10 +2,12 @@ package com.solutiongraph;
 
 import androidx.fragment.app.Fragment;
 
+import com.utils.Constants;
+
 public final class Stepper {
     private int index = 0;
     private final Fragment[] STEPS = {
-            CounterView.newInstance(constants.MAX_RESTRICTIONS_NUMBER, constants.MAX_VARIABLES_NUMBER),
+            CounterView.newInstance(Constants.MAX_RESTRICTIONS_NUMBER, Constants.MAX_VARIABLES_NUMBER),
             RestrictionsView.newInstance(0, 0)
     };
 
