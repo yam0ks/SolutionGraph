@@ -24,8 +24,8 @@ public class Model {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public GraphSolver.OutputData getGraphSolution(List<GraphRestriction> graphRestrictList,
-                                                    GraphObjective graphObjective) {
+    public GraphSolver.OutputData getGraphSolution(List<GraphRestriction> graphRestrictList, 
+                                                   GraphObjective graphObjective) {
         graphOutputData = new GraphSolver.OutputData();
         graphOutputData = graph.calculateGraphOutputData(graphRestrictList, graphObjective);
         return graphOutputData;
