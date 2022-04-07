@@ -27,16 +27,16 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     public RestrictViewHolder(@NonNull View itemView, int numbersCount) {
         super(itemView);
         this.root = itemView;
-        this.freeCoeffView = itemView.findViewById(R.id.freeCoeff);
+        this.freeCoeffView = itemView.findViewById(R.id.free_coeff);
         this.signView = itemView.findViewById(R.id.sign);
         this.result = itemView.findViewById(R.id.result);
-        this.scrollView = itemView.findViewById(R.id.scrollView);
+        this.scrollView = itemView.findViewById(R.id.scroll_view);
         this.header = itemView.findViewById(R.id.restrict_header);
 
         View.OnClickListener toggleRestrict = view -> {
             scrollView.setVisibility(toggle ? View.GONE : View.VISIBLE);
             toggle = !toggle;
-            view.findViewById(R.id.expressionExpandArrow).setRotation(toggle ? 180 : 0);
+            view.findViewById(R.id.expression_expand_arrow).setRotation(toggle ? 180 : 0);
         };
 
         View.OnFocusChangeListener toggleChange  = (view, hasFocus) -> {
@@ -101,7 +101,7 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setHeaderText(String text) {
-        TextView textView = (TextView)header.findViewById(R.id.expressionTitle);
+        TextView textView = (TextView)header.findViewById(R.id.expression_title);
         textView.setText(Html.fromHtml(text));
     }
 

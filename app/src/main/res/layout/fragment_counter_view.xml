@@ -34,7 +34,7 @@
                 android:text="@string/variablesCount" />
 
             <Spinner
-                android:id="@+id/variablesCountSpin"
+                android:id="@+id/variables_count_spin"
                 android:layout_weight="2"
                 style="@style/Spinner" />
 
@@ -54,7 +54,7 @@
                 android:text="@string/restrictionsCount" />
 
             <Spinner
-                android:id="@+id/restrictionsCountSpin"
+                android:id="@+id/restrictions_count_spin"
                 android:layout_weight="2"
                 style="@style/Spinner"  />
 

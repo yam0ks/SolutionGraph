@@ -4,65 +4,68 @@ import com.github.mikephil.charting.utils.Utils;
 
 public class GraphObjective extends BaseGraphExpression{ //Класс для представления целевой функции
 
-    public constants.GoalType goal_type; //Направление целевой функции
+    public constants.GoalType goalType; //Направление целевой функции
 
-    public GraphObjective(Float input_x_coeff, Float input_y_coeff, constants.GoalType type){
-        super(input_x_coeff, input_y_coeff, 0F);
-        goal_type = type;
-        string_expression = AsString();
+    public GraphObjective(Float inputXCoeff, Float inputYCoeff, constants.GoalType type){
+        super(inputXCoeff, inputYCoeff, 0F);
+        goalType = type;
+        stringExpression = asString();
     }
 
-    public void SetR_coeff(Float input_result_coeff){
-        result_coeff = input_result_coeff;
+    public void setResultCoeff(Float inputResultCoeff){
+        resultCoeff = inputResultCoeff;
     }
 
     @Override
     public void Normalize(){
-        if(y_coeff < 0){
-            x_coeff *= -1;
-            y_coeff *= -1;
-            result_coeff *= -1;
+        if(yCoeff < 0){
+            xCoeff *= -1;
+            yCoeff *= -1;
+            resultCoeff *= -1;
         }
-        if(y_coeff == 0 && x_coeff < 0){
-            x_coeff *= -1;
-            result_coeff *= -1;
+        if(yCoeff == 0 && xCoeff < 0){
+            xCoeff *= -1;
+            resultCoeff *= -1;
         }
     }
 
     @Override
-    protected String AsString(){
+    protected String asString(){
         String result = "";
 
-        if(x_coeff != 0) {
-            if(x_coeff == 1)
+        if(xCoeff != 0) {
+            if(xCoeff == 1)
                 result += "x ";
-            else if(x_coeff == -1)
+            else if(xCoeff == -1)
                 result += "-x ";
             else
-                result += Utils.formatNumber(x_coeff, (x_coeff % 1 == 0) ? 0 : 1, false) + "x ";
+                result += Utils.formatNumber(xCoeff, (xCoeff % 1 == 0) ? 0 : 1,
+                                                 false) + "x ";
 
-            if(y_coeff > 0) {
-                if (y_coeff == 1)
+            if(yCoeff > 0) {
+                if (yCoeff == 1)
                     result += "+ y ";
                 else
-                    result += "+ " + Utils.formatNumber(Math.abs(y_coeff), (y_coeff % 1 == 0) ? 0 : 1, false) + "y ";
+                    result += "+ " + Utils.formatNumber(Math.abs(yCoeff), (yCoeff % 1 == 0) ? 0 : 1,
+                                                                      false) + "y ";
             }
-            else if(y_coeff < 0)
-                if(y_coeff == -1)
+            else if(yCoeff < 0)
+                if(yCoeff == -1)
                     result += "- y ";
                 else
-                    result += "- " + Utils.formatNumber(Math.abs(y_coeff), (y_coeff % 1 == 0) ? 0 : 1, false) + "y ";
+                    result += "- " + Utils.formatNumber(Math.abs(yCoeff), (yCoeff % 1 == 0) ? 0 : 1,
+                                                                      false) + "y ";
         }
         else{
-            if(y_coeff == 1)
+            if(yCoeff == 1)
                 result += "y ";
-            else if(y_coeff == -1)
+            else if(yCoeff == -1)
                 result += "-y ";
             else
-                result += Utils.formatNumber(y_coeff, (y_coeff % 1 == 0) ? 0 : 1, false) + "y ";
+                result += Utils.formatNumber(yCoeff, (yCoeff % 1 == 0) ? 0 : 1, false) + "y ";
         }
 
-        if(goal_type == constants.GoalType.MAXIMIZE)
+        if(goalType == constants.GoalType.MAXIMIZE)
             result += "-> max";
         else
             result += "-> min";
