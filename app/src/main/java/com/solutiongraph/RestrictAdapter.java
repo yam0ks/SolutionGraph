@@ -46,13 +46,13 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
         holder.freeCoeffView.setText(String.valueOf(freeCoeff));
         switch (sign.name()){
             case ("LESS"):
-                holder.signView.check(R.id.radioLess);
+                holder.signView.check(R.id.radio_less);
                 break;
             case ("EQUAL"):
-                holder.signView.check(R.id.radioEqual);
+                holder.signView.check(R.id.radio_equal);
                 break;
             case ("MORE"):
-                holder.signView.check(R.id.radioMore);
+                holder.signView.check(R.id.radio_more);
                 break;
         }
         holder.setHeader(coeffs, freeCoeff, sign, result);

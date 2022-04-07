@@ -13,7 +13,7 @@ public class CoeffViewHolder extends RecyclerView.ViewHolder {
     public CoeffViewHolder(@NonNull View itemView, int index) {
         super(itemView);
 
-        this.coeffDesc = itemView.findViewById(R.id.coeffDescription);
+        this.coeffDesc = itemView.findViewById(R.id.coeff_description);
         setIndex(index);
     }
 

@@ -3,11 +3,11 @@ package com.model;
 public class BaseExpression{
     protected Fraction[] coeffs;
 
-    BaseExpression(double[] d_coeffs){
-        coeffs = ConvertToFraction(d_coeffs);
+    BaseExpression(double[] doubleCoeffs){
+        coeffs = convertToFraction(doubleCoeffs);
     }
 
-    protected Fraction[] ConvertToFraction(double[] nums){
+    protected Fraction[] convertToFraction(double[] nums){
         Fraction[] result = new Fraction[nums.length];
 
         for (int i = 0; i < nums.length; ++i){
@@ -17,7 +17,7 @@ public class BaseExpression{
         return result;
     }
 
-    protected Fraction ConvertToFraction(double num){
+    protected Fraction convertToFraction(double num){
         Fraction result = new Fraction(num);
         return result;
     }

@@ -57,9 +57,8 @@ public class RestrictionsView extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
         List<Restriction> restrictionsList = createRestrictionsList();
-        RecyclerView restrictionRecyclerView = this.requireView().findViewById(R.id.restrictionRecyclerView);
+        RecyclerView restrictionRecyclerView = this.requireView().findViewById(R.id.restriction_recycler_view);
         restrictionRecyclerView.setAdapter(
                 new RestrictAdapter(this.getContext(), restrictionsList, varblNumber));
         restrictionRecyclerView.setLayoutManager(

@@ -6,18 +6,18 @@ public class Restriction extends BaseExpression{
     public constants.Sign sign; //знак
     public Fraction result; //число после знака
 
-    public Restriction(double[] coeffs, double f_coeff, constants.Sign s, double res) {
+    public Restriction(double[] coeffs, double freeCoeff, constants.Sign sign, double res) {
         super(coeffs);
-        freeCoeff = ConvertToFraction(f_coeff);
-        sign = s;
-        result = ConvertToFraction(res);
+        this.freeCoeff = convertToFraction(freeCoeff);
+        this.sign = sign;
+        result = convertToFraction(res);
     }
 
-    public double FreeCoeffAsDouble(){
+    public double getFreeCoeffAsDouble(){
         return freeCoeff.getDouble();
     }
 
-    public double ResultCoeffAsDouble(){
+    public double getResultCoeffAsDouble(){
         return result.getDouble();
     }
 }

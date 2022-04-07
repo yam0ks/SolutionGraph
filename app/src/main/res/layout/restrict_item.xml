@@ -22,7 +22,7 @@
             android:paddingEnd="20dp">
 
             <TextView
-                android:id="@+id/expressionTitle"
+                android:id="@+id/expression_title"
                 android:layout_width="1.8in"
                 android:layout_height="48dp"
                 android:gravity="left|center_vertical"
@@ -33,7 +33,7 @@
                 tools:text="x + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 > 300" />
 
             <TextView
-                android:id="@+id/expressionExpandArrow"
+                android:id="@+id/expression_expand_arrow"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_alignParentEnd="true"
@@ -44,7 +44,7 @@
 
 
         <ScrollView
-            android:id="@+id/scrollView"
+            android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="20dp"
@@ -85,19 +85,19 @@
                         app:layout_constraintEnd_toEndOf="parent">
 
                         <RadioButton
-                            android:id="@+id/radioLess"
+                            android:id="@+id/radio_less"
                             android:layout_width="wrap_content"
                             android:layout_height="48dp"
                             android:buttonTint="@color/second_blue"
                             android:text="&lt;" />
                         <RadioButton
-                            android:id="@+id/radioEqual"
+                            android:id="@+id/radio_equal"
                             android:layout_width="wrap_content"
                             android:layout_height="48dp"
                             android:buttonTint="@color/second_blue"
                             android:text="=" />
                         <RadioButton
-                            android:id="@+id/radioMore"
+                            android:id="@+id/radio_more"
                             android:layout_width="wrap_content"
                             android:layout_height="48dp"
                             android:buttonTint="@color/second_blue"
@@ -146,7 +146,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <EditText
-                        android:id="@+id/freeCoeff"
+                        android:id="@+id/free_coeff"
                         android:layout_width="1in"
                         android:overScrollMode="ifContentScrolls"
                         android:layout_height="48dp"

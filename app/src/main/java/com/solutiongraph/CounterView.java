@@ -3,7 +3,6 @@ package com.solutiongraph;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,13 +51,13 @@ public class CounterView extends Fragment {
     public void onResume() {
         super.onResume();
 
-        Spinner spinner = root.findViewById(R.id.restrictionsCountSpin);
-        SetSpinnerRange(root, spinner, maxRest);
-        spinner = root.findViewById(R.id.variablesCountSpin);
-        SetSpinnerRange(root, spinner, maxVar);
+        Spinner spinner = root.findViewById(R.id.restrictions_count_spin);
+        setSpinnerRange(root, spinner, maxRest);
+        spinner = root.findViewById(R.id.variables_count_spin);
+        setSpinnerRange(root, spinner, maxVar);
     }
 
-    private void SetSpinnerRange(View view, Spinner spinner, Integer max) {
+    private void setSpinnerRange(View view, Spinner spinner, Integer max) {
         String[] count = new String[max];
         for (int i = 0; i < max; i++) {
             count[i] = String.valueOf(i + 1);
