@@ -1,16 +1,10 @@
-package com.model;
+package com.model.graphdata;
 
 public class BaseGraphExpression { //Базовый класс для ограничений и целевой функции
     protected Float xCoeff; //Коэффициент при х
     protected Float yCoeff; //Коэффициент при у
     protected Float resultCoeff; //Свободный коэффициент в правой части выражения
     protected String stringExpression; //Строковое представление выражения
-
-    protected BaseGraphExpression(Float inputXCoeff, Float inputYCoeff, Float inputResultCoeff) {
-        xCoeff = inputXCoeff;
-        yCoeff = inputYCoeff;
-        resultCoeff = inputResultCoeff;
-    }
 
     public Float calculateX(Float yValue){ //Расчет значения X при известном Y
         if(xCoeff == 0)
@@ -31,7 +25,29 @@ public class BaseGraphExpression { //Базовый класс для огран
 
     }
 
-    protected String asString(){return "";} //Виртуальная функция для перевода выражения в строковое представление
+    public Float getXCoeff(){
+        return  xCoeff;
+    }
 
-    protected void Normalize(){} //Виртуальная функция для канонизации выражения
+    public Float getYCoeff(){
+        return yCoeff;
+    }
+
+    public Float getResultCoeff(){
+        return resultCoeff;
+    }
+
+    public String getStringExpression(){
+        return stringExpression;
+    }
+
+    protected BaseGraphExpression(Float inputXCoeff, Float inputYCoeff, Float inputResultCoeff) {
+        xCoeff = inputXCoeff;
+        yCoeff = inputYCoeff;
+        resultCoeff = inputResultCoeff;
+    }
+
+    protected String getExpressionAsString(){return "";} //Виртуальная функция для перевода выражения в строковое представление
+
+    protected void normalize(){} //Виртуальная функция для канонизации выражения
 }

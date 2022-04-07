@@ -11,8 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.model.Restriction;
-import com.model.constants;
+import com.model.simplexdata.Restriction;
+import com.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +70,7 @@ public class RestrictionsView extends Fragment {
         List<Restriction> restrictionList = new ArrayList<>();
         for (int i = 0; i < restNumber; i++) {
             restrictionList.add(
-                    new Restriction(new double[varblNumber], 0, constants.Sign.MORE, 0));
+                    new Restriction(new double[varblNumber], 0, Constants.Sign.MORE, 0));
         }
         return restrictionList;
     }

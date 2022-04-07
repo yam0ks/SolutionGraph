@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.model.constants;
+import com.utils.Constants;
 
 public class RestrictViewHolder extends RecyclerView.ViewHolder {
     private final View root;
@@ -60,7 +60,7 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     }
 
     @SuppressLint("DefaultLocale")
-    public void setHeader(double[] coeffs, double free, constants.Sign sign, double result) {
+    public void setHeader(double[] coeffs, double free, Constants.Sign sign, double result) {
         String text = "";
         String template = "x<sub><small>%d</small></sub>";
         for (int i = 0; i < coeffs.length; i++) {
@@ -101,7 +101,7 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void setHeaderText(String text) {
-        TextView textView = (TextView)header.findViewById(R.id.expression_title);
+        TextView textView = header.findViewById(R.id.expression_title);
         textView.setText(Html.fromHtml(text));
     }
 

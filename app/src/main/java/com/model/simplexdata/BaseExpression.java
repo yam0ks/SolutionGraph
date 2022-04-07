@@ -1,4 +1,6 @@
-package com.model;
+package com.model.simplexdata;
+
+import com.model.Fraction;
 
 public class BaseExpression{
     protected Fraction[] coeffs;
@@ -18,15 +20,14 @@ public class BaseExpression{
     }
 
     protected Fraction convertToFraction(double num){
-        Fraction result = new Fraction(num);
-        return result;
+        return new Fraction(num);
     }
 
-    public Fraction[] getFractionCoeffs() {
+    public Fraction[] getCoeffs() {
         return coeffs;
     }
 
-    public void setFractionCoeffs (Fraction[] coeffs) {
+    public void setCoeffs(Fraction[] coeffs) {
         this.coeffs = coeffs;
     }
 

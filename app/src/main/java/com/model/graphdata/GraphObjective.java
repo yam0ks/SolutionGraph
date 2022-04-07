@@ -1,15 +1,16 @@
-package com.model;
+package com.model.graphdata;
 
 import com.github.mikephil.charting.utils.Utils;
+import com.utils.Constants;
 
-public class GraphObjective extends BaseGraphExpression{ //Класс для представления целевой функции
+public class GraphObjective extends BaseGraphExpression { //Класс для представления целевой функции
 
-    public constants.GoalType goalType; //Направление целевой функции
+    private Constants.GoalType goalType; //Направление целевой функции
 
-    public GraphObjective(Float inputXCoeff, Float inputYCoeff, constants.GoalType type){
+    public GraphObjective(Float inputXCoeff, Float inputYCoeff, Constants.GoalType type){
         super(inputXCoeff, inputYCoeff, 0F);
         goalType = type;
-        stringExpression = asString();
+        stringExpression = getExpressionAsString();
     }
 
     public void setResultCoeff(Float inputResultCoeff){
@@ -17,7 +18,7 @@ public class GraphObjective extends BaseGraphExpression{ //Класс для п�
     }
 
     @Override
-    public void Normalize(){
+    public void normalize(){
         if(yCoeff < 0){
             xCoeff *= -1;
             yCoeff *= -1;
@@ -29,8 +30,12 @@ public class GraphObjective extends BaseGraphExpression{ //Класс для п�
         }
     }
 
+    public Constants.GoalType getGoalType(){
+        return goalType;
+    }
+
     @Override
-    protected String asString(){
+    protected String getExpressionAsString(){
         String result = "";
 
         if(xCoeff != 0) {
@@ -65,7 +70,7 @@ public class GraphObjective extends BaseGraphExpression{ //Класс для п�
                 result += Utils.formatNumber(yCoeff, (yCoeff % 1 == 0) ? 0 : 1, false) + "y ";
         }
 
-        if(goalType == constants.GoalType.MAXIMIZE)
+        if(goalType == Constants.GoalType.MAXIMIZE)
             result += "-> max";
         else
             result += "-> min";

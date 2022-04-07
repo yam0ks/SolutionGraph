@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.model.Restriction;
-import com.model.constants;
+import com.model.simplexdata.Restriction;
+import com.utils.Constants;
 
 import java.util.List;
 
@@ -38,9 +38,9 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
     public void onBindViewHolder(@NonNull RestrictViewHolder holder, int position) {
         Restriction restrict = this.restrictionList.get(position);
         double[] coeffs = restrict.getDoubleCoeffs();
-        double freeCoeff = restrict.freeCoeff.getDouble();
-        double result = restrict.result.getDouble();
-        constants.Sign sign = restrict.sign;
+        double freeCoeff = restrict.getFreeCoeffAsDouble();
+        double result = restrict.getResultCoeffAsDouble();
+        Constants.Sign sign = restrict.getSign();
 
         holder.result.setText(String.valueOf(result));
         holder.freeCoeffView.setText(String.valueOf(freeCoeff));
