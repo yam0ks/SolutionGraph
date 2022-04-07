@@ -1,35 +1,45 @@
 package com.viewmodel;
 
 
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import android.os.Bundle;
+
+import android.os.Build;
 
 import com.model.Fraction;
+import com.model.GraphSolver;
+import com.model.Model;
 import com.model.Restriction;
 import java.util.List;
 import com.model.GraphObjective;
 import com.model.GraphRestriction;
 import com.model.Objective;
+import com.model.Simplex;
 import com.model.constants;
 import java.util.ArrayList;
 
-public class MainViewModel extends ViewModel {
+public class SharedViewModel extends ViewModel {
+
+    public enum taskType{
+        SIMPLEX,
+        GRAPHICAL
+    }
 
     private MutableLiveData<Restriction[]> restrictsMutable;
     public LiveData<Restriction[]> restricts = restrictsMutable;
 
-
     private MutableLiveData<Objective> mainFunctionMutable;
     public LiveData<Objective> mainFunction = mainFunctionMutable;
 
+    private Model model;
 
-    public void GraphSolution(Bundle bundle){
-
+    public SharedViewModel(){
+        this.model = new Model();
     }
 
-    public Object ConvertToGraphRestriction(Restriction[] restrictions){
+    public Object convertToGraphRestriction(Restriction[] restrictions){
 
         List<GraphRestriction> result = new ArrayList<>();
 
@@ -39,29 +49,29 @@ public class MainViewModel extends ViewModel {
             if(coeffs.length != 2)
                 return false;
 
-            Float x_value = (float)coeffs[0];
-            Float y_value = (float)coeffs[1];
-            Float result_value = (float)restric.ResultCoeffAsDouble() - (float)restric.FreeCoeffAsDouble();
+            Float xValue = (float)coeffs[0];
+            Float yValue = (float)coeffs[1];
+            Float resultValue = (float)restric.getResultCoeffAsDouble() - (float)restric.getFreeCoeffAsDouble();
             constants.Sign sign = restric.sign;
 
-            result.add(new GraphRestriction(x_value, y_value, sign, result_value));
+            result.add(new GraphRestriction(xValue, yValue, sign, resultValue));
         }
 
         return result;
     }
 
-    public Object ConvertToGraphObjective(Objective objective){
+    public Object convertToGraphObjective(Objective objective){
 
         double[] coeffs = objective.getDoubleCoeffs();
 
         if(coeffs.length != 2)
             return false;
 
-        Float x_value = (float)coeffs[0];
-        Float y_value = (float)coeffs[1];
-        constants.GoalType goal = objective.goal_type;
+        Float xValue = (float)coeffs[0];
+        Float yValue = (float)coeffs[1];
+        constants.GoalType goal = objective.goalType;
 
-        return new GraphObjective(x_value, y_value, goal);
+        return new GraphObjective(xValue, yValue, goal);
     }
 
     public void changeRestrictCoeffs(int restrictIndex, int coeffIndex, double newValue) {
@@ -100,7 +110,7 @@ public class MainViewModel extends ViewModel {
 
     public void changeMainFuncGoalType(constants.GoalType goal) {
         Objective mainFunc = mainFunctionMutable.getValue();
-        mainFunc.goal_type = goal;
+        mainFunc.goalType = goal;
         mainFunctionMutable.setValue(mainFunc);
     }
 
@@ -125,6 +135,28 @@ public class MainViewModel extends ViewModel {
         mainFunctionMutable.setValue(mainFunc);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void getSolution(taskType task) {
+        Restriction[] restrictionsNormal = restrictsMutable.getValue();
+        Objective mainFunctionNormal = mainFunctionMutable.getValue();
+        switch (task) {
+            case SIMPLEX:
+                Simplex.OutputData simplexOutputData = new Simplex.OutputData();
+                simplexOutputData = model.getSimplexSolution(restrictionsNormal, mainFunctionNormal);
+            case GRAPHICAL:
+                Object restrictionConversionResult = new ArrayList<>(restrictionsNormal.length);
+                Object objectiveConversionResult;
+                restrictionConversionResult = convertToGraphRestriction(restrictionsNormal);
+                objectiveConversionResult = convertToGraphObjective(mainFunctionNormal);
+                if (!(restrictionConversionResult instanceof Boolean) && !(objectiveConversionResult instanceof Boolean)) {
+                    List<GraphRestriction> restrictionsGraph = (List<GraphRestriction>)restrictionConversionResult;
+                    GraphObjective mainFunctionGraph = (GraphObjective)objectiveConversionResult;
+                    GraphSolver.OutputData graphOutputData = new GraphSolver.OutputData();
+                    graphOutputData = model.getGraphSolution(restrictionsGraph, mainFunctionGraph);
+                }
 
+        }
+
+    }
 
 }

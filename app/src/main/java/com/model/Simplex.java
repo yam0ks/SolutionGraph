@@ -18,7 +18,7 @@ public class Simplex {
         public ArrayList<SolutionSimplexData> solutionData; //Раздел вычисляем дельты
         public Fraction[] answers; // Ответ от 0 до length-2 - коэффициенты при соответветсвующих иксах последний элемент - ответ
 
-        OutputData(){}
+        public OutputData(){}
         private void setAnswers(Fraction[] answers){ this.answers = answers; }
 
         public static class InitSimplexData { //первый раздел (исходная симплекс матрица)

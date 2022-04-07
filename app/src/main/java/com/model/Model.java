@@ -17,15 +17,15 @@ public class Model {
         graph = new GraphSolver();
     }
 
-    private Simplex.OutputData getSimplexSolution(Restriction[] Restrictions, Objective objective) {
+    public Simplex.OutputData getSimplexSolution(Restriction[] Restrictions, Objective objective) {
         simplexOutputData = new Simplex.OutputData();
         simplexOutputData = simplex.getResult(Restrictions, objective);
         return simplexOutputData;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private GraphSolver.OutputData getGraphSolution(List<GraphRestriction> graphRestrictList,
-                                                    GraphObjective graphObjective) {
+    public GraphSolver.OutputData getGraphSolution(List<GraphRestriction> graphRestrictList,
+                                                   GraphObjective graphObjective) {
         graphOutputData = new GraphSolver.OutputData();
         graphOutputData = graph.CalculateGraph(graphRestrictList, graphObjective);
         return graphOutputData;
