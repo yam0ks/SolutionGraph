@@ -5,7 +5,7 @@ import com.model.Fraction;
 public class BaseExpression{
     protected Fraction[] coeffs;
 
-    BaseExpression(double[] doubleCoeffs){
+    protected BaseExpression(double[] doubleCoeffs){
         coeffs = convertToFraction(doubleCoeffs);
     }
 

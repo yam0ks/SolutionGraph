@@ -6,6 +6,12 @@ public class BaseGraphExpression { //Базовый класс для огран
     protected Float resultCoeff; //Свободный коэффициент в правой части выражения
     protected String stringExpression; //Строковое представление выражения
 
+    protected BaseGraphExpression(Float inputXCoeff, Float inputYCoeff, Float inputResultCoeff) {
+        xCoeff = inputXCoeff;
+        yCoeff = inputYCoeff;
+        resultCoeff = inputResultCoeff;
+    }
+
     public Float calculateX(Float yValue){ //Расчет значения X при известном Y
         if(xCoeff == 0)
             return xCoeff;
@@ -39,12 +45,6 @@ public class BaseGraphExpression { //Базовый класс для огран
 
     public String getStringExpression(){
         return stringExpression;
-    }
-
-    protected BaseGraphExpression(Float inputXCoeff, Float inputYCoeff, Float inputResultCoeff) {
-        xCoeff = inputXCoeff;
-        yCoeff = inputYCoeff;
-        resultCoeff = inputResultCoeff;
     }
 
     protected String getExpressionAsString(){return "";} //Виртуальная функция для перевода выражения в строковое представление
