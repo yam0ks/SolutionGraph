@@ -24,10 +24,10 @@ public class Model {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public GraphSolver.OutputData getGraphSolution(List<GraphRestriction> graphRestrictList,
+    public GraphSolver.OutputData getGraphSolution(List<GraphRestriction> graphRestrictList, 
                                                    GraphObjective graphObjective) {
         graphOutputData = new GraphSolver.OutputData();
-        graphOutputData = graph.CalculateGraph(graphRestrictList, graphObjective);
+        graphOutputData = graph.calculateGraphOutputData(graphRestrictList, graphObjective);
         return graphOutputData;
     }
 }

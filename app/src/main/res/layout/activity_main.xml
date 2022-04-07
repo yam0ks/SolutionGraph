@@ -19,7 +19,7 @@
     <Button
         android:id="@+id/NextButton"
         style="@style/NextButton"
-        android:onClick="NextStep"
+        android:onClick="nextStep"
         app:layout_constraintBottom_toTopOf="@+id/PrevButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -27,7 +27,7 @@
     <Button
         android:id="@+id/PrevButton"
         style="@style/PrevButton"
-        android:onClick="PrevStep"
+        android:onClick="prevStep"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -7,6 +7,9 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.github.mikephil.charting.data.Entry;
+import com.model.GraphObjective;
+import com.model.GraphRestriction;
+import com.model.constants;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,10 +33,10 @@ public class GraphSolver { //Ядро графического метода
     private  List<GraphRestriction> restrictions; //Список ограничений
     private GraphObjective objective; //Целевая функция
 
-    private Float right_bound = -1 * Float.MIN_VALUE; //Наибольшее значение среди точек по оси X
-    private Float left_bound = Float.MAX_VALUE; //Наименьшее значение среди точек по оси X
-    private Float top_bound = -1 * Float.MIN_VALUE; //Наибольшее значение среди точек по оси Y
-    private Float bottom_bound = Float.MAX_VALUE; //Наименьшее значение среди точек по оси Y
+    private Float rightBound = -1 * Float.MIN_VALUE; //Наибольшее значение среди точек по оси X
+    private Float leftBound = Float.MAX_VALUE; //Наименьшее значение среди точек по оси X
+    private Float topBound = -1 * Float.MIN_VALUE; //Наибольшее значение среди точек по оси Y
+    private Float bottomBound = Float.MAX_VALUE; //Наименьшее значение среди точек по оси Y
 
     public GraphSolver(){}
 
@@ -43,66 +46,68 @@ public class GraphSolver { //Ядро графического метода
             UNLIMITED,
             NOSOLUTION,
             UNKOWN,
-            INCORECTDATA
+            INCORRECTDATA
         }
 
         public List<Expression> expressions; //Список полученных функций
-        public Float right_bound;
-        public Float left_bound;
-        public Float top_bound;
-        public Float bottom_bound;
-        public Float x_solution; //X координата точки решения
-        public Float y_solution; //Y координата точки решения
-        public Float value_solution; //Результат оптимизации
+        public Float rightBound;
+        public Float leftBound;
+        public Float topBound;
+        public Float bottomBound;
+        public Float xSolution; //X координата точки решения
+        public Float ySolution; //Y координата точки решения
+        public Float valueSolution; //Результат оптимизации
         public ErrorType error; //Тип ошибки
 
         public OutputData(ErrorType type){
             expressions = new ArrayList<>();
-            right_bound = 0F;
-            left_bound = 0F;
-            top_bound = 0F;
-            bottom_bound = 0F;
-            x_solution = 0F;
-            y_solution = 0F;
-            value_solution = 0F;
+            rightBound = 0F;
+            leftBound = 0F;
+            topBound = 0F;
+            bottomBound = 0F;
+            xSolution = 0F;
+            ySolution = 0F;
+            valueSolution = 0F;
             error = type;
         }
 
         public OutputData(){
             expressions = new ArrayList<>();
-            right_bound = 0F;
-            left_bound = 0F;
-            top_bound = 0F;
-            bottom_bound = 0F;
-            x_solution = 0F;
-            y_solution = 0F;
-            value_solution = 0F;
+            rightBound = 0F;
+            leftBound = 0F;
+            topBound = 0F;
+            bottomBound = 0F;
+            xSolution = 0F;
+            ySolution = 0F;
+            valueSolution = 0F;
             error = ErrorType.NOERROR;
         }
 
-        public void SetBounds(Float input_right_bound, Float input_left_bound, Float input_top_bound, Float input_bottom_bound){
-            right_bound = input_right_bound;
-            left_bound = input_left_bound;
-            top_bound = input_top_bound;
-            bottom_bound = input_bottom_bound;
+        public void setBounds(Float inputRightBound, Float inputLeftBound, Float inputTopBound,
+                                                                           Float inputBottomBound) {
+            rightBound = inputRightBound;
+            leftBound = inputLeftBound;
+            topBound = inputTopBound;
+            bottomBound = inputBottomBound;
         }
 
-        public void SetSolution(double x_value, double y_value, double result_value){
-            x_solution = (float)x_value;
-            y_solution = (float)y_value;
-            value_solution = (float)result_value;
+        public void setSolution(double xValue, double yValue, double resultValue) {
+            xSolution = (float)xValue;
+            ySolution = (float)yValue;
+            valueSolution = (float)resultValue;
         }
 
-        public void SetExpressions(List<Expression> input_expressions){
-            expressions = input_expressions;
+        public void setExpressions(List<Expression> inputExpressions){
+            expressions = inputExpressions;
         }
 
-        public void SetError(ErrorType type){
+        public void setError(ErrorType type) {
             error = type;
         }
 
         public static class Expression{ //Класс для представления функций
-            public enum Type { //Перечисление с информацией о типе графика (обычный, целевая функция, искусственная пристройка)
+            public enum Type { //Перечисление с информацией о типе графика (обычный, целевая функция,
+                               // искусственная пристройка)
                 DEFAULT,
                 ARTIFICIAL,
                 OBJECTIVE
@@ -110,20 +115,21 @@ public class GraphSolver { //Ядро графического метода
 
             public List<Entry> points; //Список с точками графика
             public constants.Sign sign; //Знак ограничения
-            public String str_expression; //Строковое представление выражения
+            public String strExpression; //Строковое представление выражения
             public Type type; //Тип графика
 
-            public Expression(List<Entry> input_points, constants.Sign s, String input_str_expression, Type input_type){
-                points = input_points;
-                sign = s;
-                str_expression = input_str_expression;
-                type = input_type;
+            public Expression(List<Entry> inputPoints, constants.Sign sign, String inputStrExpression,
+                                                                                     Type inputType) {
+                points = inputPoints;
+                this.sign = sign;
+                strExpression = inputStrExpression;
+                type = inputType;
             }
 
-            public Expression(List<Entry> input_points, String input_str_expression, Type input_type){
-                points = input_points;
-                str_expression = input_str_expression;
-                type = input_type;
+            public Expression(List<Entry> inputPoints, String inputStrExpression, Type inputType) {
+                points = inputPoints;
+                strExpression = inputStrExpression;
+                type = inputType;
                 sign = constants.Sign.EQUALS;
             }
         }
@@ -131,10 +137,12 @@ public class GraphSolver { //Ядро графического метода
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public OutputData CalculateGraph(List<GraphRestriction> input_restrictions, GraphObjective input_main_func){ //Основной метод для расчета всех значений
+    public OutputData calculateGraphOutputData(List<GraphRestriction> inputRestrictions,
+                                               GraphObjective inputMainFunc){ // Основной метод для
+                                                                              // расчета всех значений
 
-        restrictions = input_restrictions;
-        objective = input_main_func;
+        restrictions = inputRestrictions;
+        objective = inputMainFunc;
 
         List<OutputData.Expression> expressions = new ArrayList<>();
 
@@ -143,10 +151,10 @@ public class GraphSolver { //Ядро графического метода
         OutputData data = new OutputData();
 
         try {
-            expressions = CalculateExpressions();
+            expressions = calculateExpressions();
             PointValuePair solution = Optimize();
-            expressions.add(MakeObjectiveExpression(solution));
-            data.SetSolution(solution.getPoint()[0], solution.getPoint()[1], solution.getValue());
+            expressions.add(makeObjectiveExpression(solution));
+            data.setSolution(solution.getPoint()[0], solution.getPoint()[1], solution.getValue());
         }
         catch (TooManyIterationsException e){
             error = OutputData.ErrorType.UNKOWN;
@@ -158,46 +166,46 @@ public class GraphSolver { //Ядро графического метода
             error = OutputData.ErrorType.NOSOLUTION;
         }
         catch (Exception e){
-            return new OutputData(OutputData.ErrorType.INCORECTDATA);
+            return new OutputData(OutputData.ErrorType.INCORRECTDATA);
         }
 
-        data.SetBounds(right_bound, left_bound, top_bound, bottom_bound);
-        data.SetExpressions(expressions);
-        data.SetError(error);
+        data.setBounds(rightBound, leftBound, topBound, bottomBound);
+        data.setExpressions(expressions);
+        data.setError(error);
 
         return data;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private List<OutputData.Expression> CalculateExpressions(){ //Расчет точек для всех графиков
-        List<OutputData.Expression> inters = CalculateIntersections();
+    private List<OutputData.Expression> calculateExpressions(){ //Расчет точек для всех графиков
+        List<OutputData.Expression> graphsIntersections = calculateIntersections();
 
-        if(inters.isEmpty())
-            MakeExpressions(inters);
+        if(graphsIntersections.isEmpty())
+            makeExpressions(graphsIntersections);
 
-        MakeOffsets();
+        makeOffsets();
 
         List<OutputData.Expression> result = new ArrayList<>();
 
-        for(int i = 0; i < inters.size(); ++i){
-            if(restrictions.get(i).y_coeff == 0){
-                Float restr_min_x = restrictions.get(i).CalculateX(bottom_bound);
-                inters.get(i).points.add(0, new Entry(restr_min_x, bottom_bound));
+        for(int i = 0; i < graphsIntersections.size(); ++i){
+            if(restrictions.get(i).yCoeff == 0){
+                Float restrMinX = restrictions.get(i).calculateX(bottomBound);
+                graphsIntersections.get(i).points.add(0, new Entry(restrMinX, bottomBound));
 
-                Float restr_max_x = restrictions.get(i).CalculateX(top_bound);
-                inters.get(i).points.add(new Entry(restr_max_x, top_bound));
+                Float restrMaxX = restrictions.get(i).calculateX(topBound);
+                graphsIntersections.get(i).points.add(new Entry(restrMaxX, topBound));
 
-                result.add(inters.get(i));
-                result.add(MakeArtificialExpression(inters.get(i)));
+                result.add(graphsIntersections.get(i));
+                result.add(makeArtificialExpression(graphsIntersections.get(i)));
             }
             else{
-                Float restr_min_y = restrictions.get(i).CalculateY(left_bound);
-                inters.get(i).points.add(0, new Entry(left_bound, restr_min_y));
+                Float restrMinY = restrictions.get(i).calculateY(leftBound);
+                graphsIntersections.get(i).points.add(0, new Entry(leftBound, restrMinY));
 
-                Float restr_max_y =  restrictions.get(i).CalculateY(right_bound);
-                inters.get(i).points.add(new Entry(right_bound, restr_max_y));
+                Float restrMaxY =  restrictions.get(i).calculateY(rightBound);
+                graphsIntersections.get(i).points.add(new Entry(rightBound, restrMaxY));
 
-                result.add(inters.get(i));
+                result.add(graphsIntersections.get(i));
             }
         }
 
@@ -205,126 +213,142 @@ public class GraphSolver { //Ядро графического метода
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private Object CalculateIntersectionPoint(GraphRestriction lhs, GraphRestriction rhs) { //Расчет точки пересечения двух графиков
-        float denominator = lhs.x_coeff * rhs.y_coeff - rhs.x_coeff * lhs.y_coeff;
+    private Object calculateIntersectionPoint(GraphRestriction leftHandSide,
+                                              GraphRestriction rightHandSide) {
+        float denominator = leftHandSide.xCoeff * rightHandSide.yCoeff - rightHandSide.xCoeff
+                                                                        * leftHandSide.yCoeff;
 
         if(denominator == 0)
             return false;
 
-        float x = (lhs.y_coeff * -rhs.result_coeff - rhs.y_coeff * -lhs.result_coeff) / denominator;
-        float y = (rhs.x_coeff * -lhs.result_coeff - lhs.x_coeff * -rhs.result_coeff) / denominator;
+        float x = (leftHandSide.yCoeff * -rightHandSide.resultCoeff - rightHandSide.yCoeff
+                                                * -leftHandSide.resultCoeff) / denominator;
+        float y = (rightHandSide.xCoeff * -leftHandSide.resultCoeff - leftHandSide.xCoeff
+                                              * -rightHandSide.resultCoeff) / denominator;
 
-        UpdateBounds(x, y);
+        updateBounds(x, y);
 
         return new Entry(x, y);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private List<OutputData.Expression> CalculateIntersections(){ //Расчет всех точек пересечения грфиков
+    private List<OutputData.Expression> calculateIntersections(){ //Расчет всех точек пересечения графиков
         List<OutputData.Expression> result = new ArrayList<>();
 
         for (GraphRestriction restriction : restrictions) {
-            List<Entry> cur_restriction = new ArrayList<>();
+            List<Entry> currentRestriction = new ArrayList<>();
             for (GraphRestriction graphRestriction : restrictions) {
-                Object intet_point_result = CalculateIntersectionPoint(restriction, graphRestriction);
+                Object intersectPointResult = calculateIntersectionPoint(restriction, graphRestriction);
 
-                if (intet_point_result instanceof Entry)
-                    cur_restriction.add((Entry) intet_point_result);
+                if (intersectPointResult instanceof Entry)
+                    currentRestriction.add((Entry) intersectPointResult);
             }
-            if (cur_restriction.isEmpty())
+            if (currentRestriction.isEmpty())
                 continue;
 
-            Collections.sort(cur_restriction, new CoordinatesComprator());
-            result.add(new OutputData.Expression(cur_restriction, restriction.sign, restriction.string_expression, OutputData.Expression.Type.DEFAULT));
+            Collections.sort(currentRestriction, new CoordinatesComprator());
+            result.add(new OutputData.Expression(currentRestriction, restriction.sign,
+                      restriction.stringExpression, OutputData.Expression.Type.DEFAULT));
         }
         return result;
     }
 
-    private void UpdateBounds(Float x_value, Float y_value){ //Обновление крайних значений по всем осям
-        if(x_value > right_bound)
-            right_bound = x_value;
-        if(x_value < left_bound)
-            left_bound = x_value;
-        if(y_value > top_bound)
-            top_bound = y_value;
-        if(y_value < bottom_bound)
-            bottom_bound = y_value;
+    private void updateBounds(Float xValue, Float yValue){ //Обновление крайних значений по всем осям
+        if(xValue > rightBound)
+            rightBound = xValue;
+        if(xValue < leftBound)
+            leftBound = xValue;
+        if(yValue > topBound)
+            topBound = yValue;
+        if(yValue < bottomBound)
+            bottomBound = yValue;
     }
 
-    private OutputData.Expression MakeArtificialExpression(OutputData.Expression line_data){ //Создание искусственной прямой
-        List<Entry> r_points = new ArrayList<>();
+    private OutputData.Expression makeArtificialExpression(OutputData.Expression lineData){ //Создание
+                                                                               // искусственной прямой
+        List<Entry> rPoints = new ArrayList<>();
 
-        float x_coord = line_data.points.get(0).getX();
-        float y_coord = line_data.points.get(0).getY();
+        float xCoord = lineData.points.get(0).getX();
+        float yCoord = lineData.points.get(0).getY();
 
-        r_points.add(new Entry(x_coord, y_coord));
+        rPoints.add(new Entry(xCoord, yCoord));
 
-        if(line_data.sign == constants.Sign.MORE)
-            r_points.add(new Entry(right_bound, y_coord));
+        if(lineData.sign == constants.Sign.MORE)
+            rPoints.add(new Entry(rightBound, yCoord));
         else
-            r_points.add(new Entry(left_bound, y_coord));
+            rPoints.add(new Entry(leftBound, yCoord));
 
-        return new OutputData.Expression(r_points, line_data.sign, "", OutputData.Expression.Type.ARTIFICIAL);
+        return new OutputData.Expression(rPoints, lineData.sign, "",
+                                        OutputData.Expression.Type.ARTIFICIAL);
     }
 
-    private void MakeOffsets(){ //Добавление отступов к крайним значениям
-        right_bound += GRAPH_OFFSET;
-        left_bound -= GRAPH_OFFSET;
-        top_bound += GRAPH_OFFSET;
-        bottom_bound -= GRAPH_OFFSET;
+    private void makeOffsets(){ //Добавление отступов к крайним значениям
+        rightBound += GRAPH_OFFSET;
+        leftBound -= GRAPH_OFFSET;
+        topBound += GRAPH_OFFSET;
+        bottomBound -= GRAPH_OFFSET;
     }
 
-    private void MakeExpressions(List<OutputData.Expression> expressions){ //Создание графиков при параллельных прямых
+    private void makeExpressions(List<OutputData.Expression> expressions){ //Создание графиков при
+                                                                           // параллельных прямых
         for (GraphRestriction restriction : restrictions) {
             List<Entry> points = new ArrayList<>();
 
             Float x = 0F;
-            Float y = restriction.CalculateY(x);
+            Float y = restriction.calculateY(x);
 
             points.add(new Entry(x, y));
-            UpdateBounds(x, y);
-            expressions.add(new OutputData.Expression(points, restriction.sign, restriction.string_expression, OutputData.Expression.Type.DEFAULT));
+            updateBounds(x, y);
+            expressions.add(new OutputData.Expression(points, restriction.sign, restriction.stringExpression,
+                           OutputData.Expression.Type.DEFAULT));
         }
     }
 
     private PointValuePair Optimize(){ //Поиск решения
-        LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] { objective.x_coeff, objective.y_coeff}, 0);
+        LinearObjectiveFunction objectiveFunc = new LinearObjectiveFunction(new double[]
+                { objective.xCoeff, objective.yCoeff}, 0);
 
         Collection<LinearConstraint> constraints = new ArrayList<>();
 
         for (GraphRestriction restriction : restrictions) {
-            Relationship sign = (restriction.sign == constants.Sign.MORE) ? Relationship.GEQ : Relationship.LEQ;
+            Relationship sign = (restriction.sign == constants.Sign.MORE) ? Relationship.GEQ :
+                                                                            Relationship.LEQ;
 
-            constraints.add(new LinearConstraint(new double[]{restriction.x_coeff, restriction.y_coeff}, sign, restriction.result_coeff));
+            constraints.add(new LinearConstraint(new double[]{restriction.xCoeff, restriction.yCoeff},
+                                                 sign, restriction.resultCoeff));
         }
 
-        GoalType type = (objective.goal_type == constants.GoalType.MAXIMIZE) ? GoalType.MAXIMIZE : GoalType.MINIMIZE;
+        GoalType type = (objective.goalType == constants.GoalType.MAXIMIZE) ? GoalType.MAXIMIZE :
+                                                                               GoalType.MINIMIZE;
 
-        return new SimplexSolver().optimize(f, new LinearConstraintSet(constraints), type);
+        return new SimplexSolver().optimize(objectiveFunc, new LinearConstraintSet(constraints), type);
     }
 
-    private OutputData.Expression MakeObjectiveExpression(PointValuePair solution){ //Создание графика целевой функции
+    private OutputData.Expression makeObjectiveExpression(PointValuePair solution){ //Создание графика целевой функции
         List<Entry> points = new ArrayList<>();
 
-        objective.SetR_coeff(solution.getValue().floatValue());
+        objective.setResultCoeff(solution.getValue().floatValue());
         objective.Normalize();
 
-        if(objective.y_coeff == 0){
-            points.add(new Entry(objective.CalculateX(bottom_bound), bottom_bound));
-            points.add(new Entry(objective.CalculateX(top_bound), top_bound));
+        if(objective.yCoeff == 0){
+            points.add(new Entry(objective.calculateX(bottomBound), bottomBound));
+            points.add(new Entry(objective.calculateX(topBound), topBound));
         }
         else{
-            points.add(new Entry(left_bound, objective.CalculateY(left_bound)));
-            points.add(new Entry(right_bound, objective.CalculateY(right_bound)));
+            points.add(new Entry(leftBound, objective.calculateY(leftBound)));
+            points.add(new Entry(rightBound, objective.calculateY(rightBound)));
         }
 
-        return new OutputData.Expression(points, objective.string_expression, OutputData.Expression.Type.OBJECTIVE);
+        return new OutputData.Expression(points, objective.stringExpression,
+                                        OutputData.Expression.Type.OBJECTIVE);
     }
 
-    private static class CoordinatesComprator implements Comparator<Entry>{ //Компаратор для сравнения точек типа Entry
+    private static class CoordinatesComprator implements Comparator<Entry>{ // Компаратор для
+                                                                            // сравнения точек
+                                                                            // типа Entry
         @Override
-        public int compare(Entry lhs, Entry rhs) {
-            return Float.compare(lhs.getX(), rhs.getX());
+        public int compare(Entry leftHandSide, Entry rightHandSide) {
+            return Float.compare(leftHandSide.getX(), rightHandSide.getX());
         }
     }
 }
