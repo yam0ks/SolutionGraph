@@ -29,10 +29,10 @@ public class SharedViewModel extends ViewModel {
         GRAPHICAL
     }
 
-    private MutableLiveData<Restriction[]> restrictsMutable;
+    private final MutableLiveData<Restriction[]> restrictsMutable = new MutableLiveData<>();
     public LiveData<Restriction[]> restricts = restrictsMutable;
 
-    private MutableLiveData<Objective> mainFunctionMutable;
+    private final MutableLiveData<Objective> mainFunctionMutable = new MutableLiveData<>();
     public LiveData<Objective> mainFunction = mainFunctionMutable;
 
     private Model model;

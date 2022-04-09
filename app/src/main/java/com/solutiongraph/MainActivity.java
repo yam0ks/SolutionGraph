@@ -2,21 +2,21 @@ package com.solutiongraph;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.view.View;
 import android.os.Bundle;
 
-import com.viewmodel.SharedViewModel;
+import com.solutiongraph.steps.RestrictionsViewFragment;
+import com.solutiongraph.steps.Stepper;
 
 public class MainActivity extends AppCompatActivity {
-    public SharedViewModel vModel;
+//    private MainViewModel mainViewModel;
     private static final Stepper STEPPER = new Stepper();
     int mainFragmentID = R.id.main_fragment_container_view;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        vModel = new ViewModelProvider(this).get(SharedViewModel.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setCurrentFragment(STEPPER.getStep());
@@ -33,10 +33,13 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
+    @Override
+    public void onBackPressed() {
+        PrevStep();
+    }
+
     public void nextStep(View view) {
         if (!STEPPER.Next()) return;
-        if (!STEPPER.isFirst())
-            findViewById(R.id.PrevButton).setVisibility(View.VISIBLE);
 
         Bundle bundle = new Bundle();
         switch (STEPPER.getIndex()) {
@@ -44,22 +47,19 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case Stepper.COEFFS:
                 //TODO: Передать кол-во ограничений
-                bundle.putInt(RestrictionsView.RESTRICTIONS_NUMBER, 2);
+                bundle.putInt(RestrictionsViewFragment.RESTRICTIONS_NUMBER, 2);
                 //TODO: Передать кол-во переменных
-                bundle.putInt(RestrictionsView.VARIABLES_NUMBER, 4);
+                bundle.putInt(RestrictionsViewFragment.VARIABLES_NUMBER, 4);
                 STEPPER.getStep().setArguments(bundle);
 
                 setCurrentFragment(STEPPER.getStep());
-
 
                 break;
         }
         setCurrentFragment(STEPPER.getStep());
     }
-    public void prevStep(View view) {
+    public void PrevStep() {
         if (!STEPPER.Prev()) return;
-        if (STEPPER.isFirst())
-            findViewById(R.id.PrevButton).setVisibility(View.INVISIBLE);
         setCurrentFragment(STEPPER.getStep());
     }
 }

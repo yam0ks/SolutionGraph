@@ -1,4 +1,4 @@
-package com.solutiongraph;
+package com.solutiongraph.coeffs;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.solutiongraph.R;
 
 
 public class CoeffAdapter extends RecyclerView.Adapter<CoeffViewHolder> {
