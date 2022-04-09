@@ -1,4 +1,4 @@
-package com.solutiongraph;
+package com.solutiongraph.restrictions;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,19 +9,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.model.simplexdata.Restriction;
+import com.solutiongraph.R;
+import com.solutiongraph.restrictions.RestrictViewHolder;
 import com.utils.Constants;
-
-import java.util.List;
 
 public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
     private final Context context;
     private final LayoutInflater layoutInflater;
-    private final List<Restriction> restrictionList;
+    private final Restriction[] restrictions;
     private final int numbersCount;
 
-    public RestrictAdapter(Context context, List<Restriction> data, int numbersCount) {
+    public RestrictAdapter(Context context, Restriction[] data, int numbersCount) {
         this.context = context;
-        this.restrictionList = data;
+        this.restrictions = data;
         this.layoutInflater = LayoutInflater.from(context);
         this.numbersCount = numbersCount;
     }
@@ -36,7 +36,7 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RestrictViewHolder holder, int position) {
-        Restriction restrict = this.restrictionList.get(position);
+        Restriction restrict = this.restrictions[position];
         double[] coeffs = restrict.getDoubleCoeffs();
         double freeCoeff = restrict.getFreeCoeffAsDouble();
         double result = restrict.getResultCoeffAsDouble();
@@ -60,6 +60,6 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
 
     @Override
     public int getItemCount() {
-        return this.restrictionList.size();
+        return this.restrictions.length;
     }
 }

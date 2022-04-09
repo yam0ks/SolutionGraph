@@ -1,4 +1,4 @@
-package com.solutiongraph;
+package com.solutiongraph.graph;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -10,6 +10,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.Utils;
+import com.solutiongraph.R;
 
 @SuppressLint("ViewConstructor")
 public class GraphMarkerView extends MarkerView { //Класс, регулирующий отображение значений при

@@ -8,7 +8,7 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/main_fragment_container_view"
         android:layout_width="match_parent"
-        android:layout_height="2.5in"
+        android:layout_height="0dp"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toTopOf="@+id/NextButton"
@@ -20,17 +20,10 @@
         android:id="@+id/NextButton"
         style="@style/NextButton"
         android:onClick="nextStep"
-        app:layout_constraintBottom_toTopOf="@+id/PrevButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/PrevButton"
-        style="@style/PrevButton"
-        android:onClick="prevStep"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="UsingOnClickInXml" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

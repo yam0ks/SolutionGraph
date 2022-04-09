@@ -1,9 +1,10 @@
-package com.solutiongraph;
+package com.solutiongraph.steps;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,24 +13,28 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.model.simplexdata.Restriction;
+import com.solutiongraph.R;
+import com.solutiongraph.restrictions.RestrictAdapter;
 import com.utils.Constants;
+import com.viewmodel.SharedViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RestrictionsView extends Fragment {
+public class RestrictionsViewFragment extends Fragment {
     public static final String RESTRICTIONS_NUMBER = "restrictions_number";
     public static final String VARIABLES_NUMBER = "variables_number";
 
     private int restNumber;
     private int varblNumber;
+    private SharedViewModel viewModel;
 
-    public RestrictionsView() {
+    public RestrictionsViewFragment() {
         // Required empty public constructor
     }
 
-    public static RestrictionsView newInstance(int restNumber, int varblNumber) {
-        RestrictionsView fragment = new RestrictionsView();
+    public static RestrictionsViewFragment newInstance(int restNumber, int varblNumber) {
+        RestrictionsViewFragment fragment = new RestrictionsViewFragment();
         Bundle args = new Bundle();
         args.putInt(RESTRICTIONS_NUMBER, restNumber);
         args.putInt(VARIABLES_NUMBER, varblNumber);
@@ -41,28 +46,30 @@ public class RestrictionsView extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        viewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
         if (getArguments() != null) {
             restNumber = getArguments().getInt(RESTRICTIONS_NUMBER);
             varblNumber = getArguments().getInt(VARIABLES_NUMBER);
+            viewModel.createRestrictionData(2, 4);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        return inflater.inflate(R.layout.fragment_coeff_view, container, false);
+        View root = inflater.inflate(R.layout.fragment_coeff_view, container, false);
+        Restriction[] restrictions = viewModel.restricts.getValue();
+        RecyclerView restrictionRecyclerView =root.findViewById(R.id.restriction_recycler_view);
+        restrictionRecyclerView.setAdapter(
+                new RestrictAdapter(this.getContext(), restrictions, varblNumber));
+        restrictionRecyclerView.setLayoutManager(
+                new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
+        return root;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        List<Restriction> restrictionsList = createRestrictionsList();
-        RecyclerView restrictionRecyclerView = this.requireView().findViewById(R.id.restriction_recycler_view);
-        restrictionRecyclerView.setAdapter(
-                new RestrictAdapter(this.getContext(), restrictionsList, varblNumber));
-        restrictionRecyclerView.setLayoutManager(
-                new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
     }
 
     @NonNull

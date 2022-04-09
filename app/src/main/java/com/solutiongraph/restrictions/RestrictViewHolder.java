@@ -1,4 +1,4 @@
-package com.solutiongraph;
+package com.solutiongraph.restrictions;
 
 import android.annotation.SuppressLint;
 import android.text.Html;
@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.solutiongraph.coeffs.CoeffAdapter;
+import com.solutiongraph.R;
 import com.utils.Constants;
 
 public class RestrictViewHolder extends RecyclerView.ViewHolder {
