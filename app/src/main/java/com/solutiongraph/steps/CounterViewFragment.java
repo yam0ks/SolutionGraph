@@ -3,32 +3,33 @@ package com.solutiongraph.steps;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import com.solutiongraph.R;
+import com.utils.Constants;
 
 public class CounterViewFragment extends Fragment {
+
+    public CounterViewFragment() {}
 
     public static final String MAX_RESTRICTIONS_NUMBER = "max_rest";
     public static final String MAX_VARIABLES_NUMBER = "max_var";
 
-    private int maxRest;
     private String[] restArray;
-    private void setMaxRest(int newValue) {
-        maxRest = newValue;
-        restArray = createStringArray(maxRest);
+    public void setMaxRest(int newValue) {
+        restArray = createStringArray(newValue);
     }
-    private int maxVar;
-    private String[] varArray;
-    private void setMaxVar(int newValue) {
-        maxVar = newValue;
-        varArray = createStringArray(maxVar);
+
+    private String[] numbArray;
+    public void setMaxVar(int newValue) {
+        numbArray = createStringArray(newValue);
     }
 
     private String[] createStringArray(int length) {
@@ -40,10 +41,7 @@ public class CounterViewFragment extends Fragment {
     }
 
     private Spinner restSpinner;
-    private Spinner valSpinner;
-    private View root;
-
-    public CounterViewFragment() {}
+    private Spinner numbSpinner;
 
     public static CounterViewFragment newInstance(int maxRest, int maxVar) {
         CounterViewFragment fragment = new CounterViewFragment();
@@ -60,54 +58,38 @@ public class CounterViewFragment extends Fragment {
         if (getArguments() != null) {
             setMaxRest(getArguments().getInt(MAX_RESTRICTIONS_NUMBER));
             setMaxVar(getArguments().getInt(MAX_VARIABLES_NUMBER));
+        } else {
+            setMaxRest(Constants.MAX_RESTRICTIONS_NUMBER);
+            setMaxVar(Constants.MAX_VARIABLES_NUMBER);
         }
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        this.root = inflater.inflate(R.layout.fragment_counter_view, container, false);
+        View root = inflater.inflate(R.layout.fragment_counter_view, container, false);
 
         restSpinner = root.findViewById(R.id.restrictions_count_spin);
-        restSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                Object item = parent.getItemAtPosition(pos);
-            }
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
+        SetSpinnerRange(root, restSpinner, restArray);
+        numbSpinner = root.findViewById(R.id.variables_count_spin);
+        SetSpinnerRange(root, numbSpinner, numbArray);
+
+        Button nextButton = root.findViewById(R.id.next_button);
+        nextButton.setOnClickListener(view -> {
+            int restCount = Integer.parseInt(restSpinner.getSelectedItem().toString());
+            Bundle bundle = new Bundle();
+            bundle.putInt(RestrictionsViewFragment.RESTRICTIONS_NUMBER, restCount);
+            int numbCount = Integer.parseInt(numbSpinner.getSelectedItem().toString());
+            bundle.putInt(RestrictionsViewFragment.VARIABLES_NUMBER, numbCount);
+            Navigation.findNavController(view).navigate(R.id.next_action, bundle);
         });
 
-        valSpinner = root.findViewById(R.id.variables_count_spin);
-        valSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                Object item = parent.getItemAtPosition(pos);
-            }
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-
-//        SetSpinnerRange(root, restSpinner, restArray);
-//        SetSpinnerRange(root, valSpinner, varArray);
         return root;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        new Thread() {
-            public void run() {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                SetSpinnerRange(root, restSpinner, restArray);
-                                SetSpinnerRange(root, valSpinner, varArray);
-                            }
-                        });
-
-                    }
-        }.start();
     }
 
     private void SetSpinnerRange(View view, Spinner spinner, String[] array) {

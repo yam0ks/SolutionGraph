@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/counterViewFragment">
+
+    <fragment
+        android:id="@+id/counterViewFragment"
+        android:name="com.solutiongraph.steps.CounterViewFragment"
+        android:label="fragment_counter_view"
+        tools:layout="@layout/fragment_counter_view" >
+        <action
+            android:id="@+id/next_action"
+            app:destination="@id/restrictionsViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/restrictionsViewFragment"
+        android:name="com.solutiongraph.steps.RestrictionsViewFragment"
+        android:label="fragment_coeff_view"
+        tools:layout="@layout/fragment_restrictions_view">
+        <argument
+            android:name="restrictions_number"
+            app:argType="integer"
+            android:defaultValue="1" />
+        <argument
+            android:name="variables_number"
+            app:argType="integer"
+            android:defaultValue="1" />
+    </fragment>
+</navigation>
