@@ -11,14 +11,12 @@ import android.os.Build;
 import com.model.Fraction;
 import com.model.graphdata.GraphOutputData;
 import com.model.simplexdata.SimplexOutputData;
-import com.usecase.GraphSolver;
 import com.model.Model;
 import com.model.simplexdata.Restriction;
 import java.util.List;
 import com.model.graphdata.GraphObjective;
 import com.model.graphdata.GraphRestriction;
 import com.model.simplexdata.Objective;
-import com.usecase.Simplex;
 import com.utils.Constants;
 import java.util.ArrayList;
 
@@ -53,7 +51,7 @@ public class SharedViewModel extends ViewModel {
 
             Float xValue = (float)coeffs[0];
             Float yValue = (float)coeffs[1];
-            Float resultValue = (float)restric.getResultCoeffAsDouble() - (float)restric.getFreeCoeffAsDouble();
+            Float resultValue = (float)restric.getResultAsDouble() - (float)restric.getFreeCoeffAsDouble();
             Constants.Sign sign = restric.getSign();
 
             result.add(new GraphRestriction(xValue, yValue, sign, resultValue));

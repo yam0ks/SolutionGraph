@@ -1,13 +1,13 @@
 package com.utils;
 
 public class Constants {
-    public enum Sign{
+    public enum Sign {
         EQUALS,
         MORE,
         LESS
     }
 
-    public enum GoalType{
+    public enum GoalType {
         MAXIMIZE,
         MINIMIZE
     }

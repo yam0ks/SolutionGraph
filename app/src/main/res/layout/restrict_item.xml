@@ -123,8 +123,9 @@
                     <EditText
                         android:id="@+id/result"
                         android:layout_width="1in"
-                        android:overScrollMode="ifContentScrolls"
                         android:layout_height="48dp"
+                        android:inputType="numberDecimal"
+                        android:overScrollMode="ifContentScrolls"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -148,6 +149,7 @@
                     <EditText
                         android:id="@+id/free_coeff"
                         android:layout_width="1in"
+                        android:inputType="numberDecimal"
                         android:overScrollMode="ifContentScrolls"
                         android:layout_height="48dp"
                         app:layout_constraintBottom_toBottomOf="parent"

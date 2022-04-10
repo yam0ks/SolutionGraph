@@ -17,13 +17,15 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/result"
-        android:layout_width="wrap_content"
+        android:id="@+id/coeff"
+        android:layout_width="1in"
         android:layout_height="wrap_content"
-        android:minWidth="1in"
+        android:inputType="numberDecimal"
+        android:autofillHints="numberDecimal"
         android:overScrollMode="ifContentScrolls"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="InOrMmUsage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

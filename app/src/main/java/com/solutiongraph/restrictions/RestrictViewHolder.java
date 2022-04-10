@@ -1,6 +1,5 @@
 package com.solutiongraph.restrictions;
 
-import android.annotation.SuppressLint;
 import android.text.Html;
 import android.view.View;
 import android.widget.EditText;
@@ -12,19 +11,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.model.simplexdata.Restriction;
 import com.solutiongraph.coeffs.CoeffAdapter;
 import com.solutiongraph.R;
-import com.utils.Constants;
+import com.utils.Parsers;
 
 public class RestrictViewHolder extends RecyclerView.ViewHolder {
     private final View root;
     private final View header;
-    public EditText freeCoeffView;
-    public RadioGroup signView;
-    public EditText result;
-    public RecyclerView coeffsRecyclerView;
-    public ScrollView scrollView;
-    boolean toggle = false;
+    private RadioGroup signView;
+    private EditText result;
+    private EditText freeCoeffView;
+    private RecyclerView coeffsRecyclerView;
+    private ScrollView scrollView;
+    private boolean toggle = false;
 
     public RestrictViewHolder(@NonNull View itemView, int numbersCount) {
         super(itemView);
@@ -41,6 +41,7 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
             view.findViewById(R.id.expression_expand_arrow).setRotation(toggle ? 180 : 0);
         };
 
+        //TODO: Отслеживание изменения фокуса
         View.OnFocusChangeListener toggleChange  = (view, hasFocus) -> {
             if (hasFocus) return;
             
@@ -58,53 +59,25 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         coeffsRecyclerView.setAdapter(
                 new CoeffAdapter(root.getContext(), temp));
         coeffsRecyclerView.setLayoutManager(
-                new LinearLayoutManager(root.getContext(), LinearLayoutManager.VERTICAL, false));
+                new LinearLayoutManager(root.getContext(),
+                        LinearLayoutManager.VERTICAL, false));
     }
 
-    @SuppressLint("DefaultLocale")
-    public void setHeader(double[] coeffs, double free, Constants.Sign sign, double result) {
-        String text = "";
-        String template = "x<sub><small>%d</small></sub>";
-        for (int i = 0; i < coeffs.length; i++) {
-            double coeff = coeffs[i];
-            if (coeff > 0) {
-                text = text.concat(i != 0 ? " + " : "")
-                        .concat(stringFromNumber(coeff))
-                        .concat(String.format(template, i+1));
-            } else if (coeff < 0) {
-                text = text.concat(" - ")
-                        .concat(stringFromNumber(Math.abs(coeff)))
-                        .concat(String.format(template, i+1));
-            }
-        }
-        if (free != 0)
-            text = text.concat(free < 0 ? " - " : " + ").concat(stringFromNumber(Math.abs(free)));
-        switch (sign) {
-            case LESS:
-                text = text.concat(" < ");
-                break;
-            case EQUALS:
-                text = text.concat(" = ");
-                break;
-            case MORE:
-                text = text.concat(" > ");
-                break;
-        }
-        text = text.concat(stringFromNumber(result));
-        setHeaderText(text);
-    }
-
-    private String stringFromNumber(double number) {
-        int round = (int) Math.round(number);
-        if (number == round) {
-            return String.valueOf(round);
-        }
-        return String.valueOf(number);
-    }
-
-    private void setHeaderText(String text) {
+    public void setHeaderText(Restriction restriction) {
+        String text = Parsers.parseXmlFromRestriction(restriction);
         TextView textView = header.findViewById(R.id.expression_title);
         textView.setText(Html.fromHtml(text));
     }
 
+    public void signCheck(int id) {
+        signView.check(id);
+    }
+
+    public void setResult(double newValue) {
+        this.result.setText(Parsers.stringFromNumber(newValue));
+    }
+
+    public void setFreeCoeff(double newValue) {
+        this.freeCoeffView.setText(Parsers.stringFromNumber(newValue));
+    }
 }
