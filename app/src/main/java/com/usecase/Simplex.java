@@ -39,6 +39,7 @@ public class Simplex {
             }
         return this.outputData;
     }
+
     private void formSimplexMatrix(Restriction[] restrictions, Objective objective){
         int countRestrictions = restrictions.length;
         int countVariables = restrictions[0].getCoeffs().length;
@@ -205,14 +206,16 @@ public class Simplex {
                 currentStep.setElement(this.simplexMatrix[row][column]);
                 this.lastBasedColumn = column;
                 transformMatrixByGauss(this.simplexMatrix, this.simplexMatrix[row][column],row,column);
-                currentStep.setMatrix(this.simplexMatrix.clone());
+                currentStep.setMatrix(copyFractionArray(simplexMatrix));
                 currentStep.setMatrixCanBeNormalized(true);
+                currentStep.setBases(indBases);
                 this.outputData.getNormalizeData().add(currentStep);
             }
             else{
                 currentStep = new SimplexNormalizeData();
-                currentStep.setMatrix(this.simplexMatrix.clone());
+                currentStep.setMatrix(copyFractionArray(simplexMatrix));
                 currentStep.setMatrixCanBeNormalized(false);
+                currentStep.setOldBase(row);
                 this.outputData.getNormalizeData().add(currentStep);
                 flag = false;
                 break;
@@ -254,8 +257,8 @@ public class Simplex {
     }
 
     private boolean isNegativeInRow(int row){
-        for(Fraction element: this.simplexMatrix[row]){
-            if(!element.isPositive())
+        for(int j = 0; j < simplexMatrix[0].length - 1; j++){
+            if(!simplexMatrix[row][j].isPositive())
                 return true;
         }
         return false;
@@ -283,9 +286,12 @@ public class Simplex {
         System.arraycopy(deltas, 0, finalMatrix[finalMatrix.length - 1], 0, deltas.length);
         while (!deltaIsOk(findMax)){
             SimplexSolutionData currentStep = new SimplexSolutionData();
-            currentStep.setMatrix(new Fraction[simplexMatrix.length+1][simplexMatrix[0].length]);
+            //currentStep.setMatrix(new Fraction[simplexMatrix.length+1][simplexMatrix[0].length]);
             int column = getSuitableColumn(findMax);
             currentStep.setSupportColumn(column);
+            currentStep.setBeforeMatrix(copyFractionArray(finalMatrix));
+            currentStep.setNewBase(column);
+            currentStep.setBases(indBases);
             int row = getSuitableRow(column, currentStep);
             if(row != -1){
                 currentStep.setSupportRow(row);
@@ -295,11 +301,14 @@ public class Simplex {
                 indBases[row - 1] = column;
                 currentStep.setMatrixCanBeSolved(true);
                 transformMatrixByGauss(finalMatrix, finalMatrix[row][column], row, column);
-                currentStep.setMatrix(finalMatrix.clone());
+                currentStep.setAfterMatrix(copyFractionArray(finalMatrix));
+                currentStep.setBases(indBases);
+                currentStep.setFindMax(findMax);
                 outputData.getSolutionData().add(currentStep);
                 findDelta(finalMatrix);
             }
             else {
+                currentStep.setFindMax(findMax);
                 currentStep.setMatrixCanBeSolved(false);
                 outputData.getSolutionData().add(currentStep);
                 return false;
@@ -403,6 +412,15 @@ public class Simplex {
         }
     }
 
+    private Fraction[][] copyFractionArray(Fraction[][] originalArray){
+        Fraction[][] coppyedArray = new Fraction[originalArray.length][originalArray[0].length];
+        for(int i = 0; i < originalArray.length; i++){
+            for(int j = 0; j < originalArray[0].length; j++)
+                coppyedArray[i][j] = new Fraction(originalArray[i][j]);
+        }
+        return coppyedArray;
+    }
+
     private Fraction[] getAnswers(Objective objective){
         Fraction[] ans = new Fraction[objective.getCoeffs().length + 1];
         for(int j = 0; j < objective.getCoeffs().length + 1; j++){
@@ -420,7 +438,7 @@ public class Simplex {
     public void printMatrix(Fraction[][] matrix) {
         for (Fraction[] array : matrix) {
             for (int j = 0; j < matrix[0].length; j++)
-                System.out.print(array[j].getFraction() + "\t\t\t");
+                System.out.print(array[j].getFraction(false) + "\t\t\t");
             System.out.println();
         }
         System.out.println();
@@ -428,6 +446,6 @@ public class Simplex {
 
     public void printArray(Fraction[] array){
         for(Fraction element : array)
-            System.out.print(element.getFraction() + "\t");
+            System.out.print(element.getFraction(false) + "\t");
     }
 }

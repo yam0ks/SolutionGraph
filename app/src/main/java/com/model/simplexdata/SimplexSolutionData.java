@@ -3,8 +3,11 @@ package com.model.simplexdata;
 import com.model.Fraction;
 
 public class SimplexSolutionData { //раздел решения
-    private Fraction[][] matrix; // симплекс матрица на текущем шаге (0 строка - коэффициенты
+    private Fraction[][] beforeMatrix; // симплекс матрица на начало текущего шага (0 строка - коэффициенты
     // при главной функции, последний столбец свободные коэффы b)
+    private Fraction[][] afterMatrix; // симплекс матрица на конец текущего шага (0 строка - коэффициенты
+    // при главной функции, последний столбец свободные коэффы b)
+    private int[] bases;//базис в текущем шаге
     private boolean matrixCanBeSolved; //если false прекращается работа алгоритма, функция
     // не ограничена, решения нет
     private int supportColumn;//колонка опорного элемента
@@ -13,16 +16,25 @@ public class SimplexSolutionData { //раздел решения
     private int oldBase;//номер старого базиса смещенного на -1
     private int newBase;//номер нового базиса смещенного на -1
     private Fraction[] simplexRelations;//Столбец симплекс-отношений Q (-1 - симлекс отношения нет)
+    private boolean findMax;
 
     public SimplexSolutionData(){}
 
-    public Fraction[][] getMatrix() {
-        return matrix;
+    public boolean getFindMax(){return findMax;}
+
+    public void setFindMax(boolean findMax){this.findMax = findMax;}
+
+    public Fraction[][] getBeforeMatrix() {
+        return beforeMatrix;
     }
 
-    public void setMatrix(Fraction[][] matrix) {
-        this.matrix = matrix;
+    public void setBeforeMatrix(Fraction[][] beforeMatrix) {
+        this.beforeMatrix = beforeMatrix;
     }
+
+    public Fraction[][] getAfterMatrix() {return afterMatrix;}
+
+    public void setAfterMatrix(Fraction[][] afterMatrix) {this.afterMatrix = afterMatrix; }
 
     public boolean getMatrixCanBeSolved(){
         return matrixCanBeSolved;
@@ -57,7 +69,7 @@ public class SimplexSolutionData { //раздел решения
     }
 
     public int getOldBase() {
-        return oldBase;
+        return oldBase + 1;
     }
 
     public void setOldBase(int oldBase) {
@@ -65,7 +77,7 @@ public class SimplexSolutionData { //раздел решения
     }
 
     public int getNewBase() {
-        return newBase;
+        return newBase + 1;
     }
 
     public void setNewBase(int newBase) {
@@ -83,4 +95,6 @@ public class SimplexSolutionData { //раздел решения
     public void setSimplexRelationsByIndex(int idx, Fraction simplexRelation){
         this.simplexRelations[idx] = simplexRelation;
     }
+    public void setBases(int[] bases){this.bases = bases;}
+    public int[] getBases(){return bases;}
 }

@@ -21,6 +21,16 @@ public class Model {
     private GraphOutputData graphOutputData;
     private GraphSolver graph;
 
+    public class MatrixItem {
+        public boolean isHeader;
+        public String value;
+    }
+    public class Section {
+        public String title;
+        public String description;
+        public MatrixItem[][] matrix;
+    }
+
     public Model() {
         simplex = new Simplex();
         graph = new GraphSolver();
