@@ -21,7 +21,7 @@ public class Restriction extends BaseExpression {
         return freeCoeff.getDouble();
     }
 
-    public double getResultAsDouble(){
+    public double getResultCoeffAsDouble(){
         return result.getDouble();
     }
 

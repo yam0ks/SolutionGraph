@@ -6,6 +6,7 @@ public class SimplexNormalizeData { //второй раздел (приведе�
     // каноническому виду)
     private Fraction[][] matrix;// симплекс матрица на текущем шаге (0 строка - коэффициенты
     // при главной функции, последний столбец свободные коэффы b)
+    private int[] bases;//базис в текущем шаге
     private int oldBase;//номер старого базиса смещенного на -1
     private int newBase;//номер нового базиса смещенного на -1
     private int supportElementColumn;//колонка опорного элемента
@@ -70,4 +71,6 @@ public class SimplexNormalizeData { //второй раздел (приведе�
     public void setMatrixCanBeNormalized(boolean matrixCanBeNormalized) {
         this.matrixCanBeNormalized = matrixCanBeNormalized;
     }
+    public void setBases(int[] bases){this.bases = bases;}
+    public int[] getBases(){return bases;}
 }

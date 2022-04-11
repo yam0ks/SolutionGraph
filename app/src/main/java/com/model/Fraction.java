@@ -22,7 +22,6 @@ public class Fraction {
 
     public Fraction(double number){
         String str = String.valueOf(number);
-        str.indexOf('.');
         int denominator = (int)Math.pow(10, str.length() - str.indexOf('.') - 1);
         this.denominator = denominator;
         this.numerator = (int)(number*denominator);
@@ -140,14 +139,19 @@ public class Fraction {
         return new Fraction(this.denominator, this.numerator);
     }
 
-    public String getFraction() {
+    public String getFraction(boolean likeDouble) {
         String str;
-        if (this.numerator == 0)
-            str = String.valueOf(this.numerator);
-        else if (this.denominator == 1)
-            str = String.valueOf(this.numerator);
-        else
-            str = this.numerator + "/" + this.denominator;
+        if(!likeDouble){
+            if (this.numerator == 0)
+                str = String.valueOf(this.numerator);
+            else if (this.denominator == 1)
+                str = String.valueOf(this.numerator);
+            else
+                str = this.numerator + "/" + this.denominator;
+        }
+        else {
+            str = String.valueOf(getDouble());
+        }
         return str;
     }
 
