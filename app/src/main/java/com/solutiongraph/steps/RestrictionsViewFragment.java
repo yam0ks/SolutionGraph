@@ -57,9 +57,9 @@ public class RestrictionsViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_restrictions_view, container, false);
         Restriction[] restrictions = viewModel.restricts.getValue();
-        RecyclerView restrictionRecyclerView =root.findViewById(R.id.restriction_recycler_view);
+        RecyclerView restrictionRecyclerView = root.findViewById(R.id.restriction_recycler_view);
         restrictionRecyclerView.setAdapter(
-                new RestrictAdapter(this.getContext(), restrictions, varblNumber));
+                new RestrictAdapter(this.getContext(), restrictions));
         restrictionRecyclerView.setLayoutManager(
                 new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
 
