@@ -5,11 +5,13 @@ import com.model.simplexdata.SimplexOutputData;
 import com.model.simplexdata.SimplexInitData;
 import com.model.simplexdata.SimplexNormalizeData;
 import com.model.simplexdata.SimplexSolutionData;
+import com.model.simplexdata.Section;
+import com.model.simplexdata.MatrixItem;
 
-public class Parser {
+public class SimplexParser {
     int currentSection;
     boolean fractionsLikeDouble;
-    Model.Section[] sections;
+    Section[] sections;
     SimplexOutputData outputData;
 
     public void setData(SimplexOutputData outputData, boolean fractionsLikeDouble){
@@ -17,9 +19,9 @@ public class Parser {
         this.fractionsLikeDouble = fractionsLikeDouble;
     }
 
-    public Model.Section[] formData(){
+    public Section[] formData(){
         currentSection = 0;
-        sections = new Model.Section[2 + outputData.getNormalizeData().size() + outputData.getSolutionData().size() * 2];
+        sections = new Section[2 + outputData.getNormalizeData().size() + outputData.getSolutionData().size() * 2];
         if(outputData.getAnswers() == null){
             setSection("Ответ", "Решения задачи не существует.");
         }
@@ -131,32 +133,32 @@ public class Parser {
         return formula;
     }
 
-    private Model.MatrixItem[][] getMatrixWithSimplexRelations(Model.MatrixItem[][] matrix, int[] bases, Fraction[] simplexRelations){
-        Model.MatrixItem[][] matrixItems = new Model.MatrixItem[matrix.length][matrix[0].length + 1];
+    private MatrixItem[][] getMatrixWithSimplexRelations(MatrixItem[][] matrix, int[] bases, Fraction[] simplexRelations){
+        MatrixItem[][] matrixItems = new MatrixItem[matrix.length][matrix[0].length + 1];
         for(int i = 0; i < matrix.length; i++){
             for(int j = 0; j < matrix[0].length;j++){
-                matrixItems[i][j] = new Model.MatrixItem();
+                matrixItems[i][j] = new MatrixItem();
                 matrixItems[i][j].value = matrix[i][j].value;
                 matrixItems[i][j].isHeader = matrix[i][j].isHeader;
             }
         }
-        matrixItems[0][matrixItems[0].length - 1] = new Model.MatrixItem();
+        matrixItems[0][matrixItems[0].length - 1] = new MatrixItem();
         matrixItems[0][matrixItems[0].length - 1].value = "-";
         matrixItems[0][matrixItems[0].length - 1].isHeader = false;
-        matrixItems[1][matrixItems[0].length - 1] = new Model.MatrixItem();
+        matrixItems[1][matrixItems[0].length - 1] = new MatrixItem();
         matrixItems[1][matrixItems[0].length - 1].value = "Q";
         matrixItems[1][matrixItems[0].length - 1].isHeader = true;
-        matrixItems[matrixItems.length-1][matrixItems[0].length - 1] = new Model.MatrixItem();
+        matrixItems[matrixItems.length-1][matrixItems[0].length - 1] = new MatrixItem();
         matrixItems[matrixItems.length-1][matrixItems[0].length - 1].value = "-";
         matrixItems[matrixItems.length-1][matrixItems[0].length - 1].isHeader = false;
         for(int i = 2; i < matrix.length - 1; i++){
             if(!simplexRelations[i-2].isPositive()){
-                matrixItems[i][matrixItems[0].length - 1] = new Model.MatrixItem();
+                matrixItems[i][matrixItems[0].length - 1] = new MatrixItem();
                 matrixItems[i][matrixItems[0].length - 1].value = "-";
                 matrixItems[i][matrixItems[0].length - 1].isHeader = false;
             }
             else {
-                matrixItems[i][matrixItems[0].length - 1] = new Model.MatrixItem();
+                matrixItems[i][matrixItems[0].length - 1] = new MatrixItem();
                 matrixItems[i][matrixItems[0].length - 1].value = simplexRelations[i-2].getFraction(fractionsLikeDouble);
                 matrixItems[i][matrixItems[0].length - 1].isHeader = false;
             }
@@ -164,45 +166,45 @@ public class Parser {
         return matrixItems;
     }
 
-    private Model.MatrixItem[][] transformMatrix(Fraction[][] matrix, int[] bases, boolean includeDeltas){
+    private MatrixItem[][] transformMatrix(Fraction[][] matrix, int[] bases, boolean includeDeltas){
         int matrixCorrection = 0;
         if(includeDeltas){
             matrixCorrection = 1;
         }
-        Model.MatrixItem[][] matrixItems = new Model.MatrixItem[matrix.length+1][matrix[0].length + 1];
-        matrixItems[0][0] = new Model.MatrixItem();
+        MatrixItem[][] matrixItems = new MatrixItem[matrix.length+1][matrix[0].length + 1];
+        matrixItems[0][0] = new MatrixItem();
         matrixItems[0][0].isHeader = true;
         matrixItems[0][0].value = "C";
-        matrixItems[1][0] = new Model.MatrixItem();
+        matrixItems[1][0] = new MatrixItem();
         matrixItems[1][0].isHeader = true;
         matrixItems[1][0].value = "базис";
-        matrixItems[0][matrixItems[0].length-1] = new Model.MatrixItem();
+        matrixItems[0][matrixItems[0].length-1] = new MatrixItem();
         matrixItems[0][matrixItems[0].length-1].isHeader = false;
         matrixItems[0][matrixItems[0].length-1].value = "0";
         for(int j = 1; j < matrix[0].length; j++){
-            matrixItems[0][j] = new Model.MatrixItem();
+            matrixItems[0][j] = new MatrixItem();
             matrixItems[0][j].value = matrix[0][j-1].getFraction(fractionsLikeDouble);
             matrixItems[0][j].isHeader = false;
-            matrixItems[1][j] = new Model.MatrixItem();
+            matrixItems[1][j] = new MatrixItem();
             matrixItems[1][j].value = getIndexed("x", j-1);
             matrixItems[1][j].isHeader = true;
         }
-        matrixItems[1][matrixItems[0].length-1] = new Model.MatrixItem();
+        matrixItems[1][matrixItems[0].length-1] = new MatrixItem();
         matrixItems[1][matrixItems[0].length-1].value = "b";
         matrixItems[1][matrixItems[0].length-1].isHeader = true;
         for(int i = 2; i < matrix.length - matrixCorrection + 1; i++){
-            matrixItems[i][0] = new Model.MatrixItem();
+            matrixItems[i][0] = new MatrixItem();
             matrixItems[i][0].value = getIndexed("x", bases[i-2]);
             matrixItems[i][0].isHeader = true;
         }
         if(includeDeltas){
-            matrixItems[matrixItems.length-1][0] = new Model.MatrixItem();
+            matrixItems[matrixItems.length-1][0] = new MatrixItem();
             matrixItems[matrixItems.length-1][0].value = "Δ";
             matrixItems[matrixItems.length-1][0].isHeader = true;
         }
         for(int i = 1; i < matrix.length; i++){
             for(int j = 0; j < matrix[0].length; j++){
-                matrixItems[i+1][j+1] = new Model.MatrixItem();
+                matrixItems[i+1][j+1] = new MatrixItem();
                 matrixItems[i+1][j+1].value = matrix[i][j].getFraction(fractionsLikeDouble);
                 matrixItems[i+1][j+1].isHeader = false;
             }
@@ -218,8 +220,8 @@ public class Parser {
         return letter + index;
     }
 
-    private void setSection(String title, String description, Model.MatrixItem[][] matrixItems){
-        sections[currentSection] = new Model.Section();
+    private void setSection(String title, String description, MatrixItem[][] matrixItems){
+        sections[currentSection] = new Section();
         sections[currentSection].title = title;
         sections[currentSection].description = description;
         sections[currentSection].matrix = matrixItems;
@@ -227,7 +229,7 @@ public class Parser {
     }
 
     private void setSection(String title, String description){
-        sections[currentSection] = new Model.Section();
+        sections[currentSection] = new Section();
         sections[currentSection].title = title;
         sections[currentSection].description = description;
         sections[currentSection].matrix = null;
