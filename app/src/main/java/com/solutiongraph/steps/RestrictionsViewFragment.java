@@ -4,12 +4,14 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.model.simplexdata.Restriction;
 import com.solutiongraph.R;
@@ -60,6 +62,14 @@ public class RestrictionsViewFragment extends Fragment {
                 new RestrictAdapter(this.getContext(), restrictions, varblNumber));
         restrictionRecyclerView.setLayoutManager(
                 new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
+
+        Button nextButton = root.findViewById(R.id.next_button);
+        nextButton.setOnClickListener(view -> {
+            Bundle bundle = new Bundle();
+            bundle.putInt(RestrictionsViewFragment.VARIABLES_NUMBER, varblNumber);
+            Navigation.findNavController(view).navigate(R.id.next_action, bundle);
+        });
+
         return root;
     }
 

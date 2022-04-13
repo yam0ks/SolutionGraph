@@ -27,5 +27,34 @@
             android:name="variables_number"
             app:argType="integer"
             android:defaultValue="1" />
+        <action
+            android:id="@+id/next_action"
+            app:destination="@id/mainFuncViewFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/mainFuncViewFragment"
+        android:name="com.solutiongraph.steps.MainFuncViewFragment"
+        android:label="fragment_main_func_view"
+        tools:layout="@layout/fragment_main_func_view" >
+        <argument
+            android:name="variables_number"
+            app:argType="integer"
+            android:defaultValue="1" />
+        <action
+            android:id="@+id/action_mainFuncViewFragment_to_simplexResultFragment"
+            app:destination="@id/simplexResultFragment" />
+        <action
+            android:id="@+id/action_mainFuncViewFragment_to_graphResultFragment"
+            app:destination="@id/graphResultFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/simplexResultFragment"
+        android:name="com.solutiongraph.steps.SimplexResultFragment"
+        android:label="fragment_simplex_result"
+        tools:layout="@layout/fragment_simplex_result" />
+    <fragment
+        android:id="@+id/graphResultFragment"
+        android:name="com.solutiongraph.steps.GraphResultFragment"
+        android:label="fragment_graph_result"
+        tools:layout="@layout/fragment_graph_result" />
 </navigation>
