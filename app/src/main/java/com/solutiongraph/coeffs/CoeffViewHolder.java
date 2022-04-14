@@ -14,19 +14,23 @@ import com.solutiongraph.R;
 import com.utils.Constants;
 import com.utils.Parsers;
 
+import java.util.function.BiFunction;
+
 public class CoeffViewHolder extends RecyclerView.ViewHolder {
     private final TextView coeffDesc;
     private final EditText coeff;
     private int errorCount = 0;
+    private CoeffAdapter coeffAdapter;
 
     public CoeffViewHolder(
             @NonNull View itemView,
             double coeffValue,
             int index,
-            Function2<Integer, String, Boolean> onBlur)
+            CoeffAdapter coeffAdapter,
+            Function2<Integer, Double, Boolean> onBlur)
     {
         super(itemView);
-
+        this.coeffAdapter = coeffAdapter;
         this.coeffDesc = itemView.findViewById(R.id.coeff_description);
         this.coeff = itemView.findViewById(R.id.coeff);
         setIndex(index);
@@ -34,18 +38,19 @@ public class CoeffViewHolder extends RecyclerView.ViewHolder {
 
         coeff.setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus) return;
+            double newValue;
             String text = ((EditText)view).getText().toString();
             try {
-                Double.parseDouble(text);
+                newValue = Double.parseDouble(text);
                 view.setBackgroundColor(Color.argb(0, 1, 1,1));
-                if (errorCount > 0) errorCount--;
+                coeffAdapter.manageCoeffError(index, true);
             } catch (Exception e) {
                 view.setBackgroundColor(Color.parseColor(Constants.ERROR_COLOR));
-                errorCount++;
+                coeffAdapter.manageCoeffError(index, false);
                 return;
             }
-            if (errorCount > 0) return;
-            onBlur.apply(index, coeff.getText().toString());
+            //if (errorCount > 0) return;
+            onBlur.apply(index, newValue);
         });
     }
 

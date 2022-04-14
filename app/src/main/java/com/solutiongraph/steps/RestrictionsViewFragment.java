@@ -30,19 +30,9 @@ public class RestrictionsViewFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static RestrictionsViewFragment newInstance(int restNumber, int varblNumber) {
-        RestrictionsViewFragment fragment = new RestrictionsViewFragment();
-        Bundle args = new Bundle();
-        args.putInt(RESTRICTIONS_NUMBER, restNumber);
-        args.putInt(VARIABLES_NUMBER, varblNumber);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getActivity() == null) return;
         viewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
         if (getArguments() != null) {

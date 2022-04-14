@@ -2,6 +2,7 @@ package com.solutiongraph.restrictions;
 
 import android.graphics.Color;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -27,7 +28,8 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     private final ScrollView scrollView;
     private final RecyclerView coeffsView;
     private boolean toggle = false;
-    private int errorCount = 0;
+    private boolean resultIsCorrect = true;
+    private boolean freeCoeffIsCorrect = true;
 
     public RestrictViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -52,14 +54,23 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
             try {
                 Double.parseDouble(text);
                 view.setBackgroundColor(Color.argb(0, 1, 1,1));
-                if (errorCount > 0) errorCount--;
             } catch (Exception e) {
+                if (view.getId() == R.id.free_coeff) freeCoeffIsCorrect = false;
+                if (view.getId() == R.id.result) resultIsCorrect = false;
                 view.setBackgroundColor(Color.parseColor(Constants.ERROR_COLOR));
-                errorCount++;
+                header.setBackgroundColor(Color.parseColor(Constants.ERROR_COLOR));
                 return;
             }
+            if (view.getId() == R.id.free_coeff) freeCoeffIsCorrect = true;
+            if (view.getId() == R.id.result) resultIsCorrect = true;
             updateHeader();
         };
+
+        RadioGroup.OnCheckedChangeListener checkedChangeListener = (view, checkedId) -> {
+            updateHeader();
+        };
+
+        signView.setOnCheckedChangeListener(checkedChangeListener);
         resultView.setOnFocusChangeListener(focusChangeListener);
         freeCoeffView.setOnFocusChangeListener(focusChangeListener);
     }
@@ -71,12 +82,26 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void updateHeader() {
-        if (errorCount != 0) return;
+        if (!freeCoeffIsCorrect || !resultIsCorrect) return;
+        header.setBackgroundColor(Color.argb(0, 1, 1,1));
+        Constants.Sign sign;
         double[] coeffs = ((CoeffAdapter)coeffsView.getAdapter()).getCoeffs();
         double freeCoeff = Double.parseDouble(freeCoeffView.getText().toString());
         double result = Double.parseDouble(resultView.getText().toString());
-
-        Restriction restriction = new Restriction(coeffs, freeCoeff, Constants.Sign.EQUALS, result);
+        switch (signView.getCheckedRadioButtonId()) {
+            case R.id.radio_equal:
+                sign = Constants.Sign.EQUALS;
+                break;
+            case R.id.radio_less:
+                sign = Constants.Sign.LESS;
+                break;
+            case R.id.radio_more:
+                sign = Constants.Sign.MORE;
+                break;
+            default:
+                sign = Constants.Sign.EQUALS;
+        }
+        Restriction restriction = new Restriction(coeffs, freeCoeff, sign, result);
         setHeaderText(restriction);
     }
 

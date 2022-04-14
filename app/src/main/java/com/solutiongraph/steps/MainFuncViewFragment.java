@@ -41,6 +41,7 @@ public class MainFuncViewFragment extends Fragment {
         viewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
         if (getArguments() != null) {
             varblNumber = getArguments().getInt(VARIABLES_NUMBER);
+            viewModel.createMainFuncData(varblNumber);
         }
     }
 

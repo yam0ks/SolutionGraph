@@ -34,12 +34,10 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
     public void onBindViewHolder(@NonNull RestrictViewHolder holder, int position) {
         Restriction restrict = this.restrictions[position];
         holder.setHeaderText(restrict);
-
         double[] coeffs = restrict.getDoubleCoeffs();
         double freeCoeff = restrict.getFreeCoeffAsDouble();
         double result = restrict.getResultAsDouble();
         Constants.Sign sign = restrict.getSign();
-
         holder.setCoeffs(coeffs);
         holder.setResult(result);
         holder.setFreeCoeff(freeCoeff);

@@ -22,9 +22,9 @@ public class CounterViewFragment extends Fragment {
     public static final String MAX_RESTRICTIONS_NUMBER = "max_rest";
     public static final String MAX_VARIABLES_NUMBER = "max_var";
 
-    private String[] restArray;
-    public void setMaxRest(int newValue) {
-        restArray = createStringArray(newValue);
+    private String[] restrictArray;
+    public void setMaxRestrict(int newValue) {
+        restrictArray = createStringArray(newValue);
     }
 
     private String[] numbArray;
@@ -43,23 +43,14 @@ public class CounterViewFragment extends Fragment {
     private Spinner restSpinner;
     private Spinner numbSpinner;
 
-    public static CounterViewFragment newInstance(int maxRest, int maxVar) {
-        CounterViewFragment fragment = new CounterViewFragment();
-        Bundle args = new Bundle();
-        args.putInt(MAX_RESTRICTIONS_NUMBER, maxRest);
-        args.putInt(MAX_VARIABLES_NUMBER, maxVar);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            setMaxRest(getArguments().getInt(MAX_RESTRICTIONS_NUMBER));
+            setMaxRestrict(getArguments().getInt(MAX_RESTRICTIONS_NUMBER));
             setMaxVar(getArguments().getInt(MAX_VARIABLES_NUMBER));
         } else {
-            setMaxRest(Constants.MAX_RESTRICTIONS_NUMBER);
+            setMaxRestrict(Constants.MAX_RESTRICTIONS_NUMBER);
             setMaxVar(Constants.MAX_VARIABLES_NUMBER);
         }
     }
@@ -70,7 +61,7 @@ public class CounterViewFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_counter_view, container, false);
 
         restSpinner = root.findViewById(R.id.restrictions_count_spin);
-        SetSpinnerRange(root, restSpinner, restArray);
+        SetSpinnerRange(root, restSpinner, restrictArray);
         numbSpinner = root.findViewById(R.id.variables_count_spin);
         SetSpinnerRange(root, numbSpinner, numbArray);
 
