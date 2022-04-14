@@ -30,19 +30,9 @@ public class RestrictionsViewFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static RestrictionsViewFragment newInstance(int restNumber, int varblNumber) {
-        RestrictionsViewFragment fragment = new RestrictionsViewFragment();
-        Bundle args = new Bundle();
-        args.putInt(RESTRICTIONS_NUMBER, restNumber);
-        args.putInt(VARIABLES_NUMBER, varblNumber);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getActivity() == null) return;
         viewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
         if (getArguments() != null) {
@@ -57,9 +47,9 @@ public class RestrictionsViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_restrictions_view, container, false);
         Restriction[] restrictions = viewModel.restricts.getValue();
-        RecyclerView restrictionRecyclerView =root.findViewById(R.id.restriction_recycler_view);
+        RecyclerView restrictionRecyclerView = root.findViewById(R.id.restriction_recycler_view);
         restrictionRecyclerView.setAdapter(
-                new RestrictAdapter(this.getContext(), restrictions, varblNumber));
+                new RestrictAdapter(this.getContext(), restrictions));
         restrictionRecyclerView.setLayoutManager(
                 new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
 

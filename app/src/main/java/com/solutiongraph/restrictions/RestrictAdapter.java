@@ -15,32 +15,30 @@ import com.utils.Constants;
 public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
     private final LayoutInflater layoutInflater;
     private final Restriction[] restrictions;
-    private final int numbersCount;
 
-    public RestrictAdapter(Context context, Restriction[] data, int numbersCount) {
+    public RestrictAdapter(Context context, Restriction[] data) {
         this.restrictions = data;
         this.layoutInflater = LayoutInflater.from(context);
-        this.numbersCount = numbersCount;
     }
 
     @NonNull
     @Override
     public RestrictViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View restrictViewItem = layoutInflater.inflate(R.layout.restrict_item, parent, false);
+        View restrictViewItem =
+                layoutInflater.inflate(R.layout.restrict_item, parent, false);
 
-        return new RestrictViewHolder(restrictViewItem, numbersCount);
+        return new RestrictViewHolder(restrictViewItem);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RestrictViewHolder holder, int position) {
         Restriction restrict = this.restrictions[position];
         holder.setHeaderText(restrict);
-
         double[] coeffs = restrict.getDoubleCoeffs();
         double freeCoeff = restrict.getFreeCoeffAsDouble();
         double result = restrict.getResultAsDouble();
         Constants.Sign sign = restrict.getSign();
-
+        holder.setCoeffs(coeffs);
         holder.setResult(result);
         holder.setFreeCoeff(freeCoeff);
         switch (sign){
