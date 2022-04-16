@@ -10,6 +10,7 @@ import android.os.Build;
 
 import com.model.Fraction;
 import com.model.graphdata.GraphOutputData;
+import com.model.simplexdata.Section;
 import com.model.simplexdata.SimplexOutputData;
 import com.model.Model;
 import com.model.simplexdata.Restriction;
@@ -17,6 +18,7 @@ import java.util.List;
 import com.model.graphdata.GraphObjective;
 import com.model.graphdata.GraphRestriction;
 import com.model.simplexdata.Objective;
+import com.usecase.SimplexParser;
 import com.utils.Constants;
 import java.util.ArrayList;
 
@@ -30,13 +32,21 @@ public class SharedViewModel extends ViewModel {
     private final MutableLiveData<Restriction[]> restrictsMutable = new MutableLiveData<>();
     public LiveData<Restriction[]> restricts = restrictsMutable;
 
-    private final MutableLiveData<Objective> mainFunctionMutable = new MutableLiveData<>();
-    public LiveData<Objective> mainFunction = mainFunctionMutable;
+    private final MutableLiveData<Objective> objectiveMutable = new MutableLiveData<>();
+    public LiveData<Objective> objective = objectiveMutable;
+
+    private final MutableLiveData<Section[]> sectionsMutable = new MutableLiveData<>();
+    public LiveData<Section[]> sections = sectionsMutable;
+
+    private final MutableLiveData<Boolean> isLoadingMutable = new MutableLiveData<>();
+    public LiveData<Boolean> isLoading = isLoadingMutable;
 
     private Model model;
+    private SimplexParser simplexParser;
 
     public SharedViewModel(){
         this.model = new Model();
+        this.simplexParser = new SimplexParser();
     }
 
     public Object convertToGraphRestriction(Restriction[] restrictions){
@@ -101,17 +111,17 @@ public class SharedViewModel extends ViewModel {
     }
 
     public void changeMainFuncCoeff(int coeffIndex, double newValue) {
-        Objective mainFunc = mainFunctionMutable.getValue();
+        Objective mainFunc = objectiveMutable.getValue();
         Fraction[] fracsNormal = mainFunc.getCoeffs();
         fracsNormal[coeffIndex] = new Fraction(newValue);
         mainFunc.setCoeffs(fracsNormal);
-        mainFunctionMutable.setValue(mainFunc);
+        objectiveMutable.setValue(mainFunc);
     }
 
     public void changeMainFuncGoalType(Constants.GoalType goal) {
-        Objective mainFunc = mainFunctionMutable.getValue();
+        Objective mainFunc = objectiveMutable.getValue();
         mainFunc.setGoalType(goal);
-        mainFunctionMutable.setValue(mainFunc);
+        objectiveMutable.setValue(mainFunc);
     }
 
     public void createRestrictionData(int restrictionCount, int variableCount) {
@@ -132,17 +142,20 @@ public class SharedViewModel extends ViewModel {
             sampleCoeffs[i] = 1;
         }
         Objective mainFunc = new Objective(sampleCoeffs, Constants.GoalType.MAXIMIZE);
-        mainFunctionMutable.setValue(mainFunc);
+        objectiveMutable.setValue(mainFunc);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void getSolution(taskType task) {
+        isLoadingMutable.setValue(true);
         Restriction[] restrictionsNormal = restrictsMutable.getValue();
-        Objective mainFunctionNormal = mainFunctionMutable.getValue();
+        Objective mainFunctionNormal = objectiveMutable.getValue();
         switch (task) {
             case SIMPLEX:
-                SimplexOutputData simplexOutputData = new SimplexOutputData();
-                simplexOutputData = model.getSimplexSolution(restrictionsNormal, mainFunctionNormal);
+                SimplexOutputData simplexOutputData =
+                        model.getSimplexSolution(restrictionsNormal, mainFunctionNormal);
+                simplexParser.setData(simplexOutputData, true);
+                sectionsMutable.setValue(simplexParser.getSections());
             case GRAPHICAL:
                 Object restrictionConversionResult;
                 Object objectiveConversionResult;
@@ -155,7 +168,7 @@ public class SharedViewModel extends ViewModel {
                 }
 
         }
-
+        isLoadingMutable.setValue(false);
     }
 
 }

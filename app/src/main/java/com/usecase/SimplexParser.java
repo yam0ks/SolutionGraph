@@ -19,7 +19,7 @@ public class SimplexParser {
         this.fractionsLikeDouble = fractionsLikeDouble;
     }
 
-    public Section[] formData(){
+    public Section[] getSections(){
         currentSection = 0;
         sections = new Section[2 + outputData.getNormalizeData().size() + outputData.getSolutionData().size() * 2];
         if(outputData.getAnswers() == null){
