@@ -46,13 +46,15 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         this.parentAdapter = parentAdapter;
         this.index = index;
 
+        this.freeCoeffView.setNextFocusDownId(R.id.result);
+        this.resultView.setNextFocusDownId(R.id.coeff_recyclerview);
+
         header.setOnClickListener(view -> {
             scrollView.setVisibility(toggle ? View.GONE : View.VISIBLE);
             toggle = !toggle;
             view.findViewById(R.id.expression_expand_arrow).setRotation(toggle ? 180 : 0);
         });
 
-        //TODO: Отслеживание изменения фокуса
         View.OnFocusChangeListener focusChangeListener = (view, hasFocus) -> {
             if (hasFocus) return;
             String text = ((EditText)view).getText().toString();
