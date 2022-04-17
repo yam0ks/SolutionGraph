@@ -92,9 +92,7 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
             this.parentAdapter.hasErrors[index] = true;
             return;
         }
-        else {
-            this.parentAdapter.hasErrors[index] = false;
-        }
+        this.parentAdapter.hasErrors[index] = false;
         header.setBackgroundColor(Color.argb(0, 1, 1,1));
         Constants.Sign sign = getSign();
         double[] coeffs = ((CoeffAdapter)coeffsView.getAdapter()).getCoeffs();

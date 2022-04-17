@@ -13,6 +13,8 @@ import com.model.simplexdata.Restriction;
 import com.solutiongraph.R;
 import com.utils.Constants;
 
+import java.util.Arrays;
+
 public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
     private final LayoutInflater layoutInflater;
     private Restriction[] restrictions;
@@ -60,17 +62,11 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
 
     private void initErrorStatus() {
         this.hasErrors = new boolean[restrictions.length];
-        for (int i = 0; i < restrictions.length; i++) {
-            hasErrors[i] = false;
-        }
+        Arrays.fill(hasErrors , false);
     }
 
     public boolean restrictsHaveErrors() {
-        for (int i = 0; i < hasErrors.length; i++) {
-            if (hasErrors[i]) {
-                return true;
-            }
-        }
+        for (boolean item : hasErrors) if (item) return true;
         return false;
     }
 
