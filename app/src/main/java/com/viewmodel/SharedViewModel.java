@@ -88,6 +88,10 @@ public class SharedViewModel extends ViewModel {
         restrictsMutable.setValue(restrictions);
     }
 
+    public void saveMainFunc(Objective mainFunc) {
+        objectiveMutable.setValue(mainFunc);
+    }
+
     public void changeRestrictCoeffs(int restrictIndex, int coeffIndex, double newValue) {
         Restriction[] restrictsNormal = restrictsMutable.getValue();
         Fraction[] fracsNormal = restrictsNormal[restrictIndex].getCoeffs();
@@ -158,13 +162,10 @@ public class SharedViewModel extends ViewModel {
             case SIMPLEX:
                 SimplexOutputData simplexOutputData =
                         model.getSimplexSolution(restrictionsNormal, mainFunctionNormal);
-                simplexParser.setData(simplexOutputData, true);
-                sectionsMutable.setValue(simplexParser.getSections());
+                beautifyData(simplexOutputData);
             case GRAPHICAL:
-                Object restrictionConversionResult;
-                Object objectiveConversionResult;
-                restrictionConversionResult = convertToGraphRestriction(restrictionsNormal);
-                objectiveConversionResult = convertToGraphObjective(mainFunctionNormal);
+                Object restrictionConversionResult = convertToGraphRestriction(restrictionsNormal);
+                Object objectiveConversionResult = convertToGraphObjective(mainFunctionNormal);
                 if (!(restrictionConversionResult instanceof Boolean) && !(objectiveConversionResult instanceof Boolean)) {
                     List<GraphRestriction> restrictionsGraph = (List<GraphRestriction>)restrictionConversionResult;
                     GraphObjective mainFunctionGraph = (GraphObjective)objectiveConversionResult;
@@ -173,6 +174,11 @@ public class SharedViewModel extends ViewModel {
 
         }
         isLoadingMutable.setValue(false);
+    }
+
+    private void beautifyData(SimplexOutputData simplexData) {
+        simplexParser.setData(simplexData, true);
+        sectionsMutable.setValue(simplexParser.getSections());
     }
 
 }

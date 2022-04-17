@@ -12,7 +12,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 
+import com.model.simplexdata.Objective;
+import com.model.simplexdata.Restriction;
 import com.solutiongraph.R;
+import com.solutiongraph.restrictions.RestrictAdapter;
 import com.viewmodel.SharedViewModel;
 
 public class MainFuncViewFragment extends Fragment {
@@ -49,7 +52,6 @@ public class MainFuncViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main_func_view, container, false);
-
         if (varblNumber <= 2) {
             root.findViewById(R.id.graphCheckBox).setVisibility(View.VISIBLE);
         } else {
