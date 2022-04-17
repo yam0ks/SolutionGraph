@@ -172,6 +172,6 @@ public class Fraction {
     }
 
     public double getDouble(){
-        return (float)numerator/(float)denominator;
+        return (double)numerator/(double)denominator;
     }
 }

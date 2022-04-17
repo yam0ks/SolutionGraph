@@ -13,4 +13,6 @@
     <color name="light_blue_600">#FF039BE5</color>
     <color name="gray_400">#EAEAEA</color>
     <color name="gray_600">#FF757575</color>
+    <color name="gray" >#808a91</color>
+    <color name="error_red" >#ffa1a1</color>
 </resources>

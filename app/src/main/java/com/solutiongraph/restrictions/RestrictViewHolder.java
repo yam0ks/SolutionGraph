@@ -1,8 +1,9 @@
 package com.solutiongraph.restrictions;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -10,6 +11,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +20,9 @@ import com.solutiongraph.coeffs.CoeffAdapter;
 import com.solutiongraph.R;
 import com.utils.Constants;
 import com.utils.Parsers;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 public class RestrictViewHolder extends RecyclerView.ViewHolder {
     private final View root;
@@ -32,7 +37,7 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     private boolean resultIsCorrect = true;
     private boolean freeCoeffIsCorrect = true;
     private boolean[] coeffErrorMas;
-    private int index;
+    private final int index;
 
     public RestrictViewHolder(@NonNull View itemView, RestrictAdapter parentAdapter, int index) {
         super(itemView);
@@ -46,32 +51,34 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         this.parentAdapter = parentAdapter;
         this.index = index;
 
+        this.freeCoeffView.setNextFocusDownId(R.id.result);
+        this.resultView.setNextFocusDownId(R.id.coeff_recyclerview);
+
         header.setOnClickListener(view -> {
             scrollView.setVisibility(toggle ? View.GONE : View.VISIBLE);
             toggle = !toggle;
             view.findViewById(R.id.expression_expand_arrow).setRotation(toggle ? 180 : 0);
         });
 
-        //TODO: Отслеживание изменения фокуса
         View.OnFocusChangeListener focusChangeListener = (view, hasFocus) -> {
             if (hasFocus) return;
             String text = ((EditText)view).getText().toString();
+            Drawable drawable;
             try {
                 Double.parseDouble(text);
-                view.setBackgroundColor(Color.argb(0, 1, 1,1));
+                drawable = ContextCompat.getDrawable(view.getContext(), R.drawable.text_line);
                 if (view.getId() == R.id.free_coeff) freeCoeffIsCorrect = true;
                 if (view.getId() == R.id.result) resultIsCorrect = true;
             } catch (Exception e) {
                 if (view.getId() == R.id.free_coeff) freeCoeffIsCorrect = false;
                 if (view.getId() == R.id.result) resultIsCorrect = false;
-                view.setBackgroundColor(Color.parseColor(Constants.ERROR_COLOR));
+                drawable = ContextCompat.getDrawable(view.getContext(), R.drawable.error_text_line);
             }
+            view.setBackground(drawable);
             updateHeader();
         };
 
-        RadioGroup.OnCheckedChangeListener checkedChangeListener = (view, checkedId) -> {
-            updateHeader();
-        };
+        RadioGroup.OnCheckedChangeListener checkedChangeListener = (view, checkedId) -> updateHeader();
 
         signView.setOnCheckedChangeListener(checkedChangeListener);
         resultView.setOnFocusChangeListener(focusChangeListener);
@@ -87,11 +94,13 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     public void updateHeader() {
         if (!freeCoeffIsCorrect || !resultIsCorrect || checkForCoeffErrors()) {
             header.setBackgroundColor(Color.parseColor(Constants.ERROR_COLOR));
+            this.parentAdapter.hasErrors[index] = true;
             return;
         }
+        this.parentAdapter.hasErrors[index] = false;
         header.setBackgroundColor(Color.argb(0, 1, 1,1));
         Constants.Sign sign = getSign();
-        double[] coeffs = ((CoeffAdapter)coeffsView.getAdapter()).getCoeffs();
+        double[] coeffs = ((CoeffAdapter) Objects.requireNonNull(coeffsView.getAdapter())).getCoeffs();
         double freeCoeff = Double.parseDouble(freeCoeffView.getText().toString());
         double result = Double.parseDouble(resultView.getText().toString());
         Restriction restriction = new Restriction(coeffs, freeCoeff, sign, result);
@@ -100,6 +109,8 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setCoeffs(double[] coeffs) {
+        this.coeffErrorMas = new boolean[coeffs.length];
+        Arrays.fill(coeffErrorMas, true);
         coeffsView.setAdapter(
                 new CoeffAdapter(root.getContext(), coeffs, this));
         coeffsView.setLayoutManager(
@@ -119,13 +130,6 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         this.freeCoeffView.setText(Parsers.stringFromNumber(newValue));
     }
 
-    public void initCoeffErrorMas(int length) {
-        coeffErrorMas = new boolean[length];
-        for (int i = 0; i < coeffErrorMas.length; i++) {
-            coeffErrorMas[i] = true;
-        }
-    }
-
     public boolean checkForCoeffErrors() {
         for (boolean item : coeffErrorMas) {
             if (!item) return true;
@@ -142,11 +146,12 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     public Restriction getRestrictionData() {
         double freeCoeff = Double.parseDouble(this.freeCoeffView.getText().toString());
         double result = Double.parseDouble(this.resultView.getText().toString());
-        double [] coeffs = ((CoeffAdapter)this.coeffsView.getAdapter()).getCoeffs();
+        double [] coeffs = ((CoeffAdapter) Objects.requireNonNull(this.coeffsView.getAdapter())).getCoeffs();
         Constants.Sign sign = getSign();
         return new Restriction(coeffs, freeCoeff, sign, result);
     }
 
+    @SuppressLint("NonConstantResourceId")
     public Constants.Sign getSign() {
         switch (signView.getCheckedRadioButtonId()) {
             case R.id.radio_equal:
