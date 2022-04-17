@@ -49,4 +49,6 @@ public class GraphFunction{ //Класс для представления фу�
     public Type getType(){
         return type;
     }
+
+    public void setType(Type inputType) {type = inputType;}
 }

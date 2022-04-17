@@ -76,7 +76,9 @@ public class GraphSolver { //Ядро графического метода
         makeFinalBounds(expressions);
         data.setBounds(rightBound, leftBound, topBound, bottomBound);
 
+        hideNonVisibleGraphs(expressions);
         data.setExpressions(expressions);
+
         data.setError(error);
 
         return data;
@@ -231,6 +233,28 @@ public class GraphSolver { //Ядро графического метода
                 return false;
         }
         return true;
+    }
+
+    private List<GraphFunction> hideNonVisibleGraphs(List<GraphFunction> expressions){
+        List<GraphFunction> result = new ArrayList<>();
+
+        for(GraphFunction function : expressions){
+            if(function.getType() != GraphFunction.Type.DEFAULT)
+                break;
+
+            boolean visible = false;
+            for(Entry point : function.getPoints()){
+                float x = point.getX(); float y = point.getY();
+                if(x > leftBound && x < rightBound &&
+                        y > bottomBound && y < topBound) {
+                    visible = true;
+                    break;
+                }
+            }
+            if(!visible)
+                function.setType(GraphFunction.Type.ARTIFICIAL);
+        }
+        return result;
     }
 
     private void makeExpressions(List<GraphFunction> expressions){ //Создание графиков при
