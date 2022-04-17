@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
     android:background="@drawable/layout_lines"
     tools:context=".restrictions.RestrictViewHolder" >
 
@@ -26,9 +25,11 @@
                 android:id="@+id/expression_title"
                 android:layout_width="1.8in"
                 android:layout_height="48dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="10dp"
                 android:layout_marginEnd="0dp"
-                android:layout_toStartOf="@+id/expression_expand_arrow"
                 android:layout_marginRight="20dp"
+                android:layout_toStartOf="@+id/expression_expand_arrow"
                 android:ellipsize="middle"
                 android:gravity="start|center_vertical"
                 android:singleLine="true"
@@ -132,7 +133,7 @@
 
                     <EditText
                         android:id="@+id/free_coeff"
-                        android:layout_width="0.9in"
+                        android:layout_width="0.75in"
                         android:maxLength="7"
                         android:inputType="numberDecimal|numberSigned"
                         android:autofillHints="numberDecimal|numberSigned"
@@ -163,7 +164,7 @@
 
                     <EditText
                         android:id="@+id/result"
-                        android:layout_width="0.9in"
+                        android:layout_width="0.75in"
                         android:layout_height="48dp"
                         android:maxLength="7"
                         android:inputType="numberDecimal|numberSigned"
