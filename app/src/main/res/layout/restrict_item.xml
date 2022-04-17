@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
+    android:background="@drawable/layout_lines"
     tools:context=".restrictions.RestrictViewHolder" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="2dp"
-        android:background="@drawable/layout_lines">
+        android:paddingBottom="2dp">
 
         <RelativeLayout
             android:id="@+id/restrict_header"
@@ -25,11 +26,15 @@
                 android:id="@+id/expression_title"
                 android:layout_width="1.8in"
                 android:layout_height="48dp"
+                android:layout_marginEnd="0dp"
+                android:layout_toStartOf="@+id/expression_expand_arrow"
+                android:layout_marginRight="20dp"
                 android:ellipsize="middle"
-                android:gravity="left|center_vertical"
+                android:gravity="start|center_vertical"
                 android:singleLine="true"
                 android:textColor="@color/main_blue"
                 android:textSize="18sp"
+                tools:ignore="InOrMmUsage"
                 tools:text="x + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 > 300" />
 
             <TextView
@@ -70,7 +75,7 @@
                         android:id="@+id/textView"
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
-                        android:gravity="left|center_vertical"
+                        android:gravity="start|center_vertical"
                         android:text="Выберите знак\nограничения: "
                         android:textColor="@color/black"
                         app:layout_constraintStart_toStartOf="parent"
@@ -118,7 +123,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
-                        android:gravity="left|center_vertical"
+                        android:gravity="start|center_vertical"
                         android:text="Введите свободный\nкоэффициент: "
                         android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -127,14 +132,18 @@
 
                     <EditText
                         android:id="@+id/free_coeff"
-                        android:layout_width="1in"
+                        android:layout_width="0.9in"
+                        android:maxLength="7"
                         android:inputType="numberDecimal|numberSigned"
                         android:autofillHints="numberDecimal|numberSigned"
                         android:overScrollMode="ifContentScrolls"
                         android:layout_height="48dp"
+                        android:background="@drawable/text_line"
+                        android:hint="@string/coeff_input_hint"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:ignore="InOrMmUsage" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -145,7 +154,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
-                        android:gravity="left|center_vertical"
+                        android:gravity="start|center_vertical"
                         android:text="Введите число\nпосле знака: "
                         android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -154,14 +163,18 @@
 
                     <EditText
                         android:id="@+id/result"
-                        android:layout_width="1in"
+                        android:layout_width="0.9in"
                         android:layout_height="48dp"
+                        android:maxLength="7"
                         android:inputType="numberDecimal|numberSigned"
                         android:autofillHints="numberDecimal|numberSigned"
                         android:overScrollMode="ifContentScrolls"
+                        android:background="@drawable/text_line"
+                        android:hint="@string/result_input_hint"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:ignore="InOrMmUsage" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -170,4 +183,4 @@
         </ScrollView>
 
     </LinearLayout>
-</FrameLayout>
+</RelativeLayout>

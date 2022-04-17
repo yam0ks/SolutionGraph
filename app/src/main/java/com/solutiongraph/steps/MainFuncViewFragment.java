@@ -49,8 +49,9 @@ public class MainFuncViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main_func_view, container, false);
+        boolean isGraphAllowed = varblNumber <= 2;
 
-        if (varblNumber <= 2) {
+        if (isGraphAllowed) {
             root.findViewById(R.id.graphCheckBox).setVisibility(View.VISIBLE);
         } else {
             root.findViewById(R.id.graphCheckBox).setVisibility(View.GONE);
@@ -59,7 +60,7 @@ public class MainFuncViewFragment extends Fragment {
         Button nextButton = root.findViewById(R.id.next_button);
         nextButton.setOnClickListener(view -> {
             CheckBox graphOption = root.findViewById(R.id.graphCheckBox);
-            int nextStep = (varblNumber < 2 && graphOption.isChecked())
+            int nextStep = (isGraphAllowed && graphOption.isChecked())
                     ? R.id.action_mainFuncViewFragment_to_graphResultFragment
                     : R.id.action_mainFuncViewFragment_to_simplexResultFragment;
             Navigation.findNavController(view).navigate(nextStep);
