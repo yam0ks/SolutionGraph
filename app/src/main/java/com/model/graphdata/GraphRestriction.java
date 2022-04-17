@@ -18,6 +18,20 @@ public class GraphRestriction extends BaseGraphExpression { //Класс для 
         return sign;
     }
 
+    public boolean checkConditionFulfillment(float x, float y){
+        float lhs = xCoeff * x + yCoeff * y;
+
+        switch(sign){
+            case LESS:
+                return lhs <= resultCoeff;
+            case MORE:
+                return lhs >= resultCoeff;
+            default: break;
+        }
+
+        return false;
+    }
+
     @Override
     public String getExpressionAsString() {
         String result = "";
