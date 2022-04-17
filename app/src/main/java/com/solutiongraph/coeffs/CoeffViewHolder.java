@@ -19,7 +19,6 @@ import java.util.function.BiFunction;
 public class CoeffViewHolder extends RecyclerView.ViewHolder {
     private final TextView coeffDesc;
     private final EditText coeff;
-    private int errorCount = 0;
     private CoeffAdapter coeffAdapter;
 
     public CoeffViewHolder(
@@ -43,14 +42,13 @@ public class CoeffViewHolder extends RecyclerView.ViewHolder {
             try {
                 newValue = Double.parseDouble(text);
                 view.setBackgroundColor(Color.argb(0, 1, 1,1));
-                coeffAdapter.manageCoeffError(index, true);
+                coeffAdapter.parentHolder.manageCoeffError(index, true);
+                onBlur.apply(index, newValue);
             } catch (Exception e) {
                 view.setBackgroundColor(Color.parseColor(Constants.ERROR_COLOR));
-                coeffAdapter.manageCoeffError(index, false);
-                return;
+                coeffAdapter.parentHolder.manageCoeffError(index, false);
             }
-            //if (errorCount > 0) return;
-            onBlur.apply(index, newValue);
+            coeffAdapter.parentHolder.updateHeader();
         });
     }
 
