@@ -2,6 +2,7 @@ package com.solutiongraph.restrictions;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.view.View;
@@ -91,20 +92,35 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         textView.setText(Html.fromHtml(text));
     }
 
+    private void setHeaderColor(int foreground, int background) {
+        int contextForeground = foreground;
+        int contextBackground = background;
+        try {
+            contextForeground = root.getResources().getColor(foreground);
+        } catch (Exception e) {};
+        try {
+            contextBackground = root.getResources().getColor(background);
+        } catch (Exception e) {};
+        ((TextView)header.findViewById(R.id.expression_title)).setTextColor(contextForeground);
+        ((TextView)header.findViewById(R.id.expression_expand_arrow)).setTextColor(contextForeground);
+        header.setBackgroundColor(contextBackground);
+    }
+
     public void updateHeader() {
         if (!freeCoeffIsCorrect || !resultIsCorrect || checkForCoeffErrors()) {
-            header.setBackgroundColor(Color.parseColor(Constants.ERROR_COLOR));
+            setHeaderColor(Color.RED, R.color.error_red);
             this.parentAdapter.hasErrors[index] = true;
             return;
         }
         this.parentAdapter.hasErrors[index] = false;
-        header.setBackgroundColor(Color.argb(0, 1, 1,1));
         Constants.Sign sign = getSign();
         double[] coeffs = ((CoeffAdapter) Objects.requireNonNull(coeffsView.getAdapter())).getCoeffs();
         double freeCoeff = Double.parseDouble(freeCoeffView.getText().toString());
         double result = Double.parseDouble(resultView.getText().toString());
         Restriction restriction = new Restriction(coeffs, freeCoeff, sign, result);
         this.parentAdapter.setRestrictionByIndex(this.index, restriction);
+
+        setHeaderColor(R.color.main_blue, R.color.white);
         setHeaderText(restriction);
     }
 
