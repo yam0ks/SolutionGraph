@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/text_lines"
+            android:background="@drawable/header_text_line"
             android:paddingBottom="5dp"
             android:text="@string/coeff_header"
             android:textColor="@color/black"

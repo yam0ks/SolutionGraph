@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/coeff_description"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:gravity="start|center_vertical"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -18,14 +18,17 @@
 
     <EditText
         android:id="@+id/coeff"
-        android:layout_width="1in"
-        android:layout_height="wrap_content"
+        android:layout_width="0.7in"
+        android:layout_height="48dp"
+        android:maxLength="7"
         android:inputType="numberDecimal|numberSigned"
         android:autofillHints="numberDecimal|numberSigned"
         android:overScrollMode="ifContentScrolls"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/text_line"
+        android:hint="@string/coeff_input_hint"
         tools:ignore="InOrMmUsage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
