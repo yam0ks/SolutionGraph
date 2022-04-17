@@ -17,10 +17,12 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
     private final LayoutInflater layoutInflater;
     private Restriction[] restrictions;
     public int index = 0;
+    public boolean[] hasErrors;
 
     public RestrictAdapter(Context context, Restriction[] data) {
         this.restrictions = data;
         this.layoutInflater = LayoutInflater.from(context);
+        initErrorStatus();
     }
 
     @NonNull
@@ -54,6 +56,22 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
                 holder.signCheck(R.id.radio_more);
                 break;
         }
+    }
+
+    private void initErrorStatus() {
+        this.hasErrors = new boolean[restrictions.length];
+        for (int i = 0; i < restrictions.length; i++) {
+            hasErrors[i] = false;
+        }
+    }
+
+    public boolean restrictsHaveErrors() {
+        for (int i = 0; i < hasErrors.length; i++) {
+            if (hasErrors[i]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Restriction[] getRestrictions() {

@@ -89,7 +89,11 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     public void updateHeader() {
         if (!freeCoeffIsCorrect || !resultIsCorrect || checkForCoeffErrors()) {
             header.setBackgroundColor(Color.parseColor(Constants.ERROR_COLOR));
+            this.parentAdapter.hasErrors[index] = true;
             return;
+        }
+        else {
+            this.parentAdapter.hasErrors[index] = false;
         }
         header.setBackgroundColor(Color.argb(0, 1, 1,1));
         Constants.Sign sign = getSign();
