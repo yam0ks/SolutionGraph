@@ -25,9 +25,9 @@
                 android:id="@+id/expression_title"
                 android:layout_width="1.8in"
                 android:layout_height="48dp"
+                android:ellipsize="middle"
                 android:gravity="left|center_vertical"
                 android:singleLine="true"
-                android:ellipsize="middle"
                 android:textColor="@color/main_blue"
                 android:textSize="18sp"
                 tools:text="x + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 > 300" />

@@ -8,13 +8,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.model.Fraction;
 import com.model.simplexdata.Restriction;
 import com.solutiongraph.R;
 import com.utils.Constants;
 
 public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
     private final LayoutInflater layoutInflater;
-    private final Restriction[] restrictions;
+    private Restriction[] restrictions;
+    public int index = 0;
 
     public RestrictAdapter(Context context, Restriction[] data) {
         this.restrictions = data;
@@ -27,7 +29,7 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
         View restrictViewItem =
                 layoutInflater.inflate(R.layout.restrict_item, parent, false);
 
-        return new RestrictViewHolder(restrictViewItem);
+        return new RestrictViewHolder(restrictViewItem, this, index++);
     }
 
     @Override
@@ -53,6 +55,39 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
                 break;
         }
     }
+
+    public Restriction[] getRestrictions() {
+        return restrictions;
+    }
+
+    public Restriction getRestrictionByIndex(int index) {
+        return restrictions[index];
+    }
+
+    public void setRestrictions(Restriction[] restrictions) {
+        this.restrictions = restrictions;
+    }
+
+    public void setRestrictionCoeffByIndex(int restrictIndex, int coeffIndex, double newCoeff) {
+        this.restrictions[restrictIndex].setCoeff(coeffIndex, newCoeff);
+    }
+
+    public void setSign(int restrictIndex, Constants.Sign sign) {
+        this.restrictions[restrictIndex].setSign(sign);
+    }
+
+    public void setFreeCoeff(int restrictIndex, double newValue) {
+        this.restrictions[restrictIndex].setFreeCoeff(new Fraction(newValue));
+    }
+
+    public void setResult(int restrictIndex, double newValue) {
+        this.restrictions[restrictIndex].setResult(new Fraction(newValue));
+    }
+
+    public void setRestrictionByIndex(int index, Restriction newValue) {
+        this.restrictions[index] = newValue;
+    }
+
 
     @Override
     public int getItemCount() {

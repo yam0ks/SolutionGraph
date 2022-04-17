@@ -22,6 +22,7 @@ import com.utils.Parsers;
 public class RestrictViewHolder extends RecyclerView.ViewHolder {
     private final View root;
     private final View header;
+    private final RestrictAdapter parentAdapter;
     private final RadioGroup signView;
     private final EditText resultView;
     private final EditText freeCoeffView;
@@ -30,8 +31,10 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     private boolean toggle = false;
     private boolean resultIsCorrect = true;
     private boolean freeCoeffIsCorrect = true;
+    private boolean[] coeffErrorMas;
+    private int index;
 
-    public RestrictViewHolder(@NonNull View itemView) {
+    public RestrictViewHolder(@NonNull View itemView, RestrictAdapter parentAdapter, int index) {
         super(itemView);
         this.root = itemView;
         this.header = itemView.findViewById(R.id.restrict_header);
@@ -40,6 +43,8 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         this.freeCoeffView = itemView.findViewById(R.id.free_coeff);
         this.scrollView = itemView.findViewById(R.id.scroll_view);
         this.coeffsView = root.findViewById(R.id.coeff_recyclerview);
+        this.parentAdapter = parentAdapter;
+        this.index = index;
 
         header.setOnClickListener(view -> {
             scrollView.setVisibility(toggle ? View.GONE : View.VISIBLE);
@@ -54,15 +59,13 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
             try {
                 Double.parseDouble(text);
                 view.setBackgroundColor(Color.argb(0, 1, 1,1));
+                if (view.getId() == R.id.free_coeff) freeCoeffIsCorrect = true;
+                if (view.getId() == R.id.result) resultIsCorrect = true;
             } catch (Exception e) {
                 if (view.getId() == R.id.free_coeff) freeCoeffIsCorrect = false;
                 if (view.getId() == R.id.result) resultIsCorrect = false;
                 view.setBackgroundColor(Color.parseColor(Constants.ERROR_COLOR));
-                header.setBackgroundColor(Color.parseColor(Constants.ERROR_COLOR));
-                return;
             }
-            if (view.getId() == R.id.free_coeff) freeCoeffIsCorrect = true;
-            if (view.getId() == R.id.result) resultIsCorrect = true;
             updateHeader();
         };
 
@@ -82,26 +85,17 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void updateHeader() {
-        if (!freeCoeffIsCorrect || !resultIsCorrect) return;
+        if (!freeCoeffIsCorrect || !resultIsCorrect || checkForCoeffErrors()) {
+            header.setBackgroundColor(Color.parseColor(Constants.ERROR_COLOR));
+            return;
+        }
         header.setBackgroundColor(Color.argb(0, 1, 1,1));
-        Constants.Sign sign;
+        Constants.Sign sign = getSign();
         double[] coeffs = ((CoeffAdapter)coeffsView.getAdapter()).getCoeffs();
         double freeCoeff = Double.parseDouble(freeCoeffView.getText().toString());
         double result = Double.parseDouble(resultView.getText().toString());
-        switch (signView.getCheckedRadioButtonId()) {
-            case R.id.radio_equal:
-                sign = Constants.Sign.EQUALS;
-                break;
-            case R.id.radio_less:
-                sign = Constants.Sign.LESS;
-                break;
-            case R.id.radio_more:
-                sign = Constants.Sign.MORE;
-                break;
-            default:
-                sign = Constants.Sign.EQUALS;
-        }
         Restriction restriction = new Restriction(coeffs, freeCoeff, sign, result);
+        this.parentAdapter.setRestrictionByIndex(this.index, restriction);
         setHeaderText(restriction);
     }
 
@@ -124,4 +118,45 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     public void setFreeCoeff(double newValue) {
         this.freeCoeffView.setText(Parsers.stringFromNumber(newValue));
     }
+
+    public void initCoeffErrorMas(int length) {
+        coeffErrorMas = new boolean[length];
+        for (int i = 0; i < coeffErrorMas.length; i++) {
+            coeffErrorMas[i] = true;
+        }
+    }
+
+    public boolean checkForCoeffErrors() {
+        for (boolean item : coeffErrorMas) {
+            if (!item) return true;
+        }
+        return false;
+    }
+
+    public void manageCoeffError(int pos, boolean choice) {
+        if (pos >= coeffErrorMas.length || pos < 0)
+            throw new ArrayIndexOutOfBoundsException("Incorrect coeff position out of error massive length");
+        coeffErrorMas[pos] = choice;
+    }
+
+    public Restriction getRestrictionData() {
+        double freeCoeff = Double.parseDouble(this.freeCoeffView.getText().toString());
+        double result = Double.parseDouble(this.resultView.getText().toString());
+        double [] coeffs = ((CoeffAdapter)this.coeffsView.getAdapter()).getCoeffs();
+        Constants.Sign sign = getSign();
+        return new Restriction(coeffs, freeCoeff, sign, result);
+    }
+
+    public Constants.Sign getSign() {
+        switch (signView.getCheckedRadioButtonId()) {
+            case R.id.radio_equal:
+            default:
+                return Constants.Sign.EQUALS;
+            case R.id.radio_less:
+                return Constants.Sign.LESS;
+            case R.id.radio_more:
+                return Constants.Sign.MORE;
+        }
+    }
+
 }

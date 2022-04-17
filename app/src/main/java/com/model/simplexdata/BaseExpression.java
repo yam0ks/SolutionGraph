@@ -31,6 +31,14 @@ public class BaseExpression{
         this.coeffs = coeffs;
     }
 
+    public void setCoeff(int index, Fraction newValue) {
+        this.coeffs[index] = newValue;
+    }
+
+    public void setCoeff(int index, double newValue) {
+        this.coeffs[index] = new Fraction(newValue);
+    }
+
     public double[] getDoubleCoeffs() {
         double[] arr = new double[coeffs.length];
         for (int i = 0; i < coeffs.length; i++) {
