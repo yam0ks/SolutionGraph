@@ -74,6 +74,10 @@ public class SharedViewModel extends ViewModel {
         return new GraphObjective(xValue, yValue, goal);
     }
 
+    public void saveRestrictions(Restriction[] restrictions) {
+        restrictsMutable.setValue(restrictions);
+    }
+
     public void changeRestrictCoeffs(int restrictIndex, int coeffIndex, double newValue) {
         Restriction[] restrictsNormal = restrictsMutable.getValue();
         Fraction[] fracsNormal = restrictsNormal[restrictIndex].getCoeffs();

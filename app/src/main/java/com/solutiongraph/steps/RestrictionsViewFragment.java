@@ -3,6 +3,7 @@ package com.solutiongraph.steps;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +18,8 @@ import com.model.simplexdata.Restriction;
 import com.solutiongraph.R;
 import com.solutiongraph.restrictions.RestrictAdapter;
 import com.viewmodel.SharedViewModel;
+
+import kotlin.jvm.functions.Function0;
 
 public class RestrictionsViewFragment extends Fragment {
     public static final String RESTRICTIONS_NUMBER = "restrictions_number";
@@ -52,14 +55,13 @@ public class RestrictionsViewFragment extends Fragment {
                 new RestrictAdapter(this.getContext(), restrictions));
         restrictionRecyclerView.setLayoutManager(
                 new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
-
         Button nextButton = root.findViewById(R.id.next_button);
         nextButton.setOnClickListener(view -> {
             Bundle bundle = new Bundle();
             bundle.putInt(RestrictionsViewFragment.VARIABLES_NUMBER, varblNumber);
+            viewModel.saveRestrictions(((RestrictAdapter)restrictionRecyclerView.getAdapter()).getRestrictions());
             Navigation.findNavController(view).navigate(R.id.next_action, bundle);
         });
-
         return root;
     }
 
