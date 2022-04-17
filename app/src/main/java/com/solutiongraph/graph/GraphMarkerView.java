@@ -21,7 +21,7 @@ public class GraphMarkerView extends MarkerView { //Класс, регулиру
     public GraphMarkerView(Context context, int layoutResource) {
         super(context, layoutResource);
 
-        tvContent = findViewById(R.id.tv_сontent);
+        tvContent = findViewById(R.id.tvContent);
     }
 
     @SuppressLint("SetTextI18n")

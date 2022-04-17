@@ -1,7 +1,5 @@
 package com.usecase;
 
-import static com.utils.Constants.GRAPH_OFFSET;
-
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -75,8 +73,12 @@ public class GraphSolver { //Ядро графического метода
             return new GraphOutputData(GraphOutputData.ErrorType.INCORRECTDATA);
         }
 
+        makeFinalBounds(expressions);
         data.setBounds(rightBound, leftBound, topBound, bottomBound);
+
+        hideNonVisibleGraphs(expressions);
         data.setExpressions(expressions);
+
         data.setError(error);
 
         return data;
@@ -184,15 +186,75 @@ public class GraphSolver { //Ядро графического метода
         else
             rPoints.add(new Entry(leftBound, yCoord));
 
-        return new GraphFunction(rPoints, lineData.getSign(), "",
+        return new GraphFunction(rPoints, Constants.Sign.MORE, "",
                                 GraphFunction.Type.ARTIFICIAL);
     }
 
     private void makeOffsets(){ //Добавление отступов к крайним значениям
-        rightBound += GRAPH_OFFSET;
-        leftBound -= GRAPH_OFFSET;
-        topBound += GRAPH_OFFSET;
-        bottomBound -= GRAPH_OFFSET;
+        Constants.GRAPH_X_BOUNDS_OFFSET =  (leftBound == 0 && rightBound == 0) ? 10F :
+                                        Math.abs(leftBound) + Math.abs(rightBound);
+        Constants.GRAPH_Y_BOUNDS_OFFSET =  (bottomBound == 0 && topBound == 0) ? 10F :
+                                        Math.abs(bottomBound) + Math.abs(topBound);
+
+        rightBound += Constants.GRAPH_X_BOUNDS_OFFSET;
+        leftBound -= Constants.GRAPH_X_BOUNDS_OFFSET;
+        topBound += Constants.GRAPH_Y_BOUNDS_OFFSET;
+        bottomBound -= Constants.GRAPH_Y_BOUNDS_OFFSET;
+    }
+
+    private void makeFinalBounds(List<GraphFunction> expressions){
+        if(expressions.get(0).getType() == GraphFunction.Type.PARALLEL)
+            return;
+
+        leftBound = bottomBound = Float.MAX_VALUE;
+        rightBound = topBound = -1 * Float.MIN_VALUE;
+
+        for(GraphFunction expression : expressions){
+            for(int i = 0; i < expression.getPoints().size(); ++i){
+                if(i == 0 || i == expression.getPoints().size() - 1)
+                    continue;
+                Float x = expression.getPoints().get(i).getX();
+                Float y = expression.getPoints().get(i).getY();
+                if(checkRestrictionFulfillment(x, y))
+                    updateBounds(x, y);
+            }
+        }
+
+        makeOffsets();
+    }
+
+    private boolean checkRestrictionFulfillment(Float x, Float y){
+        boolean result;
+
+        for(GraphRestriction restriction : restrictions){
+            result = restriction.checkConditionFulfillment(x, y);
+
+            if(!result)
+                return false;
+        }
+        return true;
+    }
+
+    private List<GraphFunction> hideNonVisibleGraphs(List<GraphFunction> expressions){
+        List<GraphFunction> result = new ArrayList<>();
+
+        for(GraphFunction function : expressions){
+            if(function.getType() != GraphFunction.Type.DEFAULT)
+                break;
+
+            boolean visible = false;
+            for(Entry point : function.getPoints()){
+                float x = point.getX(); float y = point.getY();
+                if(x > leftBound && x < rightBound &&
+                        y > bottomBound && y < topBound) {
+                    visible = true;
+                    break;
+                }
+            }
+            if(!visible)
+                function.setType(GraphFunction.Type.ARTIFICIAL);
+        }
+        return result;
     }
 
     private void makeExpressions(List<GraphFunction> expressions){ //Создание графиков при
@@ -200,13 +262,22 @@ public class GraphSolver { //Ядро графического метода
         for (GraphRestriction restriction : restrictions) {
             List<Entry> points = new ArrayList<>();
 
-            Float x = 0F;
-            Float y = restriction.calculateY(x);
+            Float x;
+            Float y;
+
+            if(restriction.getYCoeff() == 0){
+                y = 0F;
+                x = restriction.calculateX(y);
+            }
+            else{
+                x = 0F;
+                y = restriction.calculateY(x);
+            }
 
             points.add(new Entry(x, y));
             updateBounds(x, y);
             expressions.add(new GraphFunction(points, restriction.getSign(), restriction.getStringExpression(),
-                    GraphFunction.Type.DEFAULT));
+                    GraphFunction.Type.PARALLEL));
         }
     }
 
@@ -238,10 +309,12 @@ public class GraphSolver { //Ядро графического метода
 
         if(objective.getYCoeff() == 0){
             points.add(new Entry(objective.calculateX(bottomBound), bottomBound));
+            points.add(new Entry((float)solution.getPoint()[0], (float)solution.getPoint()[1]));
             points.add(new Entry(objective.calculateX(topBound), topBound));
         }
         else{
             points.add(new Entry(leftBound, objective.calculateY(leftBound)));
+            points.add(new Entry((float)solution.getPoint()[0], (float)solution.getPoint()[1]));
             points.add(new Entry(rightBound, objective.calculateY(rightBound)));
         }
 
