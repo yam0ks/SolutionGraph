@@ -57,10 +57,12 @@ public class RestrictionsViewFragment extends Fragment {
                 new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
         Button nextButton = root.findViewById(R.id.next_button);
         nextButton.setOnClickListener(view -> {
-            Bundle bundle = new Bundle();
-            bundle.putInt(RestrictionsViewFragment.VARIABLES_NUMBER, varblNumber);
-            viewModel.saveRestrictions(((RestrictAdapter)restrictionRecyclerView.getAdapter()).getRestrictions());
-            Navigation.findNavController(view).navigate(R.id.next_action, bundle);
+            if (!((RestrictAdapter)restrictionRecyclerView.getAdapter()).restrictsHaveErrors()) {
+                Bundle bundle = new Bundle();
+                bundle.putInt(RestrictionsViewFragment.VARIABLES_NUMBER, varblNumber);
+                viewModel.saveRestrictions(((RestrictAdapter) restrictionRecyclerView.getAdapter()).getRestrictions());
+                Navigation.findNavController(view).navigate(R.id.next_action, bundle);
+            }
         });
         return root;
     }
