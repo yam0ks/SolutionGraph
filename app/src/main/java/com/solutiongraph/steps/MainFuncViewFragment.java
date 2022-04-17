@@ -12,7 +12,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 
+import com.model.simplexdata.Objective;
+import com.model.simplexdata.Restriction;
 import com.solutiongraph.R;
+import com.solutiongraph.restrictions.RestrictAdapter;
 import com.viewmodel.SharedViewModel;
 
 public class MainFuncViewFragment extends Fragment {

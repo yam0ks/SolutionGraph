@@ -4,6 +4,16 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.18177083333333333" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.18804626464843752" />
+        <entry key="app/src/main/res/layout/coeff_item.xml" value="0.24910888671875003" />
+        <entry key="app/src/main/res/layout/fragment_counter_view.xml" value="0.1453125" />
+        <entry key="app/src/main/res/layout/fragment_graph_result.xml" value="0.1453125" />
+        <entry key="app/src/main/res/layout/fragment_main_func_view.xml" value="0.15070921985815602" />
+        <entry key="app/src/main/res/layout/fragment_restrictions_view.xml" value="0.20382385253906254" />
+        <entry key="app/src/main/res/layout/fragment_simplex_result.xml" value="0.15070921985815602" />
+        <entry key="app/src/main/res/layout/graph_layout.xml" value="0.15070921985815602" />
+        <entry key="app/src/main/res/layout/graph_marker_view.xml" value="0.1453125" />
+        <entry key="app/src/main/res/layout/restrict_item.xml" value="0.18304443359375" />
       </map>
     </option>
   </component>
