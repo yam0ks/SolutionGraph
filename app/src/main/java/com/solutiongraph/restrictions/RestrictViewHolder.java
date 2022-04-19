@@ -2,14 +2,15 @@ package com.solutiongraph.restrictions;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -51,7 +52,6 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         this.coeffsView = root.findViewById(R.id.coeff_recyclerview);
         this.parentAdapter = parentAdapter;
         this.index = index;
-
         this.freeCoeffView.setNextFocusDownId(R.id.result);
         this.resultView.setNextFocusDownId(R.id.coeff_recyclerview);
 
@@ -66,7 +66,9 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
             String text = ((EditText)view).getText().toString();
             Drawable drawable;
             try {
-                Double.parseDouble(text);
+                if (!text.isEmpty()) {
+                    Double.parseDouble(text);
+                }
                 drawable = ContextCompat.getDrawable(view.getContext(), R.drawable.text_line);
                 if (view.getId() == R.id.free_coeff) freeCoeffIsCorrect = true;
                 if (view.getId() == R.id.result) resultIsCorrect = true;
@@ -115,18 +117,15 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         this.parentAdapter.hasErrors[index] = false;
         Constants.Sign sign = getSign();
         double[] coeffs = ((CoeffAdapter) Objects.requireNonNull(coeffsView.getAdapter())).getCoeffs();
-        double freeCoeff = Double.parseDouble(freeCoeffView.getText().toString());
-        double result = Double.parseDouble(resultView.getText().toString());
-        Restriction restriction = new Restriction(coeffs, freeCoeff, sign, result);
+        Restriction restriction = new Restriction(coeffs, getFreeCoeff(), sign, getResult());
         this.parentAdapter.setRestrictionByIndex(this.index, restriction);
-
         setHeaderColor(R.color.main_blue, R.color.white);
         setHeaderText(restriction);
     }
 
     public void setCoeffs(double[] coeffs) {
         this.coeffErrorMas = new boolean[coeffs.length];
-        Arrays.fill(coeffErrorMas, true);
+        Arrays.fill(coeffErrorMas, false);
         coeffsView.setAdapter(
                 new CoeffAdapter(root.getContext(), coeffs, this));
         coeffsView.setLayoutManager(
@@ -139,18 +138,43 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setResult(double newValue) {
+        if (newValue == 0) {
+            return;
+        }
         this.resultView.setText(Parsers.stringFromNumber(newValue));
     }
 
+    public double getResult() {
+        String result = resultView.getText().toString();
+        return result.isEmpty() ? 0 : Double.parseDouble(result);
+    }
+
+    public double getFreeCoeff() {
+        String result = freeCoeffView.getText().toString();
+        return result.isEmpty() ? 0 : Double.parseDouble(result);
+    }
+
+
     public void setFreeCoeff(double newValue) {
+        if (newValue == 0) {
+            return;
+        }
         this.freeCoeffView.setText(Parsers.stringFromNumber(newValue));
     }
 
     public boolean checkForCoeffErrors() {
         for (boolean item : coeffErrorMas) {
-            if (!item) return true;
+            if (item) return true;
         }
-        return false;
+        double[] coeffs = ((CoeffAdapter) Objects.requireNonNull(coeffsView.getAdapter())).getCoeffs();
+        for (double item : coeffs) {
+            if (item != 0) return false;
+        }
+        Toast zeroCoeffsError = Toast.makeText(this.root.getContext(),
+                "Хотя бы один коэффициент должен быть не равен нулю", Toast.LENGTH_LONG);
+        zeroCoeffsError.setGravity(Gravity.TOP, 0, 0);
+        zeroCoeffsError.show();
+        return true;
     }
 
     public void manageCoeffError(int pos, boolean choice) {

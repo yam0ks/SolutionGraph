@@ -17,6 +17,7 @@ import android.widget.Button;
 import com.model.simplexdata.Restriction;
 import com.solutiongraph.R;
 import com.solutiongraph.restrictions.RestrictAdapter;
+import com.solutiongraph.restrictions.RestrictViewHolder;
 import com.viewmodel.SharedViewModel;
 
 import kotlin.jvm.functions.Function0;
@@ -57,6 +58,9 @@ public class RestrictionsViewFragment extends Fragment {
                 new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false));
         Button nextButton = root.findViewById(R.id.next_button);
         nextButton.setOnClickListener(view -> {
+            nextButton.setFocusable(true);
+            nextButton.setFocusableInTouchMode(true);
+            nextButton.requestFocus();
             if (!((RestrictAdapter)restrictionRecyclerView.getAdapter()).restrictsHaveErrors()) {
                 Bundle bundle = new Bundle();
                 bundle.putInt(RestrictionsViewFragment.VARIABLES_NUMBER, varblNumber);
