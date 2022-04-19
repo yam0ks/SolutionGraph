@@ -4,39 +4,33 @@ import com.model.Fraction;
 
 public class BaseExpression{
     protected Fraction[] coeffs;
+    private Fraction freeCoeff; //свободный коэффициент
 
-    protected BaseExpression(double[] doubleCoeffs){
-        coeffs = convertToFraction(doubleCoeffs);
+    protected BaseExpression(Fraction[] coeffs, Fraction freeCoeff){
+        this.coeffs = coeffs;
+        this.freeCoeff = freeCoeff;
     }
 
-    protected Fraction[] convertToFraction(double[] nums){
-        Fraction[] result = new Fraction[nums.length];
+    protected BaseExpression(double[] doubleCoeffs, double doubleFreeCoeff){
+        coeffs = convertToFraction(doubleCoeffs);
+        freeCoeff = convertToFraction(doubleFreeCoeff);
+    }
 
-        for (int i = 0; i < nums.length; ++i){
-            result[i] = new Fraction(nums[i]);
+    protected Fraction[] convertToFraction(double[] convertValue){
+        Fraction[] result = new Fraction[convertValue.length];
+        for (int i = 0; i < convertValue.length; ++i){
+            result[i] = new Fraction(convertValue[i]);
         }
-
         return result;
     }
 
-    protected Fraction convertToFraction(double num){
-        return new Fraction(num);
+    protected Fraction convertToFraction(double convertValue){
+        return new Fraction(convertValue);
     }
 
-    public Fraction[] getCoeffs() {
+
+    public Fraction[] getFractionCoeffs() {
         return coeffs;
-    }
-
-    public void setCoeffs(Fraction[] coeffs) {
-        this.coeffs = coeffs;
-    }
-
-    public void setCoeff(int index, Fraction newValue) {
-        this.coeffs[index] = newValue;
-    }
-
-    public void setCoeff(int index, double newValue) {
-        this.coeffs[index] = new Fraction(newValue);
     }
 
     public double[] getDoubleCoeffs() {
@@ -45,5 +39,40 @@ public class BaseExpression{
             arr[i] = coeffs[i].getDouble();
         }
         return arr;
+    }
+
+    public void setCoeffsFraction(Fraction[] coeffs) {
+        this.coeffs = coeffs;
+    }
+
+    public void setCoeffsDouble(double[] coeffs) {
+        this.coeffs = convertToFraction(coeffs);
+    }
+
+
+    public void setCoeffFraction(int index, Fraction newValue) {
+        this.coeffs[index] = newValue;
+    }
+
+    public void setCoeffDouble(int index, double newValue) {
+        if (index >= coeffs.length || index < 0) return;
+        this.coeffs[index] = new Fraction(newValue);
+    }
+
+
+    public double getDoubleFreeCoeff(){
+        return freeCoeff.getDouble();
+    }
+
+    public Fraction getFractionFreeCoeff() {
+        return freeCoeff;
+    }
+
+    public void setFreeCoeffFraction(Fraction freeCoeff) {
+        this.freeCoeff = freeCoeff;
+    }
+
+    public void setFreeCoeffDouble(double freeCoeff) {
+        this.freeCoeff = convertToFraction(freeCoeff);
     }
 }

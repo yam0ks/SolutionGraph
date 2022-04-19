@@ -41,7 +41,7 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
         Restriction restrict = this.restrictions[position];
         holder.setHeaderText(restrict);
         double[] coeffs = restrict.getDoubleCoeffs();
-        double freeCoeff = restrict.getFreeCoeffAsDouble();
+        double freeCoeff = restrict.getDoubleFreeCoeff();
         double result = restrict.getResultAsDouble();
         Constants.Sign sign = restrict.getSign();
         holder.setCoeffs(coeffs);
@@ -83,7 +83,7 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
     }
 
     public void setRestrictionCoeffByIndex(int restrictIndex, int coeffIndex, double newCoeff) {
-        this.restrictions[restrictIndex].setCoeff(coeffIndex, newCoeff);
+        this.restrictions[restrictIndex].setCoeffDouble(coeffIndex, newCoeff);
     }
 
     public void setSign(int restrictIndex, Constants.Sign sign) {
@@ -91,7 +91,7 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
     }
 
     public void setFreeCoeff(int restrictIndex, double newValue) {
-        this.restrictions[restrictIndex].setFreeCoeff(new Fraction(newValue));
+        this.restrictions[restrictIndex].setFreeCoeffDouble(newValue);
     }
 
     public void setResult(int restrictIndex, double newValue) {
