@@ -35,15 +35,14 @@ public class CoeffViewHolder extends RecyclerView.ViewHolder {
             if (hasFocus) return;
             double newValue;
             Drawable drawable;
-            String text = ((EditText)view).getText().toString();
             try {
-                newValue = Double.parseDouble(text);
+                newValue = getCoeff();
                 drawable = ContextCompat.getDrawable(view.getContext(), R.drawable.text_line);
-                coeffAdapter.parentHolder.manageCoeffError(index, true);
+                coeffAdapter.parentHolder.manageCoeffError(index, false);
                 onBlur.apply(index, newValue);
             } catch (Exception e) {
                 drawable = ContextCompat.getDrawable(view.getContext(), R.drawable.error_text_line);
-                coeffAdapter.parentHolder.manageCoeffError(index, false);
+                coeffAdapter.parentHolder.manageCoeffError(index, true);
             }
             view.setBackground(drawable);
             coeffAdapter.parentHolder.updateHeader();
@@ -62,6 +61,14 @@ public class CoeffViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setCoeff(double newValue) {
+        if (newValue == 1.0) {
+            return;
+        }
         coeff.setText(Parsers.stringFromNumber(newValue));
+    }
+
+    public double getCoeff() {
+        String result = coeff.getText().toString();
+        return result.isEmpty() ? 1 : Double.parseDouble(result);
     }
 }

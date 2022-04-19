@@ -47,7 +47,7 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
         holder.setCoeffs(coeffs);
         holder.setResult(result);
         holder.setFreeCoeff(freeCoeff);
-        switch (sign){
+        switch (sign) {
             case LESS:
                 holder.signCheck(R.id.radio_less);
                 break;
@@ -66,7 +66,9 @@ public class RestrictAdapter extends RecyclerView.Adapter<RestrictViewHolder> {
     }
 
     public boolean restrictsHaveErrors() {
-        for (boolean item : hasErrors) if (item) return true;
+        for (boolean item : hasErrors) {
+            if (item) return true;
+        }
         return false;
     }
 
