@@ -13,22 +13,26 @@ public class Parsers {
         double freeCoeff = restriction.getFreeCoeffAsDouble();
         Constants.Sign sign = restriction.getSign();
         double result = restriction.getResultAsDouble();
+        boolean isFirst = false;
 
         String text = "";
         String template = "x<sub><small>%d</small></sub>";
         for (int i = 0; i < coeffs.length; i++) {
             double coeff = coeffs[i];
             if (coeff == 1.0) {
-                text = text.concat(i != 0 ? " + " : "")
+                text = text.concat(isFirst ? " + " : "")
                         .concat(String.format(template, i+1));
+                isFirst = true;
             } else if (coeff > 0) {
-                text = text.concat(i != 0 ? " + " : "")
+                text = text.concat(isFirst ? " + " : "")
                         .concat(stringFromNumber(coeff))
                         .concat(String.format(template, i+1));
+                isFirst = true;
             } else if (coeff < 0) {
                 text = text.concat(" - ")
                         .concat(stringFromNumber(Math.abs(coeff)))
                         .concat(String.format(template, i+1));
+                isFirst = true;
             }
         }
         if (freeCoeff != 0)
