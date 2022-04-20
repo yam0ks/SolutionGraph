@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/layout_lines"
-    tools:context=".restrictions.RestrictViewHolder" >
+    tools:context=".my_recyclerview_adapter.restrictions.RestrictViewHolder" >
 
     <LinearLayout
         android:layout_width="match_parent"
