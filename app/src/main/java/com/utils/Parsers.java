@@ -1,7 +1,6 @@
 package com.utils;
 
 import android.annotation.SuppressLint;
-import android.widget.EditText;
 
 import com.model.simplexdata.Restriction;
 
@@ -10,7 +9,7 @@ public class Parsers {
     @SuppressLint("DefaultLocale")
     public static String parseXmlFromRestriction (Restriction restriction) {
         double[] coeffs = restriction.getDoubleCoeffs();
-        double freeCoeff = restriction.getFreeCoeffAsDouble();
+        double freeCoeff = restriction.getDoubleFreeCoeff();
         Constants.Sign sign = restriction.getSign();
         double result = restriction.getResultAsDouble();
         boolean isFirst = false;

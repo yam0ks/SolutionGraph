@@ -41,8 +41,8 @@ public class SharedViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isLoadingMutable = new MutableLiveData<>();
     public LiveData<Boolean> isLoading = isLoadingMutable;
 
-    private Model model;
-    private SimplexParser simplexParser;
+    private final Model model;
+    private final SimplexParser simplexParser;
 
     public SharedViewModel(){
         this.model = new Model();
@@ -53,16 +53,16 @@ public class SharedViewModel extends ViewModel {
 
         List<GraphRestriction> result = new ArrayList<>();
 
-        for(Restriction restric : restrictions){
-            double[] coeffs = restric.getDoubleCoeffs();
+        for(Restriction restriction : restrictions){
+            double[] coeffs = restriction.getDoubleCoeffs();
 
             if(coeffs.length != 2)
                 return false;
 
             Float xValue = (float)coeffs[0];
             Float yValue = (float)coeffs[1];
-            Float resultValue = (float)restric.getResultAsDouble() - (float)restric.getFreeCoeffAsDouble();
-            Constants.Sign sign = restric.getSign();
+            Float resultValue = (float)restriction.getResultAsDouble() - (float)restriction.getDoubleFreeCoeff();
+            Constants.Sign sign = restriction.getSign();
 
             result.add(new GraphRestriction(xValue, yValue, sign, resultValue));
         }
@@ -88,51 +88,58 @@ public class SharedViewModel extends ViewModel {
         restrictsMutable.setValue(restrictions);
     }
 
-    public void saveMainFunc(Objective mainFunc) {
+    public void saveObjective(Objective mainFunc) {
         objectiveMutable.setValue(mainFunc);
     }
 
     public void changeRestrictCoeffs(int restrictIndex, int coeffIndex, double newValue) {
-        Restriction[] restrictsNormal = restrictsMutable.getValue();
-        Fraction[] fracsNormal = restrictsNormal[restrictIndex].getCoeffs();
-        fracsNormal[coeffIndex] = new Fraction(newValue);
-        restrictsNormal[restrictIndex].setCoeffs(fracsNormal);
-        restrictsMutable.setValue(restrictsNormal);
+        Restriction[] restrictionsNormal = restrictsMutable.getValue();
+        if (restrictionsNormal == null) return;
+        if (restrictIndex >= restrictionsNormal.length || restrictIndex < 0) return;
+        restrictionsNormal[restrictIndex].setCoeffDouble(coeffIndex, newValue);
+        restrictsMutable.setValue(restrictionsNormal);
     }
 
     public void changeRestrictFreeCoeff(int restrictIndex, double newValue) {
         Restriction[] restrictionsNormal = restrictsMutable.getValue();
-        restrictionsNormal[restrictIndex].setFreeCoeff(new Fraction(newValue));
+        if (restrictionsNormal == null) return;
+        if (restrictIndex >= restrictionsNormal.length || restrictIndex < 0) return;
+        restrictionsNormal[restrictIndex].setFreeCoeffDouble(newValue);
         restrictsMutable.setValue(restrictionsNormal);
     }
 
     public void changeRestrictRes(int restrictIndex, double newValue) {
         Restriction[] restrictionsNormal = restrictsMutable.getValue();
+        if (restrictionsNormal == null) return;
+        if (restrictIndex >= restrictionsNormal.length || restrictIndex < 0) return;
         restrictionsNormal[restrictIndex].setResult(new Fraction(newValue));
         restrictsMutable.setValue(restrictionsNormal);
     }
 
     public void changeRestrictSign(int restrictIndex, Constants.Sign newSign) {
         Restriction[] restrictionsNormal = restrictsMutable.getValue();
+        if (restrictionsNormal == null) return;
+        if (restrictIndex >= restrictionsNormal.length || restrictIndex < 0) return;
         restrictionsNormal[restrictIndex].setSign(newSign);
         restrictsMutable.setValue(restrictionsNormal);
     }
 
-    public void changeMainFuncCoeff(int coeffIndex, double newValue) {
-        Objective mainFunc = objectiveMutable.getValue();
-        Fraction[] fracsNormal = mainFunc.getCoeffs();
-        fracsNormal[coeffIndex] = new Fraction(newValue);
-        mainFunc.setCoeffs(fracsNormal);
-        objectiveMutable.setValue(mainFunc);
+    public void changeObjectiveCoeff(int coeffIndex, double newValue) {
+        Objective objective = objectiveMutable.getValue();
+        if (objective == null) return;
+        objective.setCoeffDouble(coeffIndex, newValue);
+        objectiveMutable.setValue(objective);
     }
 
-    public void changeMainFuncGoalType(Constants.GoalType goal) {
-        Objective mainFunc = objectiveMutable.getValue();
-        mainFunc.setGoalType(goal);
-        objectiveMutable.setValue(mainFunc);
+    public void changeObjectiveGoalType(Constants.GoalType goal) {
+        Objective objective = objectiveMutable.getValue();
+        if (objective == null) return;
+        objective.setGoalType(goal);
+        objectiveMutable.setValue(objective);
     }
 
     public void createRestrictionData(int restrictionCount, int variableCount) {
+        if (restrictionCount < 0 || variableCount < 0) return;
         Restriction[] restrictionList = new Restriction[restrictionCount];
         double[] sampleCoeffs = new double[variableCount];
         for (int i = 0; i < variableCount; i++){
@@ -144,28 +151,37 @@ public class SharedViewModel extends ViewModel {
         restrictsMutable.setValue(restrictionList);
     }
 
-    public void createMainFuncData(int variableCount) {
+    public void createObjectiveData(int variableCount) {
         double[] sampleCoeffs = new double[variableCount];
         for (int i = 0; i < variableCount; i++) {
             sampleCoeffs[i] = 1;
         }
-        Objective mainFunc = new Objective(sampleCoeffs, Constants.GoalType.MAXIMIZE);
-        objectiveMutable.setValue(mainFunc);
+        Objective objective = new Objective(sampleCoeffs, 0, Constants.GoalType.MAXIMIZE);
+        objectiveMutable.setValue(objective);
+    }
+
+    private void beautifyData(SimplexOutputData simplexData) {
+        simplexParser.setData(simplexData, true);
+        sectionsMutable.setValue(simplexParser.getSections());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void getSolution(taskType task) {
         isLoadingMutable.setValue(true);
         Restriction[] restrictionsNormal = restrictsMutable.getValue();
-        Objective mainFunctionNormal = objectiveMutable.getValue();
+        Objective objectiveNormal = objectiveMutable.getValue();
+        if (restrictionsNormal == null || objectiveNormal == null) {
+            isLoadingMutable.setValue(false);
+            return;
+        }
         switch (task) {
             case SIMPLEX:
                 SimplexOutputData simplexOutputData =
-                        model.getSimplexSolution(restrictionsNormal, mainFunctionNormal);
+                        model.getSimplexSolution(restrictionsNormal, objectiveNormal);
                 beautifyData(simplexOutputData);
             case GRAPHICAL:
                 Object restrictionConversionResult = convertToGraphRestriction(restrictionsNormal);
-                Object objectiveConversionResult = convertToGraphObjective(mainFunctionNormal);
+                Object objectiveConversionResult = convertToGraphObjective(objectiveNormal);
                 if (!(restrictionConversionResult instanceof Boolean) && !(objectiveConversionResult instanceof Boolean)) {
                     List<GraphRestriction> restrictionsGraph = (List<GraphRestriction>)restrictionConversionResult;
                     GraphObjective mainFunctionGraph = (GraphObjective)objectiveConversionResult;
@@ -175,10 +191,4 @@ public class SharedViewModel extends ViewModel {
         }
         isLoadingMutable.setValue(false);
     }
-
-    private void beautifyData(SimplexOutputData simplexData) {
-        simplexParser.setData(simplexData, true);
-        sectionsMutable.setValue(simplexParser.getSections());
-    }
-
 }

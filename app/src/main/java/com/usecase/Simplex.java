@@ -42,26 +42,26 @@ public class Simplex {
 
     private void formSimplexMatrix(Restriction[] restrictions, Objective objective){
         int countRestrictions = restrictions.length;
-        int countVariables = restrictions[0].getCoeffs().length;
+        int countVariables = restrictions[0].getFractionCoeffs().length;
         this.simplexMatrix = new Fraction[countRestrictions + 1][countRestrictions + countVariables
                                                                      - sumEquals(restrictions) + 1];
         this.outputData.setInitData(new SimplexInitData());
         this.outputData.setInitData(canonizeData(restrictions, this.outputData.getInitData()));
         for (int i = 1; i < this.simplexMatrix.length; i++) {
-            System.arraycopy(restrictions[i - 1].getCoeffs(), 0, this.simplexMatrix[i], 0,
-                                                        restrictions[i - 1].getCoeffs().length);
+            System.arraycopy(restrictions[i - 1].getFractionCoeffs(), 0, this.simplexMatrix[i], 0,
+                                                        restrictions[i - 1].getFractionCoeffs().length);
             this.simplexMatrix[i][this.simplexMatrix[0].length - 1] = restrictions[i - 1].getResult();
         }
         for (int j = 0; j < this.simplexMatrix[0].length; j++){
-            if(j < objective.getCoeffs().length){
-                this.simplexMatrix[0][j] = objective.getCoeffs()[j];
+            if(j < objective.getFractionCoeffs().length){
+                this.simplexMatrix[0][j] = objective.getFractionCoeffs()[j];
             }
             else {
                 this.simplexMatrix[0][j] = new Fraction(0);
             }
         }
         int[] bases = new int[countVariables];
-        int biasBases = restrictions[0].getCoeffs().length;
+        int biasBases = restrictions[0].getFractionCoeffs().length;
         for (int i = 1; i < this.simplexMatrix.length; i++) {
             for(int j = biasBases; j < this.simplexMatrix[0].length - 1; j++) {
                 simplexMatrix[i][j] = new Fraction(0);
@@ -111,7 +111,7 @@ public class Simplex {
 
     private int findReadyBase(int row, Restriction[] restrictions) {
         int column = -1;
-        for (int j = 0; j < restrictions[0].getCoeffs().length; j++) {
+        for (int j = 0; j < restrictions[0].getFractionCoeffs().length; j++) {
             boolean zerosInColumn = true;
 
             if (this.simplexMatrix[row][j].getNumerator() == 1 && this.simplexMatrix[row][j].getDenominator() == 1)
@@ -134,7 +134,7 @@ public class Simplex {
 
     private int findColumnWithZeros(int row, Restriction[] restrictions) {
         int column = -1;
-        for (int j = 0; j < restrictions[0].getCoeffs().length; j++) {
+        for (int j = 0; j < restrictions[0].getFractionCoeffs().length; j++) {
             boolean zerosInColumn = true;
 
             if (this.simplexMatrix[row][j].getNumerator() != 0)
@@ -156,7 +156,7 @@ public class Simplex {
     }
 
     private int findFirstNoZerosColumn(int row, Restriction[] restrictions) {
-        for (int j = 0; j < restrictions[0].getCoeffs().length; j++) {
+        for (int j = 0; j < restrictions[0].getFractionCoeffs().length; j++) {
             if (this.simplexMatrix[row][j].getNumerator() != 0)
                 return j;
         }
@@ -170,8 +170,8 @@ public class Simplex {
             if (restrictions[i].getSign() == Constants.Sign.MORE){
                 changedRows[k] = i + 1;
                 k++;
-                for (int j = 0; j < restrictions[i].getCoeffs().length; j++) {
-                    restrictions[i].getCoeffs()[j] = restrictions[i].getCoeffs()[j].getMultiply(-1);
+                for (int j = 0; j < restrictions[i].getFractionCoeffs().length; j++) {
+                    restrictions[i].getFractionCoeffs()[j] = restrictions[i].getFractionCoeffs()[j].getMultiply(-1);
                     restrictions[i].setSign(Constants.Sign.LESS);
                 }
             }
@@ -422,8 +422,8 @@ public class Simplex {
     }
 
     private Fraction[] getAnswers(Objective objective){
-        Fraction[] ans = new Fraction[objective.getCoeffs().length + 1];
-        for(int j = 0; j < objective.getCoeffs().length + 1; j++){
+        Fraction[] ans = new Fraction[objective.getFractionCoeffs().length + 1];
+        for(int j = 0; j < objective.getFractionCoeffs().length + 1; j++){
             if(getIndex(indBases, j) != -1){
                 ans[j] = finalMatrix[getIndex(indBases, j) + 1][finalMatrix[0].length - 1];
             }
