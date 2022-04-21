@@ -33,9 +33,9 @@
     </fragment>
     <fragment
         android:id="@+id/mainFuncViewFragment"
-        android:name="com.solutiongraph.steps.MainFuncViewFragment"
+        android:name="com.solutiongraph.steps.ObjectiveFragment"
         android:label="fragment_main_func_view"
-        tools:layout="@layout/fragment_main_func_view" >
+        tools:layout="@layout/fragment_objective_view" >
         <argument
             android:name="variables_number"
             app:argType="integer"

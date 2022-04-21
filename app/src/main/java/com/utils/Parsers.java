@@ -2,18 +2,54 @@ package com.utils;
 
 import android.annotation.SuppressLint;
 
+import com.model.simplexdata.Objective;
 import com.model.simplexdata.Restriction;
 
 public class Parsers {
 
-    @SuppressLint("DefaultLocale")
     public static String parseXmlFromRestriction (Restriction restriction) {
         double[] coeffs = restriction.getDoubleCoeffs();
         double freeCoeff = restriction.getDoubleFreeCoeff();
         Constants.Sign sign = restriction.getSign();
         double result = restriction.getResultAsDouble();
-        boolean isFirst = false;
 
+        String xml = parseXmlFromCoeffs(coeffs, freeCoeff);
+        switch (sign) {
+            case LESS:
+                xml = xml.concat(" < ");
+                break;
+            case EQUALS:
+                xml = xml.concat(" = ");
+                break;
+            case MORE:
+                xml = xml.concat(" > ");
+                break;
+        }
+        xml = xml.concat(stringFromNumber(result));
+        return xml;
+    }
+
+    public static String parseXmlFromObjective (Objective objective) {
+        double[] coeffs = objective.getDoubleCoeffs();
+        double freeCoeff = objective.getDoubleFreeCoeff();
+        Constants.GoalType goal = objective.getGoalType();
+
+        String xml = parseXmlFromCoeffs(coeffs, freeCoeff);
+        xml += " ➝ ";
+        switch (goal) {
+            case MAXIMIZE:
+                xml = xml.concat("max");
+                break;
+            case MINIMIZE:
+                xml = xml.concat("min");
+                break;
+        }
+        return xml;
+    }
+
+    @SuppressLint("DefaultLocale")
+    private static String parseXmlFromCoeffs(double[] coeffs, double freeCoeff) {
+        boolean isFirst = false;
         String text = "";
         String template = "x<sub><small>%d</small></sub>";
         for (int i = 0; i < coeffs.length; i++) {
@@ -37,18 +73,6 @@ public class Parsers {
         if (freeCoeff != 0)
             text = text.concat(freeCoeff < 0 ? " - " : " + ")
                     .concat(stringFromNumber(Math.abs(freeCoeff)));
-        switch (sign) {
-            case LESS:
-                text = text.concat(" < ");
-                break;
-            case EQUALS:
-                text = text.concat(" = ");
-                break;
-            case MORE:
-                text = text.concat(" > ");
-                break;
-        }
-        text = text.concat(stringFromNumber(result));
         return text;
     }
 
