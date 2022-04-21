@@ -4,6 +4,7 @@
     <string name="variablesCount">Количество переменных:</string>
     <string name="restrictionsCount">Количество ограничений:</string>
     <string name="coeff_header">Заполните коэффициенты при переменных в ограничениях</string>
+    <string name="objective_header">Заполните коэффициенты в целевой функции</string>
     <string name="coeff_text">Коэффициент при %1$s =</string>
     <string name="coeff_hint">Введите коэффициент</string>
     <string name="graph_option">Решить задачу графическим методом</string>
