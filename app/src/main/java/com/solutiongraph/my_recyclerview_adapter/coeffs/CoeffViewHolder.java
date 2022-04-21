@@ -1,4 +1,4 @@
-package com.solutiongraph.coeffs;
+package com.solutiongraph.my_recyclerview_adapter.coeffs;
 
 import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
@@ -22,9 +22,8 @@ public class CoeffViewHolder extends RecyclerView.ViewHolder {
             @NonNull View itemView,
             double coeffValue,
             int index,
-            CoeffAdapter coeffAdapter,
-            Function2<Integer, Double> onBlur)
-    {
+            CoeffAdapter coeffAdapter
+    ) {
         super(itemView);
         this.coeffDesc = itemView.findViewById(R.id.coeff_description);
         this.coeff = itemView.findViewById(R.id.coeff);
@@ -33,25 +32,18 @@ public class CoeffViewHolder extends RecyclerView.ViewHolder {
 
         coeff.setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus) return;
-            double newValue;
             Drawable drawable;
             try {
-                newValue = getCoeff();
+                coeffAdapter.setDataByIndex(index, getCoeff());
+                coeffAdapter.setErrorByIndex(index, false);
                 drawable = ContextCompat.getDrawable(view.getContext(), R.drawable.text_line);
-                coeffAdapter.parentHolder.manageCoeffError(index, false);
-                onBlur.apply(index, newValue);
             } catch (Exception e) {
+                coeffAdapter.setErrorByIndex(index, true);
                 drawable = ContextCompat.getDrawable(view.getContext(), R.drawable.error_text_line);
-                coeffAdapter.parentHolder.manageCoeffError(index, true);
             }
             view.setBackground(drawable);
-            coeffAdapter.parentHolder.updateHeader();
+            coeffAdapter.updateCoeffs();
         });
-    }
-
-    @FunctionalInterface
-    interface Function2<One, Two> {
-        void apply(One one, Two two);
     }
 
     @SuppressLint("DefaultLocale")
@@ -61,9 +53,7 @@ public class CoeffViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setCoeff(double newValue) {
-        if (newValue == 1.0) {
-            return;
-        }
+        if (newValue == 1.0) return;
         coeff.setText(Parsers.stringFromNumber(newValue));
     }
 

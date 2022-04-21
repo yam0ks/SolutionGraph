@@ -57,4 +57,22 @@ public class Parsers {
             return String.valueOf(Math.round(number));
         return String.valueOf(number);
     }
+
+    public static Double[] doublePrimitiveArrayToDoubleArray(double[] array) {
+        int length = array.length;
+        Double[] data = new Double[length];
+        for (int i = 0; i < length; i++) {
+            data[i] = array[i];
+        }
+        return data;
+    }
+
+    public static double[] doubleArrayToDoublePrimitiveArray(Double[] array) {
+        int length = array.length;
+        double[] data = new double[length];
+        for (int i = 0; i < length; i++) {
+            data[i] = array[i];
+        }
+        return data;
+    }
 }
