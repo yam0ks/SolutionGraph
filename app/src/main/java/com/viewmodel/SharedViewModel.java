@@ -14,6 +14,8 @@ import com.model.simplexdata.Section;
 import com.model.simplexdata.SimplexOutputData;
 import com.model.Model;
 import com.model.simplexdata.Restriction;
+
+import java.util.Arrays;
 import java.util.List;
 import com.model.graphdata.GraphObjective;
 import com.model.graphdata.GraphRestriction;
@@ -54,34 +56,35 @@ public class SharedViewModel extends ViewModel {
         List<GraphRestriction> result = new ArrayList<>();
 
         for(Restriction restriction : restrictions){
-            double[] coeffs = restriction.getDoubleCoeffs();
+            Double[] coeffs = restriction.getDoubleCoeffs();
 
             if(coeffs.length != 2)
                 return false;
 
-            Float xValue = (float)coeffs[0];
-            Float yValue = (float)coeffs[1];
-            Float resultValue = (float)restriction.getResultAsDouble() - (float)restriction.getDoubleFreeCoeff();
+            Double xValue = coeffs[0];
+            Double yValue = coeffs[1];
+            Double resultValue = restriction.getResultAsDouble() - restriction.getDoubleFreeCoeff();
             Constants.Sign sign = restriction.getSign();
 
-            result.add(new GraphRestriction(xValue, yValue, sign, resultValue));
+            //TODO: поменять в графике Float на Double
+            //result.add(new GraphRestriction(xValue, yValue, sign, resultValue));
         }
 
         return result;
     }
 
-    public Object convertToGraphObjective(Objective objective){
+    public Object convertToGraphObjective(Objective objective) {
+        Double[] coeffs = objective.getDoubleCoeffs();
 
-        double[] coeffs = objective.getDoubleCoeffs();
+        if (coeffs.length != 2) return false;
 
-        if(coeffs.length != 2)
-            return false;
-
-        Float xValue = (float)coeffs[0];
-        Float yValue = (float)coeffs[1];
+        Double xValue = coeffs[0];
+        Double yValue = coeffs[1];
         Constants.GoalType goal = objective.getGoalType();
 
-        return new GraphObjective(xValue, yValue, goal);
+        //TODO: поменять в графике Float на Double
+        //return new GraphObjective(xValue, yValue, goal);
+        return null;
     }
 
     public void saveRestrictions(Restriction[] restrictions) {
@@ -141,22 +144,18 @@ public class SharedViewModel extends ViewModel {
     public void createRestrictionData(int restrictionCount, int variableCount) {
         if (restrictionCount < 0 || variableCount < 0) return;
         Restriction[] restrictionList = new Restriction[restrictionCount];
-        double[] sampleCoeffs = new double[variableCount];
-        for (int i = 0; i < variableCount; i++){
-            sampleCoeffs[i] = 1;
-        }
-        for (int i = 0; i < restrictionCount; i++) {
-            restrictionList[i] = new Restriction(sampleCoeffs, 0, Constants.Sign.EQUALS, 0);
-        }
+        Double[] sampleCoeffs = new Double[variableCount];
+        Arrays.fill(sampleCoeffs, 1.0);
+        Arrays.fill(restrictionList,
+                new Restriction(sampleCoeffs, 0.0, Constants.Sign.EQUALS, 0.0)
+        );
         restrictsMutable.setValue(restrictionList);
     }
 
     public void createObjectiveData(int variableCount) {
-        double[] sampleCoeffs = new double[variableCount];
-        for (int i = 0; i < variableCount; i++) {
-            sampleCoeffs[i] = 1;
-        }
-        Objective objective = new Objective(sampleCoeffs, 0, Constants.GoalType.MAXIMIZE);
+        Double[] sampleCoeffs = new Double[variableCount];
+        Arrays.fill(sampleCoeffs, 1.0);
+        Objective objective = new Objective(sampleCoeffs, 0.0, Constants.GoalType.MAXIMIZE);
         objectiveMutable.setValue(objective);
     }
 

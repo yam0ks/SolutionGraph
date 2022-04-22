@@ -12,10 +12,10 @@ public class SimplexTest extends TestCase {
 
     public void testGetResult() {
         Restriction[] restrictions = new Restriction[3];
-        restrictions[0] = new Restriction(new double[]{2, 12, 14}, 0, Constants.Sign.LESS, 349);
-        restrictions[1] = new Restriction(new double[]{4, 12, 15}, 0, Constants.Sign.LESS, 264);
-        restrictions[2] = new Restriction(new double[]{17, 17, 18}, 0, Constants.Sign.LESS, 337);
-        Objective objective = new Objective(new double[]{3, 6, 7}, 0, Constants.GoalType.MAXIMIZE);
+        restrictions[0] = new Restriction(new Double[]{2.0, 12.0, 14.0}, 0.0, Constants.Sign.LESS, 349.0);
+        restrictions[1] = new Restriction(new Double[]{4.0, 12.0, 15.0}, 0.0, Constants.Sign.LESS, 264.0);
+        restrictions[2] = new Restriction(new Double[]{17.0, 17.0, 18.0}, 0.0, Constants.Sign.LESS, 337.0);
+        Objective objective = new Objective(new Double[]{3.0, 6.0, 7.0}, 0.0, Constants.GoalType.MAXIMIZE);
         Simplex simplex = new Simplex();
         SimplexOutputData outputData = simplex.getResult(restrictions, objective);
         double result = (double)outputData.getAnswers()[outputData.getAnswers().length - 1].getNumerator() /

@@ -8,7 +8,7 @@ import com.model.simplexdata.Restriction;
 public class Parsers {
 
     public static String parseXmlFromRestriction (Restriction restriction) {
-        double[] coeffs = restriction.getDoubleCoeffs();
+        Double[] coeffs = restriction.getDoubleCoeffs();
         double freeCoeff = restriction.getDoubleFreeCoeff();
         Constants.Sign sign = restriction.getSign();
         double result = restriction.getResultAsDouble();
@@ -30,7 +30,7 @@ public class Parsers {
     }
 
     public static String parseXmlFromObjective (Objective objective) {
-        double[] coeffs = objective.getDoubleCoeffs();
+        Double[] coeffs = objective.getDoubleCoeffs();
         double freeCoeff = objective.getDoubleFreeCoeff();
         Constants.GoalType goal = objective.getGoalType();
 
@@ -48,7 +48,7 @@ public class Parsers {
     }
 
     @SuppressLint("DefaultLocale")
-    private static String parseXmlFromCoeffs(double[] coeffs, double freeCoeff) {
+    private static String parseXmlFromCoeffs(Double[] coeffs, double freeCoeff) {
         boolean isFirst = false;
         String text = "";
         String template = "x<sub><small>%d</small></sub>";
