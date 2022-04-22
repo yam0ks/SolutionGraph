@@ -11,6 +11,10 @@ public class Objective extends BaseExpression {
         goalType = goal;
     }
 
+    public double getFreeCoeff() {
+        return super.getDoubleFreeCoeff();
+    }
+
     public Constants.GoalType getGoalType() {
         return goalType;
     }

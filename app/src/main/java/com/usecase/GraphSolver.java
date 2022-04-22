@@ -73,12 +73,13 @@ public class GraphSolver { //Ядро графического метода
             return new GraphOutputData(GraphOutputData.ErrorType.INCORRECTDATA);
         }
 
-        makeFinalBounds(expressions);
+        if(error == GraphOutputData.ErrorType.NOERROR){
+            makeFinalBounds(expressions);
+            hideNonVisibleGraphs(expressions);
+        }
+
         data.setBounds(rightBound, leftBound, topBound, bottomBound);
-
-        hideNonVisibleGraphs(expressions);
         data.setExpressions(expressions);
-
         data.setError(error);
 
         return data;
@@ -283,7 +284,7 @@ public class GraphSolver { //Ядро графического метода
 
     private PointValuePair Optimize(){ //Поиск решения
         LinearObjectiveFunction objectiveFunc = new LinearObjectiveFunction(new double[]
-                { objective.getXCoeff(), objective.getYCoeff()}, 0);
+                { objective.getXCoeff(), objective.getYCoeff()}, objective.getResultCoeff());
 
         Collection<LinearConstraint> constraints = new ArrayList<>();
 

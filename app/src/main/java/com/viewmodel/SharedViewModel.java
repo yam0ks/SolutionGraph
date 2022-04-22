@@ -22,6 +22,8 @@ import com.model.graphdata.GraphRestriction;
 import com.model.simplexdata.Objective;
 import com.usecase.SimplexParser;
 import com.utils.Constants;
+import com.utils.Parsers;
+
 import java.util.ArrayList;
 
 public class SharedViewModel extends ViewModel {
@@ -49,42 +51,6 @@ public class SharedViewModel extends ViewModel {
     public SharedViewModel(){
         this.model = new Model();
         this.simplexParser = new SimplexParser();
-    }
-
-    public Object convertToGraphRestriction(Restriction[] restrictions){
-
-        List<GraphRestriction> result = new ArrayList<>();
-
-        for(Restriction restriction : restrictions){
-            Double[] coeffs = restriction.getDoubleCoeffs();
-
-            if(coeffs.length != 2)
-                return false;
-
-            Double xValue = coeffs[0];
-            Double yValue = coeffs[1];
-            Double resultValue = restriction.getResultAsDouble() - restriction.getDoubleFreeCoeff();
-            Constants.Sign sign = restriction.getSign();
-
-            //TODO: поменять в графике Float на Double
-            //result.add(new GraphRestriction(xValue, yValue, sign, resultValue));
-        }
-
-        return result;
-    }
-
-    public Object convertToGraphObjective(Objective objective) {
-        Double[] coeffs = objective.getDoubleCoeffs();
-
-        if (coeffs.length != 2) return false;
-
-        Double xValue = coeffs[0];
-        Double yValue = coeffs[1];
-        Constants.GoalType goal = objective.getGoalType();
-
-        //TODO: поменять в графике Float на Double
-        //return new GraphObjective(xValue, yValue, goal);
-        return null;
     }
 
     public void saveRestrictions(Restriction[] restrictions) {
@@ -179,8 +145,8 @@ public class SharedViewModel extends ViewModel {
                         model.getSimplexSolution(restrictionsNormal, objectiveNormal);
                 beautifyData(simplexOutputData);
             case GRAPHICAL:
-                Object restrictionConversionResult = convertToGraphRestriction(restrictionsNormal);
-                Object objectiveConversionResult = convertToGraphObjective(objectiveNormal);
+                Object restrictionConversionResult = Parsers.toGraphRestriction(restrictionsNormal);
+                Object objectiveConversionResult = Parsers.toGraphObjective(objectiveNormal);
                 if (!(restrictionConversionResult instanceof Boolean) && !(objectiveConversionResult instanceof Boolean)) {
                     List<GraphRestriction> restrictionsGraph = (List<GraphRestriction>)restrictionConversionResult;
                     GraphObjective mainFunctionGraph = (GraphObjective)objectiveConversionResult;
