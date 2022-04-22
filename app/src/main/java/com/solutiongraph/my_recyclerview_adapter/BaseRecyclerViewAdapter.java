@@ -38,6 +38,15 @@ public class BaseRecyclerViewAdapter
         return this.data.length;
     }
 
+    public String[] getDataConvertedToString() {
+        String[] stringData = new String[data.length];
+        for (int i = 0; i < stringData.length; i++) {
+            stringData[i] = data[i].toString();
+        }
+        return stringData;
+    }
+
+
     public void setDataByIndex(int index, Data newValue) {
         if (index < 0 || index >= data.length) return;
         data[index] = newValue;

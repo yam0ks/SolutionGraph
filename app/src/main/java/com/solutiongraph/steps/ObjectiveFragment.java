@@ -1,9 +1,12 @@
 package com.solutiongraph.steps;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -39,6 +42,9 @@ public class ObjectiveFragment extends Fragment {
     private RecyclerView coeffRecyclerView;
     private EditText freeCoeffView;
     private SharedViewModel viewModel;
+    private CoeffAdapter coeffAdapter;
+    private boolean freeCoeffIsCorrect = true;
+    private boolean hasErrors = false;
 
     public ObjectiveFragment() {
         // Required empty public constructor
@@ -56,6 +62,7 @@ public class ObjectiveFragment extends Fragment {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,9 +78,9 @@ public class ObjectiveFragment extends Fragment {
         goalCheck(objective.getGoalType());
 
         coeffRecyclerView = root.findViewById(R.id.coeff_recyclerview);
-        coeffRecyclerView.setAdapter(
-                new CoeffAdapter(this.getContext(), objective.getDoubleCoeffs(), this::updateHeader)
-        );
+        coeffAdapter = new CoeffAdapter(this.getContext(), objective.getDoubleCoeffs(),
+                this::updateHeader);
+        coeffRecyclerView.setAdapter(coeffAdapter);
         coeffRecyclerView.setLayoutManager(new LinearLayoutManager(
                 this.getContext(), LinearLayoutManager.VERTICAL, false)
         );
@@ -88,13 +95,24 @@ public class ObjectiveFragment extends Fragment {
 
         Button nextButton = root.findViewById(R.id.next_button);
         nextButton.setOnClickListener(view -> {
+            nextButton.setFocusable(true);
+            nextButton.setFocusableInTouchMode(true);
             nextButton.requestFocus();
-            CheckBox graphOption = root.findViewById(R.id.graphCheckBox);
-            viewModel.saveObjective(getObjective());
-            int nextStep = (graphOption.isChecked())
-                    ? R.id.action_mainFuncViewFragment_to_graphResultFragment
-                    : R.id.action_mainFuncViewFragment_to_simplexResultFragment;
-            Navigation.findNavController(view).navigate(nextStep);
+            if (!hasErrors) {
+                CheckBox graphOption = root.findViewById(R.id.graphCheckBox);
+                viewModel.saveObjective(getObjective());
+                int nextStep;
+                SharedViewModel.taskType task;
+                if (graphOption.isChecked()) {
+                    task = SharedViewModel.taskType.GRAPHICAL;
+                    nextStep = R.id.action_mainFuncViewFragment_to_graphResultFragment;
+                } else {
+                    task = SharedViewModel.taskType.SIMPLEX;
+                    nextStep = R.id.action_mainFuncViewFragment_to_simplexResultFragment;
+                }
+                viewModel.getSolution(task);
+                Navigation.findNavController(view).navigate(nextStep);
+            }
         });
         updateHeader();
         return root;
@@ -140,10 +158,20 @@ public class ObjectiveFragment extends Fragment {
         return new Objective(getCoeffs(), getFreeCoeff(), getGoal());
     }
 
-    public void setHeaderText(Objective objective) {
-        String text = Parsers.parseXmlFromObjective(objective);
+    private String[] getStringCoeffs() {
+        CoeffAdapter coeffAdapter = (CoeffAdapter)Objects.requireNonNull(coeffRecyclerView.getAdapter());
+        return coeffAdapter.getDataConvertedToString();
+    }
+
+    private String getStringFreeCoeff() {
+        return freeCoeffView.getText().toString();
+    }
+
+
+    public void setHeaderText(String[] coeffs, String freeCoeff, Constants.GoalType goal) {
+        // String text = Parsers.parseXmlFromObjective(coeffs, freeCoeff, goal);
         TextView textView = root.findViewById(R.id.expression_title);
-        textView.setText(Html.fromHtml(text));
+        // textView.setText(Html.fromHtml(text));
     }
 
     private void setHeaderColor(int foreground, int background) {
@@ -168,14 +196,19 @@ public class ObjectiveFragment extends Fragment {
         headerText.setBackgroundColor(contextBackground);
     }
 
-    public void updateHeader() {
-//        if (!freeCoeffIsCorrect || !resultIsCorrect || checkForCoeffErrors()) {
-//            setHeaderColor(Color.RED, R.color.error_red);
-//            this.parentAdapter.hasErrors[index] = true;
-//            return;
-//        }
-        Objective objective = new Objective(getCoeffs(), getFreeCoeff(), getGoal());
+    private boolean validate() {
+        if (!freeCoeffIsCorrect || coeffAdapter.hasErrors()) {
+            setHeaderColor(Color.RED, R.color.error_red);
+            hasErrors = true;
+            return false;
+        }
         setHeaderColor(R.color.main_blue, R.drawable.layout_lines);
-        setHeaderText(objective);
+        hasErrors = false;
+        return true;
+    }
+
+    public void updateHeader() {
+        validate();
+        setHeaderText(getStringCoeffs(), getStringFreeCoeff(), getGoal());
     }
 }
