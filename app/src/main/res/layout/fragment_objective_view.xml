@@ -155,8 +155,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:minHeight="48dp"
-        android:text="@string/graph_option"
-        android:focusable="true"
-        android:focusableInTouchMode="true"/>
+        android:text="@string/graph_option" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

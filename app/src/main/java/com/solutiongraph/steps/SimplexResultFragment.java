@@ -65,6 +65,7 @@ public class SimplexResultFragment extends Fragment {
 
     @SuppressLint("DefaultLocale")
     private GridLayout drawMatrix(MatrixItem[][] matrix) {
+        if (matrix == null) return new GridLayout(this.getContext());
         GridLayout matrixLayout = new GridLayout(this.getContext());
         GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams();
         layoutParams.height = GridLayout.LayoutParams.MATCH_PARENT;
@@ -82,7 +83,7 @@ public class SimplexResultFragment extends Fragment {
                 GridLayout.Spec colSpan = GridLayout.spec(GridLayout.UNDEFINED, 1, 1f);
                 GridLayout.LayoutParams gridParam = new GridLayout.LayoutParams(rowSpan, colSpan);
 
-                String matrixText = String.format("%d:%d", i, j);
+                String matrixText = matrixItem.value;
                 TextView matrixTextView = matrixItem.isHeader
                         ? drawTitle(matrixText) : drawDescription(matrixText);
                 matrixTextView.setBackground(getResources().getDrawable(R.drawable.matrix_item_border));
@@ -96,18 +97,9 @@ public class SimplexResultFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //Заглушка пока нет связи с ViewModel
-        MatrixItem m = new MatrixItem();
-        MatrixItem h = new MatrixItem();
-        h.isHeader = true;
         this.root = inflater.inflate(R.layout.fragment_simplex_result, container, false);
-        MatrixItem[][] matrixItems = new MatrixItem[][] {
-                { h, m, m, h, m, m, m, h, h, h },
-                { h, m, m, h, m, m, m, m, m, m}
-        };
-        Section mock = new Section("Заголовок", "Описание описание описание", matrixItems);
-        Section[] mocks = new Section[] {mock};
-        drawSections(mocks);
+        Section[] sections = viewModel.sections.getValue();
+        drawSections(sections);
         return root;
     }
 }

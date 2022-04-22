@@ -45,6 +45,9 @@ public class SharedViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isLoadingMutable = new MutableLiveData<>();
     public LiveData<Boolean> isLoading = isLoadingMutable;
 
+    private final MutableLiveData<GraphOutputData> graphOutputDataMutable = new MutableLiveData<>();
+    public LiveData<GraphOutputData> graphOutputData = graphOutputDataMutable;
+
     private final Model model;
     private final SimplexParser simplexParser;
 
@@ -151,6 +154,7 @@ public class SharedViewModel extends ViewModel {
                     List<GraphRestriction> restrictionsGraph = (List<GraphRestriction>)restrictionConversionResult;
                     GraphObjective mainFunctionGraph = (GraphObjective)objectiveConversionResult;
                     GraphOutputData graphOutputData = model.getGraphSolution(restrictionsGraph, mainFunctionGraph);
+                    graphOutputDataMutable.setValue(graphOutputData);
                 }
 
         }
