@@ -43,12 +43,16 @@ public class ObjectiveFragment extends Fragment {
     private EditText freeCoeffView;
     private SharedViewModel viewModel;
     private CoeffAdapter coeffAdapter;
-    private boolean freeCoeffIsCorrect = true;
     private boolean hasErrors = false;
 
     public ObjectiveFragment() {
         // Required empty public constructor
     }
+
+    View.OnFocusChangeListener focusChangeListener = (view, hasFocus) -> {
+        if (hasFocus) return;
+        updateHeader();
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,6 +89,8 @@ public class ObjectiveFragment extends Fragment {
                 this.getContext(), LinearLayoutManager.VERTICAL, false)
         );
         freeCoeffView = root.findViewById(R.id.free_coeff);
+        freeCoeffView.setOnFocusChangeListener(focusChangeListener);
+        this.freeCoeffView.setNextFocusDownId(R.id.coeff_recyclerview);
         setFreeCoeff(objective.getDoubleFreeCoeff());
 
         if (varblNumber <= 2) {
@@ -197,7 +203,7 @@ public class ObjectiveFragment extends Fragment {
     }
 
     private boolean validate() {
-        if (!freeCoeffIsCorrect || coeffAdapter.hasErrors()) {
+        if (freeCoeffHasErrors() || coeffAdapter.hasErrors()) {
             setHeaderColor(Color.RED, R.color.error_red);
             hasErrors = true;
             return false;
@@ -205,6 +211,18 @@ public class ObjectiveFragment extends Fragment {
         setHeaderColor(R.color.main_blue, R.drawable.layout_lines);
         hasErrors = false;
         return true;
+    }
+
+    public boolean freeCoeffHasErrors() {
+        String freeCoeff = getStringFreeCoeff();
+        if (freeCoeff.isEmpty()) return false;
+        try {
+            Double.parseDouble(freeCoeff);
+            return false;
+        }
+        catch (Exception e) {
+            return true;
+        }
     }
 
     public void updateHeader() {
