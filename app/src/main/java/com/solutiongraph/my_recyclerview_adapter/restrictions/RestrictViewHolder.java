@@ -108,14 +108,14 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         header.setBackgroundColor(contextBackground);
     }
 
-    private boolean checkNotZeroCoeff(double[] coeffs) {
+    private boolean checkNotZeroCoeff(Double[] coeffs) {
         for (double item : coeffs) {
-            if (item != 0) return true;
+            if (item != 0.0) return true;
         }
         return false;
     }
 
-    private boolean validate(double[] coeff) {
+    private boolean validate(Double[] coeff) {
         if (!freeCoeffIsCorrect || !resultIsCorrect || coeffAdapter.hasErrors()) {
             setHeaderColor(Color.RED, R.color.error_red);
             this.parentAdapter.setErrorByIndex(getAdapterPosition(), true);
@@ -132,7 +132,7 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void updateHeader() {
-        double[] coeff = getCoeff();
+        Double[] coeff = getCoeff();
         if (!validate(coeff)) return;
         int index = getAdapterPosition();
         this.parentAdapter.setErrorByIndex(index, false);
@@ -142,7 +142,7 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         setHeaderText(rest);
     }
 
-    public void setCoeffs(double[] coeffs) {
+    public void setCoeffs(Double[] coeffs) {
         coeffAdapter = new CoeffAdapter(root.getContext(), coeffs, this::updateHeader);
         coeffsView.setAdapter(coeffAdapter);
         coeffsView.setLayoutManager(
@@ -201,8 +201,7 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         this.freeCoeffView.setText(Parsers.stringFromNumber(newValue));
     }
 
-    public double[] getCoeff() {
-        Double[] data = ((CoeffAdapter) Objects.requireNonNull(coeffsView.getAdapter())).getData();
-        return Parsers.doubleArrayToDoublePrimitiveArray(data);
+    public Double[] getCoeff() {
+        return ((CoeffAdapter) Objects.requireNonNull(coeffsView.getAdapter())).getData();
     }
 }

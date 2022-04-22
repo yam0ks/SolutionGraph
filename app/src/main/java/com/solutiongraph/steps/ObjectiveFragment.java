@@ -100,9 +100,8 @@ public class ObjectiveFragment extends Fragment {
         return root;
     }
 
-    private double[] getCoeffs() {
-        CoeffAdapter coeffAdapter = (CoeffAdapter)Objects.requireNonNull(coeffRecyclerView.getAdapter());
-        return Parsers.doubleArrayToDoublePrimitiveArray(coeffAdapter.getData());
+    private Double[] getCoeffs() {
+        return ((CoeffAdapter)Objects.requireNonNull(coeffRecyclerView.getAdapter())).getData();
     }
 
     private void setFreeCoeff(double newValue) {

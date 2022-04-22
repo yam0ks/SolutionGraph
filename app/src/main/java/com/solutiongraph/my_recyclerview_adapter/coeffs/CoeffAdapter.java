@@ -18,8 +18,8 @@ public class CoeffAdapter extends BaseRecyclerViewAdapter<Double, CoeffViewHolde
     private int index = 0;
     private final Procedure update;
 
-    public CoeffAdapter(Context context, double[] coeffs, Procedure update) {
-        super(LayoutInflater.from(context), Parsers.doublePrimitiveArrayToDoubleArray(coeffs));
+    public CoeffAdapter(Context context, Double[] coeffs, Procedure update) {
+        super(LayoutInflater.from(context), coeffs);
         this.update = update;
     }
 

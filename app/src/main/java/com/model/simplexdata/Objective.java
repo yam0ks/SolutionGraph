@@ -6,7 +6,7 @@ import com.utils.Constants;
 public class Objective extends BaseExpression {
     private Constants.GoalType goalType;
 
-    public Objective(double[] coeffs, double freeCoeff, Constants.GoalType goal){
+    public Objective(Double[] coeffs, Double freeCoeff, Constants.GoalType goal){
         super(coeffs, freeCoeff);
         goalType = goal;
     }
