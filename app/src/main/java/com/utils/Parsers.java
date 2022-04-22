@@ -2,8 +2,13 @@ package com.utils;
 
 import android.annotation.SuppressLint;
 
+import com.model.graphdata.GraphObjective;
+import com.model.graphdata.GraphRestriction;
 import com.model.simplexdata.Objective;
 import com.model.simplexdata.Restriction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Parsers {
 
@@ -98,5 +103,40 @@ public class Parsers {
             data[i] = array[i];
         }
         return data;
+    }
+
+    public static Object toGraphRestriction(Restriction[] restrictions){
+
+        List<GraphRestriction> result = new ArrayList<>();
+
+        for(Restriction restriction : restrictions){
+            Double[] coeffs = restriction.getDoubleCoeffs();
+
+            if(coeffs.length != 2)
+                return false;
+
+            Float xValue = coeffs[0].floatValue();
+            Float yValue = coeffs[1].floatValue();
+            Float resultValue = restriction.getResultAsDouble().floatValue() - restriction.getDoubleFreeCoeff().floatValue();
+            Constants.Sign sign = restriction.getSign();
+
+            result.add(new GraphRestriction(xValue, yValue, sign, resultValue));
+        }
+
+        return result;
+    }
+
+    public static Object toGraphObjective(Objective objective){
+
+        Double[] coeffs = objective.getDoubleCoeffs();
+
+        if(coeffs.length != 2)
+            return false;
+
+        Float xValue = coeffs[0].floatValue();
+        Float yValue = coeffs[1].floatValue();
+        Constants.GoalType goal = objective.getGoalType();
+
+        return new GraphObjective(xValue, yValue, -(float)objective.getFreeCoeff(), goal);
     }
 }

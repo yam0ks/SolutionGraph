@@ -7,8 +7,8 @@ public class GraphObjective extends BaseGraphExpression { //Класс для п
 
     private Constants.GoalType goalType; //Направление целевой функции
 
-    public GraphObjective(Float inputXCoeff, Float inputYCoeff, Constants.GoalType type){
-        super(inputXCoeff, inputYCoeff, 0F);
+    public GraphObjective(Float inputXCoeff, Float inputYCoeff, Float inputResultCoeff, Constants.GoalType type){
+        super(inputXCoeff, inputYCoeff, inputResultCoeff);
         goalType = type;
         stringExpression = getExpressionAsString();
     }
@@ -32,6 +32,10 @@ public class GraphObjective extends BaseGraphExpression { //Класс для п
 
     public Constants.GoalType getGoalType(){
         return goalType;
+    }
+
+    public Float getResultCoeff() {
+        return super.getResultCoeff();
     }
 
     @Override
