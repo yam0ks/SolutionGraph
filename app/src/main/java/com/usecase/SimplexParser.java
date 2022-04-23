@@ -38,12 +38,7 @@ public class SimplexParser {
     }
 
     private int getStaticSections(){
-        if(outputData.getAnswers() == null){
-            return 2;
-        }
-        else {
-            return 3;
-        }
+        return outputData.getAnswers() == null ? 2 : 3;
     }
 
     private void formAnswer(Fraction[] answers){
