@@ -60,29 +60,29 @@ public class Simplex {
                 this.simplexMatrix[0][j] = new Fraction(0);
             }
         }
-        int[] bases = new int[countVariables];
+        int[] bases = new int[countRestrictions];
         int biasBases = restrictions[0].getFractionCoeffs().length;
         for (int i = 1; i < this.simplexMatrix.length; i++) {
             for(int j = biasBases; j < this.simplexMatrix[0].length - 1; j++) {
                 simplexMatrix[i][j] = new Fraction(0);
             }
         }
-        int k = 0;
-        int chosenBases = 0;
+        int countOfBases = 0;
+        int countOfChosenBases = 0;
         for (int i = 1; i < this.simplexMatrix.length; i++) {
             if(restrictions[i-1].getSign() == Constants.Sign.EQUALS){
                 int column = getBaseColumn(i, restrictions);
                 transformMatrixByGauss(simplexMatrix, simplexMatrix[i][column], i, column);
-                bases[k] = column;
-                k++;
-                chosenBases++;
+                bases[countOfBases] = column;
+                countOfBases++;
+                countOfChosenBases++;
                 continue;
             }
-            for(int j = biasBases; j < this.simplexMatrix[0].length; j++){
-                if(j-biasBases == i - 1 && restrictions[i - 1].getSign() != Constants.Sign.EQUALS) {
-                    simplexMatrix[i][biasBases + k - chosenBases] = new Fraction(1);
-                    bases[k] = j;
-                    k++;
+            for(int j = biasBases; j < this.simplexMatrix[0].length - 1; j++){
+                if(j == biasBases + countOfBases - countOfChosenBases && restrictions[i - 1].getSign() != Constants.Sign.EQUALS) {
+                    simplexMatrix[i][biasBases + countOfBases - countOfChosenBases] = new Fraction(1);
+                    bases[countOfBases] = biasBases + countOfBases - countOfChosenBases;
+                    countOfBases++;
                 }
             }
         }
@@ -120,6 +120,7 @@ public class Simplex {
                         continue;
                     if (this.simplexMatrix[i][j].getNumerator() != 0) {
                         zerosInColumn = false;
+                        break;
                     }
                 }
             else{
@@ -284,8 +285,12 @@ public class Simplex {
         for(int i = 0; i < simplexMatrix.length; i++)
             System.arraycopy(simplexMatrix[i], 0, finalMatrix[i], 0, simplexMatrix[0].length);
         System.arraycopy(deltas, 0, finalMatrix[finalMatrix.length - 1], 0, deltas.length);
+        SimplexSolutionData currentStep = new SimplexSolutionData();
+        currentStep.setBeforeMatrix(copyFractionArray(finalMatrix));
+        currentStep.setBases(indBases);
+        outputData.getSolutionData().add(currentStep);
         while (!deltaIsOk(findMax)){
-            SimplexSolutionData currentStep = new SimplexSolutionData();
+            currentStep = new SimplexSolutionData();
             //currentStep.setMatrix(new Fraction[simplexMatrix.length+1][simplexMatrix[0].length]);
             int column = getSuitableColumn(findMax);
             currentStep.setSupportColumn(column);
