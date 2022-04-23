@@ -21,7 +21,7 @@ public class SimplexParser {
 
     public Section[] getSections(){
         currentSection = 0;
-        sections = new Section[2 + outputData.getNormalizeData().size() + outputData.getSolutionData().size() * 2];
+        sections = new Section[getStaticSections() + outputData.getNormalizeData().size() + (outputData.getSolutionData().size() - 1) * 2];
         if(outputData.getAnswers() == null){
             setSection("Ответ", "Решения задачи не существует.");
         }
@@ -37,12 +37,21 @@ public class SimplexParser {
         return sections;
     }
 
+    private int getStaticSections(){
+        if(outputData.getAnswers() == null){
+            return 2;
+        }
+        else {
+            return 3;
+        }
+    }
+
     private void formAnswer(Fraction[] answers){
         StringBuilder description = new StringBuilder();
         for(int i = 0; i < answers.length-1; i++){
             description.append(getIndexed("x", i)).append(" = ").append(answers[i].getFraction(fractionsLikeDouble)).append(", ");
         }
-        description.append("F = ").append(answers[answers.length - 1]);
+        description.append("F = ").append(answers[answers.length - 1].getFraction(fractionsLikeDouble));
         setSection("Ответ", description.toString());
     }
 
@@ -88,12 +97,13 @@ public class SimplexParser {
 
         setSection("Симплекс таблица с дельтами", "Расчитаем дельты и добавим их в нашу симплекс таблицу",
                 transformMatrix(outputData.getSolutionData().get(0).getBeforeMatrix(),outputData.getSolutionData().get(0).getBases(),  true));
+        outputData.getSolutionData().remove(0);
         int i = 1;
         for(SimplexSolutionData solutionData : outputData.getSolutionData()){
             if(solutionData.getMatrixCanBeSolved()){
                 setSection("Итерация " + i, "Определяем разрешающий столбец - столбец, в котором находится минимальная дельта: " +
                                 solutionData.getNewBase() + " " + getIndexed("Δ", solutionData.getNewBase()) + ": " +
-                                solutionData.getBeforeMatrix()[solutionData.getBeforeMatrix().length - 1][solutionData.getNewBase()] + "\n" +
+                                solutionData.getBeforeMatrix()[solutionData.getBeforeMatrix().length - 1][solutionData.getNewBase()].getFraction(fractionsLikeDouble) + "\n" +
                                 "Находим симплекс-отношения Q, путём деления коэффициентов b на соответствующие значения столбца " + solutionData.getNewBase() + "\n" +
                                 "В найденном столбце ищем строку с наименьшим значением Q - строка " + solutionData.getSupportRow() +
                                 "В качестве базисной переменной строки " + solutionData.getSupportRow() + " берем " + getIndexed("x", solutionData.getNewBase()),
