@@ -79,9 +79,10 @@ public class Simplex {
                 continue;
             }
             for(int j = biasBases; j < this.simplexMatrix[0].length - 1; j++){
-                if(j == biasBases + countOfBases - countOfChosenBases && restrictions[i - 1].getSign() != Constants.Sign.EQUALS) {
-                    simplexMatrix[i][biasBases + countOfBases - countOfChosenBases] = new Fraction(1);
-                    bases[countOfBases] = biasBases + countOfBases - countOfChosenBases;
+                int columnCurrentBase = biasBases + countOfBases - countOfChosenBases;
+                if(j == columnCurrentBase && restrictions[i - 1].getSign() != Constants.Sign.EQUALS) {
+                    simplexMatrix[i][columnCurrentBase] = new Fraction(1);
+                    bases[countOfBases] = biasBases;
                     countOfBases++;
                 }
             }
