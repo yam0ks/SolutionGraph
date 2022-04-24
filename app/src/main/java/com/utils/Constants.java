@@ -12,6 +12,19 @@ public class Constants {
         MINIMIZE
     }
 
+    public enum COLORS{
+        RED,
+        GREEN,
+        BLUE,
+        YELLOW,
+        GREY,
+        VIOLET,
+        ORANGE,
+        PURPLE,
+        CYAN,
+        TEAL
+    }
+
     public static final String ERROR_COLOR = "#ffa1a1";
 
     public static Float GRAPH_X_BOUNDS_OFFSET;
