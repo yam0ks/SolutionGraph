@@ -33,9 +33,9 @@ public class GraphSolver { //Ядро графического метода
     private  List<GraphRestriction> restrictions; //Список ограничений
     private GraphObjective objective; //Целевая функция
 
-    private Float rightBound = -1 * Float.MIN_VALUE; //Наибольшее значение среди точек по оси X
+    private Float rightBound = -1 * Float.MAX_VALUE; //Наибольшее значение среди точек по оси X
     private Float leftBound = Float.MAX_VALUE; //Наименьшее значение среди точек по оси X
-    private Float topBound = -1 * Float.MIN_VALUE; //Наибольшее значение среди точек по оси Y
+    private Float topBound = -1 * Float.MAX_VALUE; //Наибольшее значение среди точек по оси Y
     private Float bottomBound = Float.MAX_VALUE; //Наименьшее значение среди точек по оси Y
 
     public GraphSolver(){}
@@ -82,6 +82,8 @@ public class GraphSolver { //Ядро графического метода
         data.setExpressions(expressions);
         data.setError(error);
 
+        setBoundsToDefault();
+
         return data;
     }
 
@@ -105,7 +107,9 @@ public class GraphSolver { //Ядро графического метода
                 graphsIntersections.get(i).getPoints().add(new Entry(restrMaxX, topBound));
 
                 result.add(graphsIntersections.get(i));
-                result.add(makeArtificialExpression(graphsIntersections.get(i)));
+
+                if(graphsIntersections.get(i).getSign() != Constants.Sign.EQUALS)
+                    result.add(makeArtificialExpression(graphsIntersections.get(i)));
             }
             else{
                 Float restrMinY = restrictions.get(i).calculateY(leftBound);
@@ -207,8 +211,7 @@ public class GraphSolver { //Ядро графического метода
         if(expressions.get(0).getType() == GraphFunction.Type.PARALLEL)
             return;
 
-        leftBound = bottomBound = Float.MAX_VALUE;
-        rightBound = topBound = -1 * Float.MIN_VALUE;
+        setBoundsToDefault();
 
         for(GraphFunction expression : expressions){
             for(int i = 0; i < expression.getPoints().size(); ++i){
@@ -236,9 +239,7 @@ public class GraphSolver { //Ядро графического метода
         return true;
     }
 
-    private List<GraphFunction> hideNonVisibleGraphs(List<GraphFunction> expressions){
-        List<GraphFunction> result = new ArrayList<>();
-
+    private void hideNonVisibleGraphs(List<GraphFunction> expressions){
         for(GraphFunction function : expressions){
             if(function.getType() != GraphFunction.Type.DEFAULT)
                 break;
@@ -255,7 +256,6 @@ public class GraphSolver { //Ядро графического метода
             if(!visible)
                 function.setType(GraphFunction.Type.ARTIFICIAL);
         }
-        return result;
     }
 
     private void makeExpressions(List<GraphFunction> expressions){ //Создание графиков при
@@ -289,8 +289,13 @@ public class GraphSolver { //Ядро графического метода
         Collection<LinearConstraint> constraints = new ArrayList<>();
 
         for (GraphRestriction restriction : restrictions) {
-            Relationship sign = (restriction.getSign() == Constants.Sign.MORE) ? Relationship.GEQ :
-                                                                            Relationship.LEQ;
+            Relationship sign = Relationship.EQ;
+
+            switch(restriction.getSign()){
+                case EQUALS: sign = Relationship.EQ; break;
+                case MORE: sign = Relationship.GEQ; break;
+                case LESS: sign = Relationship.LEQ ; break;
+            }
 
             constraints.add(new LinearConstraint(new double[]{restriction.getXCoeff(), restriction.getYCoeff()},
                                                  sign, restriction.getResultCoeff()));
@@ -321,6 +326,11 @@ public class GraphSolver { //Ядро графического метода
 
         return new GraphFunction(points, objective.getStringExpression(),
                 GraphFunction.Type.OBJECTIVE);
+    }
+
+    private void setBoundsToDefault(){
+        leftBound = bottomBound = Float.MAX_VALUE;
+        rightBound = topBound = -1 * Float.MAX_VALUE;
     }
 
     private static class CoordinatesComprator implements Comparator<Entry>{ // Компаратор для

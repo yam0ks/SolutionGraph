@@ -67,7 +67,43 @@ public class GraphOutputData{ //Класс для представления р�
         expressions = inputExpressions;
     }
 
+    public List<GraphFunction> getExpressions() {
+        return expressions;
+    }
+
     public void setError(ErrorType type) {
         error = type;
+    }
+
+    public ErrorType getError() {
+        return error;
+    }
+
+    public Float getLeftBound() {
+        return leftBound;
+    }
+
+    public Float getRightBound() {
+        return rightBound;
+    }
+
+    public Float getBottomBound() {
+        return bottomBound;
+    }
+
+    public Float getTopBound() {
+        return topBound;
+    }
+
+    public Float getValueSolution() {
+        return valueSolution;
+    }
+
+    public Float getxSolution() {
+        return xSolution;
+    }
+
+    public Float getySolution() {
+        return ySolution;
     }
 }
