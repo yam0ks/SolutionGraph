@@ -147,16 +147,17 @@ public class SharedViewModel extends ViewModel {
                 SimplexOutputData simplexOutputData =
                         model.getSimplexSolution(restrictionsNormal, objectiveNormal);
                 beautifyData(simplexOutputData);
+            break;
             case GRAPHICAL:
                 Object restrictionConversionResult = Parsers.toGraphRestriction(restrictionsNormal);
                 Object objectiveConversionResult = Parsers.toGraphObjective(objectiveNormal);
                 if (!(restrictionConversionResult instanceof Boolean) && !(objectiveConversionResult instanceof Boolean)) {
                     List<GraphRestriction> restrictionsGraph = (List<GraphRestriction>)restrictionConversionResult;
-                    GraphObjective mainFunctionGraph = (GraphObjective)objectiveConversionResult;
-                    GraphOutputData graphOutputData = model.getGraphSolution(restrictionsGraph, mainFunctionGraph);
+                    GraphObjective graphObjective = (GraphObjective)objectiveConversionResult;
+                    GraphOutputData graphOutputData = model.getGraphSolution(restrictionsGraph, graphObjective);
                     graphOutputDataMutable.setValue(graphOutputData);
                 }
-
+            break;
         }
         isLoadingMutable.setValue(false);
     }

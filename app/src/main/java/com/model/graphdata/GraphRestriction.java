@@ -23,9 +23,11 @@ public class GraphRestriction extends BaseGraphExpression { //Класс для 
 
         switch(sign){
             case LESS:
-                return lhs <= resultCoeff;
+                return Float.compare(lhs, resultCoeff) == 0 || Float.compare(lhs, resultCoeff) < 0;
             case MORE:
-                return lhs >= resultCoeff;
+                return Float.compare(lhs, resultCoeff) == 0 || Float.compare(lhs, resultCoeff) > 0;
+            case EQUALS:
+                return Float.compare(lhs, resultCoeff) == 0;
             default: break;
         }
 
@@ -70,9 +72,12 @@ public class GraphRestriction extends BaseGraphExpression { //Класс для 
         if (sign == Constants.Sign.MORE)
             result += "≥ " + Utils.formatNumber(resultCoeff, (resultCoeff % 1 == 0) ? 0 : 1,
                                                                      false);
-        else
+        else if(sign == Constants.Sign.LESS)
             result += "≤ " + Utils.formatNumber(resultCoeff, (resultCoeff % 1 == 0) ? 0 : 1,
                                                                      false);
+        else
+            result += "= " + Utils.formatNumber(resultCoeff, (resultCoeff % 1 == 0) ? 0 : 1,
+                    false);
 
         return result;
     }
@@ -83,7 +88,7 @@ public class GraphRestriction extends BaseGraphExpression { //Класс для 
             xCoeff *= -1;
             yCoeff *= -1;
             resultCoeff *= -1;
-            sign = (sign == Constants.Sign.MORE) ? Constants.Sign.LESS : Constants.Sign.MORE;
+            sign = (sign == Constants.Sign.EQUALS) ? Constants.Sign.EQUALS : (sign == Constants.Sign.MORE) ? Constants.Sign.LESS : Constants.Sign.MORE;
         }
         if (yCoeff == 0 && xCoeff < 0) {
             xCoeff *= -1;
