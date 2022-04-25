@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.solutiongraph.R;
-import com.utils.Parsers;
 
 public class CoeffViewHolder extends RecyclerView.ViewHolder {
     private final TextView coeffDesc;
@@ -20,7 +19,7 @@ public class CoeffViewHolder extends RecyclerView.ViewHolder {
 
     public CoeffViewHolder(
             @NonNull View itemView,
-            double coeffValue,
+            String coeffValue,
             int index,
             CoeffAdapter coeffAdapter
     ) {
@@ -33,8 +32,10 @@ public class CoeffViewHolder extends RecyclerView.ViewHolder {
         coeff.setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus) return;
             Drawable drawable;
+            String coeff = getCoeff();
+            coeffAdapter.setDataByIndex(index, coeff);
             try {
-                coeffAdapter.setDataByIndex(index, getCoeff());
+                Double.parseDouble(coeff);
                 coeffAdapter.setErrorByIndex(index, false);
                 drawable = ContextCompat.getDrawable(view.getContext(), R.drawable.text_line);
             } catch (Exception e) {
@@ -52,13 +53,13 @@ public class CoeffViewHolder extends RecyclerView.ViewHolder {
         coeffDesc.setText(Html.fromHtml(String.format(template, index + 1)));
     }
 
-    public void setCoeff(double newValue) {
-        if (newValue == 1.0) return;
-        coeff.setText(Parsers.stringFromNumber(newValue));
+    public void setCoeff(String newValue) {
+        if (newValue.equals("1")) return;
+        coeff.setText(newValue);
     }
 
-    public double getCoeff() {
+    public String getCoeff() {
         String result = coeff.getText().toString();
-        return result.isEmpty() ? 1 : Double.parseDouble(result);
+        return result.isEmpty() ? "1" : result;
     }
 }
