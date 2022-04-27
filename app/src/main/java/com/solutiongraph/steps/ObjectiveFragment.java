@@ -80,10 +80,11 @@ public class ObjectiveFragment extends Fragment {
 
         goalView = root.findViewById(R.id.goal);
         goalCheck(objective.getGoalType());
+        goalView.setOnCheckedChangeListener((view, checkedId) -> updateHeader());
 
         coeffRecyclerView = root.findViewById(R.id.coeff_recyclerview);
-        coeffAdapter = new CoeffAdapter(this.getContext(), objective.getDoubleCoeffs(),
-                this::updateHeader);
+        coeffAdapter = new CoeffAdapter(
+                this.getContext(), objective.getDoubleCoeffs(), this::updateHeader);
         coeffRecyclerView.setAdapter(coeffAdapter);
         coeffRecyclerView.setLayoutManager(new LinearLayoutManager(
                 this.getContext(), LinearLayoutManager.VERTICAL, false)
@@ -101,8 +102,6 @@ public class ObjectiveFragment extends Fragment {
 
         Button nextButton = root.findViewById(R.id.next_button);
         nextButton.setOnClickListener(view -> {
-            nextButton.setFocusable(true);
-            nextButton.setFocusableInTouchMode(true);
             nextButton.requestFocus();
             if (!hasErrors) {
                 CheckBox graphOption = root.findViewById(R.id.graphCheckBox);
@@ -124,13 +123,14 @@ public class ObjectiveFragment extends Fragment {
         return root;
     }
 
-    private Double[] getCoeffs() {
-        return ((CoeffAdapter)Objects.requireNonNull(coeffRecyclerView.getAdapter())).getData();
+    public Double[] getCoeffsDouble() {
+        String[] data = Objects.requireNonNull(coeffAdapter).getData();
+        return Parsers.convertStringsToDoubles(data);
     }
 
     private void setFreeCoeff(double newValue) {
         if (newValue == 0) return;
-        freeCoeffView.setText(Parsers.stringFromNumber(newValue));
+        freeCoeffView.setText(Parsers.formatDoubleString(newValue));
     }
 
     private double getFreeCoeff() {
@@ -161,33 +161,32 @@ public class ObjectiveFragment extends Fragment {
     }
 
     private Objective getObjective() {
-        return new Objective(getCoeffs(), getFreeCoeff(), getGoal());
+        return new Objective(getCoeffsDouble(), getFreeCoeff(), getGoal());
     }
 
     private String[] getStringCoeffs() {
         CoeffAdapter coeffAdapter = (CoeffAdapter)Objects.requireNonNull(coeffRecyclerView.getAdapter());
-        return coeffAdapter.getDataConvertedToString();
+        return coeffAdapter.getData();
     }
 
     private String getStringFreeCoeff() {
         return freeCoeffView.getText().toString();
     }
 
-
     public void setHeaderText(String[] coeffs, String freeCoeff, Constants.GoalType goal) {
-        // String text = Parsers.parseXmlFromObjective(coeffs, freeCoeff, goal);
+        String text = Parsers.parseXmlFromObjective(coeffs, freeCoeff, goal);
         TextView textView = root.findViewById(R.id.expression_title);
-        // textView.setText(Html.fromHtml(text));
+        textView.setText(Html.fromHtml(text));
     }
 
     private void setHeaderColor(int foreground, int background) {
         int contextForeground = foreground;
         int contextBackground = background;
-        TextView headerText = (TextView)root.findViewById(R.id.expression_title);
+        TextView headerText = root.findViewById(R.id.expression_title);
 
         try {
             contextForeground = getResources().getColor(foreground);
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
         headerText.setTextColor(contextForeground);
 
         try {
@@ -197,30 +196,35 @@ public class ObjectiveFragment extends Fragment {
         } catch (Exception e) {
             try {
                 contextBackground = getResources().getColor(background);
-            } catch (Exception e1) {}
+            } catch (Exception ignored) {}
         }
         headerText.setBackgroundColor(contextBackground);
     }
 
-    private boolean validate() {
+    private void validate() {
         if (freeCoeffHasErrors() || coeffAdapter.hasErrors()) {
-            setHeaderColor(Color.RED, R.color.error_red);
+            setHeaderColor(Color.RED, R.drawable.error_text_line);
             hasErrors = true;
-            return false;
+            return;
         }
         setHeaderColor(R.color.main_blue, R.drawable.layout_lines);
         hasErrors = false;
-        return true;
     }
 
     public boolean freeCoeffHasErrors() {
         String freeCoeff = getStringFreeCoeff();
+        freeCoeffView.setBackground(
+                ContextCompat.getDrawable(root.getContext(), R.drawable.text_line)
+        );
         if (freeCoeff.isEmpty()) return false;
         try {
             Double.parseDouble(freeCoeff);
             return false;
         }
         catch (Exception e) {
+            freeCoeffView.setBackground(
+                    ContextCompat.getDrawable(root.getContext(), R.drawable.error_text_line)
+            );
             return true;
         }
     }
