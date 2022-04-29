@@ -110,18 +110,21 @@ public class SimplexParser {
         setSection("Симплекс таблица с дельтами", "Расчитаем дельты и добавим их в нашу симплекс таблицу",
                 transformMatrix(outputData.getSolutionData().get(0).getBeforeMatrix(),outputData.getSolutionData().get(0).getBases(),  true));
         boolean findMax = outputData.getSolutionData().get(outputData.getSolutionData().size() - 1).getFindMax();
+        if(outputData.getSolutionData().size() == 1){
+            String description;
+            String neededSignDeltas;
+            if(findMax)
+                neededSignDeltas = "отрицательные дельты";
+            else
+                neededSignDeltas = "положительные дельты";
+
+
+            description = "Проверяем план на оптимальность: план оптимален, так как отсутствуют " + neededSignDeltas;
+            setSection("Анализ дельт", description);
+        }
         outputData.getSolutionData().remove(0);
+
         int i = 1;
-        String description;
-        String neededSignDeltas;
-        if(findMax)
-            neededSignDeltas = "отрицательные дельты";
-        else
-            neededSignDeltas = "положительные дельты";
-
-
-        description = "Проверяем план на оптимальность: план оптимален, так как отсутствуют " + neededSignDeltas;
-        setSection("Анализ дельт", description);
         for(SimplexSolutionData solutionData : outputData.getSolutionData()){
             if(solutionData.getMatrixCanBeSolved()){
                 setSection("Итерация " + i, "Определяем разрешающий столбец - столбец, в котором находится минимальная дельта: " +
@@ -131,6 +134,8 @@ public class SimplexParser {
                                 "В найденном столбце ищем строку с наименьшим значением Q - строка " + solutionData.getSupportRow() +
                                 "\nВ качестве базисной переменной строки " + solutionData.getSupportRow() + " берем " + getIndexed("x", solutionData.getNewBase()),
                         getMatrixWithSimplexRelations(transformMatrix(solutionData.getBeforeMatrix(), solutionData.getBases(), true), solutionData.getBases(), solutionData.getSimplexRelations()));
+                String neededSignDeltas;
+                String description;
                 if(solutionData.getFindMax())
                     neededSignDeltas = "отрицательные дельты";
                 else
@@ -139,7 +144,7 @@ public class SimplexParser {
                     description = "Проверяем план на оптимальность: план не оптимален, так как присутствуют " + neededSignDeltas;
                 }
                 else {
-                    description = "Проверяем план на оптимальность: план не оптимален, так как присутствуют " + neededSignDeltas;
+                    description = "Проверяем план на оптимальность: план оптимален, так как " + neededSignDeltas + " отсутствуют";
                 }
                 setSection("Симплекс-таблица с обновлёнными дельтами",description, getMatrixWithSimplexRelations(transformMatrix(solutionData.getAfterMatrix(), solutionData.getBases(), true), solutionData.getBases(), solutionData.getSimplexRelations()));
             }
@@ -243,7 +248,7 @@ public class SimplexParser {
     }
 
     private String getIndexed(String letter, int index){
-        return letter + (index + 1);
+        return letter + "<sub><small>" + (index + 1) + "</small></sub>";
     }
 
     private String getIndexed(String letter, String index){

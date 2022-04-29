@@ -7,6 +7,8 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.text.Html;
+import android.text.Spanned;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +57,7 @@ public class SimplexResultFragment extends Fragment {
         int blackColor = getResources().getColor(R.color.black);
         descriptionView.setTextColor(blackColor);
         descriptionView.setPadding(5, 5, 5, 5);
-        descriptionView.setText(description);
+        descriptionView.setText(Html.fromHtml(description));
         return descriptionView;
     }
 
@@ -84,6 +86,7 @@ public class SimplexResultFragment extends Fragment {
                 GridLayout.LayoutParams gridParam = new GridLayout.LayoutParams(rowSpan, colSpan);
 
                 String matrixText = matrixItem.value;
+                Spanned str = Html.fromHtml(matrixText);
                 if (matrixText.length() > 7) {
                     matrixText = matrixText.substring(0, 7) + "...";
                 }

@@ -93,6 +93,7 @@ public class Simplex {
                     simplexMatrix[i][columnCurrentBase] = new Fraction(1);
                     bases[countOfBases] = j;
                     countOfBases++;
+                    break;
                 }
             }
         }
