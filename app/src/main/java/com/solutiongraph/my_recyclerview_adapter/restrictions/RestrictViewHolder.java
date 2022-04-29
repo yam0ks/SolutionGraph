@@ -1,16 +1,17 @@
 package com.solutiongraph.my_recyclerview_adapter.restrictions;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
-import android.view.Gravity;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -59,6 +60,7 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         header.setOnClickListener(view -> {
             scrollView.setVisibility(toggle ? View.GONE : View.VISIBLE);
             toggle = !toggle;
+            hideKeyboardFrom();
             view.findViewById(R.id.expression_expand_arrow).setRotation(toggle ? 180 : 0);
         });
 
@@ -80,16 +82,24 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
             updateHeader();
         };
 
-        RadioGroup.OnCheckedChangeListener checkedChangeListener =
-                                                                (view, checkedId) -> updateHeader();
-
-        signView.setOnCheckedChangeListener(checkedChangeListener);
+        signView.setOnCheckedChangeListener((view, checkedId) -> updateHeader());
         resultView.setOnFocusChangeListener(focusChangeListener);
         freeCoeffView.setOnFocusChangeListener(focusChangeListener);
     }
 
-    private void setHeaderText(Restriction restriction) {
-        String text = Parsers.parseXmlFromRestriction(restriction);
+    private void hideKeyboardFrom() {
+        InputMethodManager imm = (InputMethodManager) this.root.getContext()
+                .getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(root.getWindowToken(), 0);
+    }
+
+    private void setHeaderText() {
+        String text = Parsers.parseXmlFromRestriction(
+                getCoeffsString(),
+                getFreeCoeffString(),
+                getSign(),
+                getResultString()
+        );
         TextView textView = header.findViewById(R.id.expression_title);
         textView.setText(Html.fromHtml(text));
     }
@@ -99,47 +109,33 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         int contextBackground = background;
         try {
             contextForeground = root.getResources().getColor(foreground);
-        } catch (Exception e) {};
+        } catch (Exception ignored) {};
         try {
             contextBackground = root.getResources().getColor(background);
-        } catch (Exception e) {};
+        } catch (Exception ignored) {};
         ((TextView)header.findViewById(R.id.expression_title)).setTextColor(contextForeground);
         ((TextView)header.findViewById(R.id.expression_expand_arrow)).setTextColor(contextForeground);
         header.setBackgroundColor(contextBackground);
     }
 
-    private boolean checkNotZeroCoeff(Double[] coeffs) {
-        for (double item : coeffs) {
-            if (item != 0.0) return true;
-        }
-        return false;
-    }
-
-    private boolean validate(Double[] coeff) {
+    private boolean validate() {
         if (!freeCoeffIsCorrect || !resultIsCorrect || coeffAdapter.hasErrors()) {
             setHeaderColor(Color.RED, R.color.error_red);
             this.parentAdapter.setErrorByIndex(getAdapterPosition(), true);
             return false;
         }
-        if (!checkNotZeroCoeff(coeff)) {
-            Toast zeroCoeffsError = Toast.makeText(this.root.getContext(),
-                    "Хотя бы один коэффициент должен быть не равен нулю", Toast.LENGTH_LONG);
-            zeroCoeffsError.setGravity(Gravity.TOP, 0, 0);
-            zeroCoeffsError.show();
-            return false;
-        }
+        setHeaderColor(R.color.main_blue, 0);
+        this.parentAdapter.setErrorByIndex(getAdapterPosition(), false);
         return true;
     }
 
     public void updateHeader() {
-        Double[] coeff = getCoeff();
-        if (!validate(coeff)) return;
+        setHeaderText();
+        if (!validate()) return;
         int index = getAdapterPosition();
         this.parentAdapter.setErrorByIndex(index, false);
-        Restriction rest = new Restriction(coeff, getFreeCoeff(), getSign(), getResult());
+        Restriction rest = new Restriction(getCoeffsDouble(), getFreeCoeff(), getSign(), getResult());
         this.parentAdapter.setDataByIndex(index, rest);
-        setHeaderColor(R.color.main_blue, R.color.white);
-        setHeaderText(rest);
     }
 
     public void setCoeffs(Double[] coeffs) {
@@ -183,12 +179,16 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
 
     public void setResult(double newValue) {
         if (newValue == 0) return;
-        this.resultView.setText(Parsers.stringFromNumber(newValue));
+        this.resultView.setText(Parsers.formatDoubleString(newValue));
     }
 
     public double getResult() {
+        return Double.parseDouble(getResultString());
+    }
+
+    public String getResultString() {
         String result = resultView.getText().toString();
-        return result.isEmpty() ? 0 : Double.parseDouble(result);
+        return result.isEmpty() ? "0" : result;
     }
 
     public double getFreeCoeff() {
@@ -196,12 +196,21 @@ public class RestrictViewHolder extends RecyclerView.ViewHolder {
         return result.isEmpty() ? 0 : Double.parseDouble(result);
     }
 
-    public void setFreeCoeff(double newValue) {
-        if (newValue == 0) return;
-        this.freeCoeffView.setText(Parsers.stringFromNumber(newValue));
+    public String getFreeCoeffString() {
+        return freeCoeffView.getText().toString();
     }
 
-    public Double[] getCoeff() {
+    public void setFreeCoeff(double newValue) {
+        if (newValue == 0) return;
+        this.freeCoeffView.setText(Parsers.formatDoubleString(newValue));
+    }
+
+    public String[] getCoeffsString() {
         return ((CoeffAdapter) Objects.requireNonNull(coeffsView.getAdapter())).getData();
+    }
+
+    public Double[] getCoeffsDouble() {
+        String[] data = getCoeffsString();
+        return Parsers.convertStringsToDoubles(data);
     }
 }
