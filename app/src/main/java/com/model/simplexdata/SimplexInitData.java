@@ -8,6 +8,16 @@ public class SimplexInitData { //первый раздел (исходная с�
     private int[] bases; //Номера базисов смещенных на -1 (x1 - 0, x4 - 3 и т.д.)
     private int[] changedRowsSign; //строки, знаки которых менялись было >= стало <=
 
+    public boolean isCanBeSolved() {
+        return canBeSolved;
+    }
+
+    public void setCanBeSolved(boolean canBeSolved) {
+        this.canBeSolved = canBeSolved;
+    }
+
+    private boolean canBeSolved = true;
+
     public SimplexInitData(){}
 
     public Fraction[][] getMatrix(){

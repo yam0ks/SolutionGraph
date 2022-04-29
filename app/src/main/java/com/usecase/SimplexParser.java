@@ -8,10 +8,12 @@ import com.model.simplexdata.SimplexSolutionData;
 import com.model.simplexdata.Section;
 import com.model.simplexdata.MatrixItem;
 
+import java.util.ArrayList;
+
 public class SimplexParser {
     int currentSection;
     boolean fractionsLikeDouble;
-    Section[] sections;
+    ArrayList<Section> sections;
     SimplexOutputData outputData;
 
     public void setData(SimplexOutputData outputData, boolean fractionsLikeDouble){
@@ -21,22 +23,30 @@ public class SimplexParser {
 
     public Section[] getSections(){
         currentSection = 0;
-        sections = new Section[getStaticSections() + outputData.getNormalizeData().size() + (outputData.getSolutionData().size() - 1) * 2];
+        sections = new ArrayList<>();
         if(outputData.getAnswers() == null){
             setSection("Ответ", "Решения задачи не существует.");
         }
         else {
             formAnswer(outputData.getAnswers());
         }
-        formFirstSection();
+        if(!formFirstSection())
+            return getCopiedArray(sections);
         if(!formNormalizedSections()){
-            return sections;
+            return getCopiedArray(sections);
         }
         formSolutionSections();
 
-        return sections;
+        return getCopiedArray(sections);
     }
 
+    private Section[] getCopiedArray(ArrayList<Section> sections){
+        Section[] arraySections = new Section[sections.size()];
+        for(int i = 0; i < arraySections.length; i++){
+            arraySections[i] = sections.get(i);
+        }
+        return arraySections;
+     }
     private int getStaticSections(){
         return outputData.getAnswers() == null ? 2 : 3;
     }
@@ -50,8 +60,14 @@ public class SimplexParser {
         setSection("Ответ", description.toString());
     }
 
-    private void formFirstSection(){
+    private boolean formFirstSection(){
         SimplexInitData initData = outputData.getInitData();
+        if(!initData.isCanBeSolved())
+        {
+            setSection("Решение задачи симплекс методом невозможно", "Количество ограничений, превышает количество возможных базисов.\n" +
+                    "Существуют эквивалентные уравнения в текущей СЛАУ");
+            return false;
+        }
         if(initData.getChangedRowsSign().length != 0){
             setSection("Решение базовым симплекс методом",
                             "Меняем знаки у ограничений с ≥, путём умножения на -1. Для каждого ограничения с неравенством добавляем дополнительные переменные и сотставляем начальную симплекс таблицу. \nНачальная симплекс-таблица",
@@ -62,6 +78,7 @@ public class SimplexParser {
                             "Начальная симплекс-таблица",
                     transformMatrix(initData.getMatrix(), initData.getBases(), false));
         }
+        return true;
     }
 
     private boolean formNormalizedSections(){
@@ -92,8 +109,19 @@ public class SimplexParser {
 
         setSection("Симплекс таблица с дельтами", "Расчитаем дельты и добавим их в нашу симплекс таблицу",
                 transformMatrix(outputData.getSolutionData().get(0).getBeforeMatrix(),outputData.getSolutionData().get(0).getBases(),  true));
+        boolean findMax = outputData.getSolutionData().get(outputData.getSolutionData().size() - 1).getFindMax();
         outputData.getSolutionData().remove(0);
         int i = 1;
+        String description;
+        String neededSignDeltas;
+        if(findMax)
+            neededSignDeltas = "отрицательные дельты";
+        else
+            neededSignDeltas = "положительные дельты";
+
+
+        description = "Проверяем план на оптимальность: план оптимален, так как отсутствуют " + neededSignDeltas;
+        setSection("Анализ дельт", description);
         for(SimplexSolutionData solutionData : outputData.getSolutionData()){
             if(solutionData.getMatrixCanBeSolved()){
                 setSection("Итерация " + i, "Определяем разрешающий столбец - столбец, в котором находится минимальная дельта: " +
@@ -101,10 +129,8 @@ public class SimplexParser {
                                 solutionData.getBeforeMatrix()[solutionData.getBeforeMatrix().length - 1][solutionData.getNewBase()].getFraction(fractionsLikeDouble) + "\n" +
                                 "Находим симплекс-отношения Q, путём деления коэффициентов b на соответствующие значения столбца " + solutionData.getNewBase() + "\n" +
                                 "В найденном столбце ищем строку с наименьшим значением Q - строка " + solutionData.getSupportRow() +
-                                "В качестве базисной переменной строки " + solutionData.getSupportRow() + " берем " + getIndexed("x", solutionData.getNewBase()),
+                                "\nВ качестве базисной переменной строки " + solutionData.getSupportRow() + " берем " + getIndexed("x", solutionData.getNewBase()),
                         getMatrixWithSimplexRelations(transformMatrix(solutionData.getBeforeMatrix(), solutionData.getBases(), true), solutionData.getBases(), solutionData.getSimplexRelations()));
-                String description;
-                String neededSignDeltas;
                 if(solutionData.getFindMax())
                     neededSignDeltas = "отрицательные дельты";
                 else
@@ -113,13 +139,14 @@ public class SimplexParser {
                     description = "Проверяем план на оптимальность: план не оптимален, так как присутствуют " + neededSignDeltas;
                 }
                 else {
-                    description = "Проверяем план на оптимальность: план не оптимален, так как отсутствуют " + neededSignDeltas;
+                    description = "Проверяем план на оптимальность: план не оптимален, так как присутствуют " + neededSignDeltas;
                 }
                 setSection("Симплекс-таблица с обновлёнными дельтами",description, getMatrixWithSimplexRelations(transformMatrix(solutionData.getAfterMatrix(), solutionData.getBases(), true), solutionData.getBases(), solutionData.getSimplexRelations()));
             }
             else {
                 setSection("Итерация " + i, "Все значения столбца "+ solutionData.getNewBase() + " неположительны.\n" +
                         "Функция не ограничена. Оптимальное решение отсутствует.", getMatrixWithSimplexRelations(transformMatrix(solutionData.getBeforeMatrix(), solutionData.getBases(), true), solutionData.getBases(), solutionData.getSimplexRelations()));
+            return;
             }
             i++;
         }
@@ -224,18 +251,20 @@ public class SimplexParser {
     }
 
     private void setSection(String title, String description, MatrixItem[][] matrixItems){
-        sections[currentSection] = new Section();
-        sections[currentSection].title = title;
-        sections[currentSection].description = description;
-        sections[currentSection].matrix = matrixItems;
+        Section section = new Section();
+        section.title = title;
+        section.description = description;
+        section.matrix = matrixItems;
+        sections.add(section);
         currentSection++;
     }
 
     private void setSection(String title, String description){
-        sections[currentSection] = new Section();
-        sections[currentSection].title = title;
-        sections[currentSection].description = description;
-        sections[currentSection].matrix = null;
+        Section section = new Section();
+        section.title = title;
+        section.description = description;
+        section.matrix = null;
+        sections.add(section);
         currentSection++;
     }
 }
