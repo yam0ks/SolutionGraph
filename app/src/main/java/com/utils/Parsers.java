@@ -139,8 +139,10 @@ public class Parsers {
                 return false;
 
             Float xValue = coeffs[0].floatValue();
+
             Float yValue = coeffs.length == 1 ? 0 : coeffs[1].floatValue();
             Float resultValue = restriction.getResultAsDouble().floatValue() - restriction.getDoubleFreeCoeff().floatValue();
+          
             Constants.Sign sign = restriction.getSign();
 
             result.add(new GraphRestriction(xValue, yValue, sign, resultValue));

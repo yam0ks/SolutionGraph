@@ -45,7 +45,7 @@ public class GraphSolver { //Ядро графического метода
                                                     GraphObjective inputMainFunc){ // Основной метод для
                                                                               // расчета всех значений
 
-        restrictions = inputRestrictions;
+        restrictions = uniqueRestrictions(inputRestrictions);
         objective = inputMainFunc;
 
         List<GraphFunction> expressions = new ArrayList<>();
@@ -331,6 +331,25 @@ public class GraphSolver { //Ядро графического метода
     private void setBoundsToDefault(){
         leftBound = bottomBound = Float.MAX_VALUE;
         rightBound = topBound = -1 * Float.MAX_VALUE;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private List<GraphRestriction> uniqueRestrictions(List<GraphRestriction> restrictions){
+        List<GraphRestriction> uniqueRestrictions = new ArrayList<>();
+
+        for(GraphRestriction r : restrictions){
+            GraphRestriction nonUniqueR = uniqueRestrictions.stream()
+                    .filter(restrict -> restrict.getXCoeff().equals(r.getXCoeff()) &&
+                                        restrict.getYCoeff().equals(r.getYCoeff()) &&
+                                        restrict.getResultCoeff().equals(r.getResultCoeff()))
+                    .findAny()
+                    .orElse(null);
+
+            if(nonUniqueR == null)
+                uniqueRestrictions.add(r);
+        }
+
+        return uniqueRestrictions;
     }
 
     private static class CoordinatesComprator implements Comparator<Entry>{ // Компаратор для

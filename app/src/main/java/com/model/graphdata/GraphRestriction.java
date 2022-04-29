@@ -85,9 +85,9 @@ public class GraphRestriction extends BaseGraphExpression { //Класс для 
     @Override
     protected void normalize() {
         if (yCoeff < 0) {
-            xCoeff *= -1;
+            xCoeff *= (xCoeff == 0F) ? 1 : -1;
             yCoeff *= -1;
-            resultCoeff *= -1;
+            resultCoeff *= (resultCoeff == 0F) ? 1 : -1;
 
             if(sign == Constants.Sign.MORE)
                 sign = Constants.Sign.LESS;
@@ -96,7 +96,7 @@ public class GraphRestriction extends BaseGraphExpression { //Класс для 
         }
         if (yCoeff == 0 && xCoeff < 0) {
             xCoeff *= -1;
-            resultCoeff *= -1;
+            resultCoeff *= (resultCoeff == 0F) ? 1 : -1;
         }
     }
 }

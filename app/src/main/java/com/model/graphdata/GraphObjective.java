@@ -5,7 +5,7 @@ import com.utils.Constants;
 
 public class GraphObjective extends BaseGraphExpression { //Класс для представления целевой функции
 
-    private Constants.GoalType goalType; //Направление целевой функции
+    private final Constants.GoalType goalType; //Направление целевой функции
 
     public GraphObjective(Float inputXCoeff, Float inputYCoeff, Float inputResultCoeff, Constants.GoalType type){
         super(inputXCoeff, inputYCoeff, inputResultCoeff);
@@ -20,13 +20,13 @@ public class GraphObjective extends BaseGraphExpression { //Класс для п
     @Override
     public void normalize(){
         if(yCoeff < 0){
-            xCoeff *= -1;
+            xCoeff *= (xCoeff == 0F) ? 1 : -1;
             yCoeff *= -1;
-            resultCoeff *= -1;
+            resultCoeff *= (resultCoeff == 0F) ? 1 : -1;
         }
         if(yCoeff == 0 && xCoeff < 0){
             xCoeff *= -1;
-            resultCoeff *= -1;
+            resultCoeff *= (resultCoeff == 0F) ? 1 : -1;
         }
     }
 
