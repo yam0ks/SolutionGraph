@@ -42,7 +42,9 @@ public class SimplexResultFragment extends Fragment {
         LinearLayout simplexResultLayout = root.findViewById(R.id.simplex_result_layout);
         simplexResultLayout.removeAllViews();
         for (Section section : sections) {
-            simplexResultLayout.addView(drawTitle(section.title));
+            TextView textView = drawTitle(section.title);
+            textView.setPadding(0, 32, 0, 5);
+            simplexResultLayout.addView(textView);
             simplexResultLayout.addView(drawDescription(section.description));
             simplexResultLayout.addView(drawMatrix(section.matrix));
         }
@@ -63,7 +65,7 @@ public class SimplexResultFragment extends Fragment {
         return titleView;
     }
 
-    @SuppressLint("DefaultLocale")
+    @SuppressLint({"DefaultLocale", "UseCompatLoadingForDrawables"})
     private GridLayout drawMatrix(MatrixItem[][] matrix) {
         if (matrix == null) return new GridLayout(this.getContext());
         GridLayout matrixLayout = new GridLayout(this.getContext());
@@ -75,15 +77,16 @@ public class SimplexResultFragment extends Fragment {
         matrixLayout.setRowCount(matrix.length);
         matrixLayout.setColumnCount(matrix[0].length);
 
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                MatrixItem matrixItem = matrix[i][j];
-
+        for (MatrixItem[] matrixItems : matrix) {
+            for (MatrixItem matrixItem : matrixItems) {
                 GridLayout.Spec rowSpan = GridLayout.spec(GridLayout.UNDEFINED, 1, 1f);
                 GridLayout.Spec colSpan = GridLayout.spec(GridLayout.UNDEFINED, 1, 1f);
                 GridLayout.LayoutParams gridParam = new GridLayout.LayoutParams(rowSpan, colSpan);
 
                 String matrixText = matrixItem.value;
+                if (matrixText.length() > 7) {
+                    matrixText = matrixText.substring(0, 7) + "...";
+                }
                 TextView matrixTextView = matrixItem.isHeader
                         ? drawTitle(matrixText) : drawDescription(matrixText);
                 matrixTextView.setBackground(getResources().getDrawable(R.drawable.matrix_item_border));

@@ -86,6 +86,7 @@ public class ObjectiveFragment extends Fragment {
         coeffAdapter = new CoeffAdapter(
                 this.getContext(), objective.getDoubleCoeffs(), this::updateHeader);
         coeffRecyclerView.setAdapter(coeffAdapter);
+        coeffRecyclerView.setNestedScrollingEnabled(false);
         coeffRecyclerView.setLayoutManager(new LinearLayoutManager(
                 this.getContext(), LinearLayoutManager.VERTICAL, false)
         );

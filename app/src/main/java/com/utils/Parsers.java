@@ -135,15 +135,14 @@ public class Parsers {
         for(Restriction restriction : restrictions){
             Double[] coeffs = restriction.getDoubleCoeffs();
 
-            if(coeffs.length != 2)
+            if(coeffs.length > 2)
                 return false;
 
             Float xValue = coeffs[0].floatValue();
-            Float yValue = (coeffs.length == 1) ? 0 : coeffs[1].floatValue();
 
-            Float resultValue = restriction.getResultAsDouble().floatValue() -
-                                restriction.getDoubleFreeCoeff().floatValue();
-
+            Float yValue = coeffs.length == 1 ? 0 : coeffs[1].floatValue();
+            Float resultValue = restriction.getResultAsDouble().floatValue() - restriction.getDoubleFreeCoeff().floatValue();
+          
             Constants.Sign sign = restriction.getSign();
 
             result.add(new GraphRestriction(xValue, yValue, sign, resultValue));
@@ -156,11 +155,11 @@ public class Parsers {
 
         Double[] coeffs = objective.getDoubleCoeffs();
 
-        if(coeffs.length != 2)
+        if(coeffs.length > 2)
             return false;
 
         Float xValue = coeffs[0].floatValue();
-        Float yValue = coeffs[1].floatValue();
+        Float yValue = coeffs.length == 1 ? 0 : coeffs[1].floatValue();
         Constants.GoalType goal = objective.getGoalType();
 
         return new GraphObjective(xValue, yValue, -(float)objective.getFreeCoeff(), goal);
