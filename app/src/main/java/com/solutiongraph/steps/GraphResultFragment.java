@@ -235,7 +235,7 @@ public class GraphResultFragment extends Fragment {
                              Bundle savedInstanceState) {
         this.root = inflater.inflate(R.layout.fragment_graph_result, container, false);
         GraphOutputData outputData = viewModel.graphOutputData.getValue();
-        drawGraph(outputData);
+        if (outputData != null) drawGraph(outputData);
         return root;
     }
 }
