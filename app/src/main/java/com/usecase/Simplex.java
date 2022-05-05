@@ -28,7 +28,11 @@ public class Simplex {
         this.outputData.setNormalizeData(new ArrayList<>());
         this.outputData.setSolutionData(new ArrayList<>());
 
-        formSimplexMatrix(restrictions, objective);
+        if(!formSimplexMatrix(restrictions, objective))
+        {
+            return this.outputData;
+        }
+
 
         if(!normalizationMatrix()){
             return this.outputData;
@@ -40,7 +44,7 @@ public class Simplex {
         return this.outputData;
     }
 
-    private void formSimplexMatrix(Restriction[] restrictions, Objective objective){
+    private boolean formSimplexMatrix(Restriction[] restrictions, Objective objective){
         int countRestrictions = restrictions.length;
         int countVariables = restrictions[0].getFractionCoeffs().length;
         this.simplexMatrix = new Fraction[countRestrictions + 1][countRestrictions + countVariables
@@ -72,7 +76,12 @@ public class Simplex {
         for (int i = 1; i < this.simplexMatrix.length; i++) {
             if(restrictions[i-1].getSign() == Constants.Sign.EQUALS){
                 int column = getBaseColumn(i, restrictions);
-                transformMatrixByGauss(simplexMatrix, simplexMatrix[i][column], i, column);
+                if(column != -1)
+                    transformMatrixByGauss(simplexMatrix, simplexMatrix[i][column], i, column);
+                else {
+                    outputData.getInitData().setCanBeSolved(false);
+                    return false;
+                }
                 bases[countOfBases] = column;
                 countOfBases++;
                 countOfChosenBases++;
@@ -82,14 +91,16 @@ public class Simplex {
                 int columnCurrentBase = biasBases + countOfBases - countOfChosenBases;
                 if(j == columnCurrentBase && restrictions[i - 1].getSign() != Constants.Sign.EQUALS) {
                     simplexMatrix[i][columnCurrentBase] = new Fraction(1);
-                    bases[countOfBases] = biasBases;
+                    bases[countOfBases] = j;
                     countOfBases++;
+                    break;
                 }
             }
         }
         indBases = bases;
         this.outputData.getInitData().setBases(indBases.clone());
         this.outputData.getInitData().setMatrix(simplexMatrix.clone());
+        return true;
     }
 
     private int sumEquals(Restriction[] restrictions) {
@@ -419,12 +430,12 @@ public class Simplex {
     }
 
     private Fraction[][] copyFractionArray(Fraction[][] originalArray){
-        Fraction[][] coppyedArray = new Fraction[originalArray.length][originalArray[0].length];
+        Fraction[][] coppedArray = new Fraction[originalArray.length][originalArray[0].length];
         for(int i = 0; i < originalArray.length; i++){
             for(int j = 0; j < originalArray[0].length; j++)
-                coppyedArray[i][j] = new Fraction(originalArray[i][j]);
+                coppedArray[i][j] = new Fraction(originalArray[i][j]);
         }
-        return coppyedArray;
+        return coppedArray;
     }
 
     private Fraction[] getAnswers(Objective objective){
