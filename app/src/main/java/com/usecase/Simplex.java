@@ -65,7 +65,7 @@ public class Simplex {
             }
         }
         int[] bases = new int[countRestrictions];
-        int biasBases = restrictions[0].getFractionCoeffs().length;
+        int biasBases = restrictions[0].getFractionCoeffs().length - sumEquals(restrictions);
         for (int i = 1; i < this.simplexMatrix.length; i++) {
             for(int j = biasBases; j < this.simplexMatrix[0].length - 1; j++) {
                 simplexMatrix[i][j] = new Fraction(0);
