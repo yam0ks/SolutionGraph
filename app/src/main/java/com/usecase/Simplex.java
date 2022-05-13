@@ -300,6 +300,7 @@ public class Simplex {
         SimplexSolutionData currentStep = new SimplexSolutionData();
         currentStep.setBeforeMatrix(copyFractionArray(finalMatrix));
         currentStep.setBases(indBases);
+        currentStep.setFindMax(findMax);
         outputData.getSolutionData().add(currentStep);
         while (!deltaIsOk(findMax)){
             currentStep = new SimplexSolutionData();
