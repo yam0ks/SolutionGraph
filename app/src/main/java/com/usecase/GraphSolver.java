@@ -184,12 +184,14 @@ public class GraphSolver { //Ядро графического метода
         float xCoord = lineData.getPoints().get(0).getX();
         float yCoord = lineData.getPoints().get(0).getY();
 
-        rPoints.add(new Entry(xCoord, yCoord));
-
-        if(lineData.getSign() == Constants.Sign.MORE)
+        if(lineData.getSign() == Constants.Sign.MORE) {
+            rPoints.add(new Entry(xCoord, yCoord));
             rPoints.add(new Entry(rightBound, yCoord));
-        else
+        }
+        else {
             rPoints.add(new Entry(leftBound, yCoord));
+            rPoints.add(new Entry(xCoord, yCoord));
+        }
 
         return new GraphFunction(rPoints, Constants.Sign.MORE, "",
                                 GraphFunction.Type.ARTIFICIAL);
@@ -208,6 +210,15 @@ public class GraphSolver { //Ядро графического метода
     }
 
     private void makeFinalBounds(List<GraphFunction> expressions){
+
+        if(expressions.size() == 2 && expressions.get(1).getType() == GraphFunction.Type.OBJECTIVE){
+            setBoundsToDefault();
+            updateBounds(expressions.get(1).getPoints().get(1).getX(),
+                         expressions.get(1).getPoints().get(1).getY());
+            makeOffsets();
+            return;
+        }
+
         if(expressions.get(0).getType() == GraphFunction.Type.PARALLEL)
             return;
 
@@ -284,7 +295,7 @@ public class GraphSolver { //Ядро графического метода
 
     private PointValuePair Optimize(){ //Поиск решения
         LinearObjectiveFunction objectiveFunc = new LinearObjectiveFunction(new double[]
-                { objective.getXCoeff(), objective.getYCoeff()}, objective.getResultCoeff());
+                { objective.getXCoeff(), objective.getYCoeff()}, -objective.getResultCoeff());
 
         Collection<LinearConstraint> constraints = new ArrayList<>();
 
@@ -310,7 +321,7 @@ public class GraphSolver { //Ядро графического метода
     private GraphFunction makeObjectiveExpression(PointValuePair solution){ //Создание графика целевой функции
         List<Entry> points = new ArrayList<>();
 
-        objective.setResultCoeff(solution.getValue().floatValue());
+        objective.changeResultCoeff(solution.getValue().floatValue());
         objective.normalize();
 
         if(objective.getYCoeff() == 0){

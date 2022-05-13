@@ -27,7 +27,6 @@ public class Model {
     }
 
     public SimplexOutputData getSimplexSolution(Restriction[] Restrictions, Objective objective) {
-        simplexOutputData = new SimplexOutputData();
         simplexOutputData = simplex.getResult(Restrictions, objective);
         return simplexOutputData;
     }
@@ -35,7 +34,6 @@ public class Model {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public GraphOutputData getGraphSolution(List<GraphRestriction> graphRestrictList,
                                                    GraphObjective graphObjective) {
-        graphOutputData = new GraphOutputData();
         graphOutputData = graph.calculateGraphOutputData(graphRestrictList, graphObjective);
         return graphOutputData;
     }
