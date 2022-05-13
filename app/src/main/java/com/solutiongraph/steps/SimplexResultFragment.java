@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.text.Html;
@@ -17,9 +18,11 @@ import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.model.graphdata.GraphOutputData;
 import com.model.simplexdata.MatrixItem;
 import com.model.simplexdata.Section;
 import com.solutiongraph.R;
+import com.utils.Constants;
 import com.viewmodel.SharedViewModel;
 
 public class SimplexResultFragment extends Fragment {
@@ -35,9 +38,13 @@ public class SimplexResultFragment extends Fragment {
         if (getActivity() == null) return;
         viewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
 
-        if (getArguments() != null) {
-            viewModel.sections.observe(this.getViewLifecycleOwner(), this::drawSections);
-        }
+        final Observer<Section[]> sectionsObserver = sections -> {
+            if(Constants.truly_changed)
+                drawSections(sections);
+            Constants.truly_changed = false;
+        };
+
+        viewModel.sections.observe(this, sectionsObserver);
     }
 
     private void drawSections(Section[] sections) {
@@ -104,8 +111,6 @@ public class SimplexResultFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.root = inflater.inflate(R.layout.fragment_simplex_result, container, false);
-        Section[] sections = viewModel.sections.getValue();
-        drawSections(sections);
         return root;
     }
 }

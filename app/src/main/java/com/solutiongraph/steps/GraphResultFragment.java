@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
@@ -44,8 +45,13 @@ public class GraphResultFragment extends Fragment {
         if (getActivity() == null) return;
             viewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
 
-        if (getArguments() != null)
-            viewModel.graphOutputData.observe(this.getViewLifecycleOwner(), this::drawGraph);
+        final Observer<GraphOutputData> graphOutputDataObserver = outputData -> {
+            if(Constants.truly_changed)
+                drawGraph(outputData);
+            Constants.truly_changed = false;
+        };
+
+        viewModel.graphOutputData.observe(this, graphOutputDataObserver);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -92,6 +98,7 @@ public class GraphResultFragment extends Fragment {
                 break;
         }
 
+        currentColor = -1;
     }
 
     private void setChartProperties(LineChart chart){
@@ -178,7 +185,7 @@ public class GraphResultFragment extends Fragment {
 
         chart.setVisibleXRangeMaximum(xMax);
         chart.setVisibleYRangeMaximum(yMax, YAxis.AxisDependency.LEFT);
-        chart.moveViewTo(moveTo, (outputData.getTopBound() +outputData.getBottomBound()) / 2,
+        chart.moveViewTo(moveTo, (outputData.getTopBound() + outputData.getBottomBound()) / 2,
                 YAxis.AxisDependency.LEFT);
     }
 
@@ -234,8 +241,6 @@ public class GraphResultFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.root = inflater.inflate(R.layout.fragment_graph_result, container, false);
-        GraphOutputData outputData = viewModel.graphOutputData.getValue();
-        if (outputData != null) drawGraph(outputData);
         return root;
     }
 }

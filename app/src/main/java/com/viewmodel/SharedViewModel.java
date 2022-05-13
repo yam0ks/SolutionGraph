@@ -6,7 +6,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import android.icu.text.SymbolTable;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.util.Log;
 
 import com.model.Fraction;
 import com.model.graphdata.GraphOutputData;
@@ -23,8 +26,6 @@ import com.model.simplexdata.Objective;
 import com.usecase.SimplexParser;
 import com.utils.Constants;
 import com.utils.Parsers;
-
-import java.util.ArrayList;
 
 public class SharedViewModel extends ViewModel {
 
@@ -130,35 +131,58 @@ public class SharedViewModel extends ViewModel {
 
     private void beautifyData(SimplexOutputData simplexData) {
         simplexParser.setData(simplexData, true);
-        sectionsMutable.setValue(simplexParser.getSections());
+        sectionsMutable.postValue(simplexParser.getSections());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void getSolution(taskType task) {
-        isLoadingMutable.setValue(true);
-        Restriction[] restrictionsNormal = restrictsMutable.getValue();
-        Objective objectiveNormal = objectiveMutable.getValue();
-        if (restrictionsNormal == null || objectiveNormal == null) {
-            isLoadingMutable.setValue(false);
-            return;
-        }
+//        isLoadingMutable.setValue(true);
+//        Restriction[] restrictionsNormal = restrictsMutable.getValue();
+//        Objective objectiveNormal = objectiveMutable.getValue();
+//        if (restrictionsNormal == null || objectiveNormal == null) {
+//            isLoadingMutable.setValue(false);
+//            return;
+//        }
+        Constants.truly_changed = true;
+
         switch (task) {
             case SIMPLEX:
-                SimplexOutputData simplexOutputData =
-                        model.getSimplexSolution(restrictionsNormal, objectiveNormal);
-                beautifyData(simplexOutputData);
+                new SimplexTask().execute();
             break;
             case GRAPHICAL:
-                Object restrictionConversionResult = Parsers.toGraphRestriction(restrictionsNormal);
-                Object objectiveConversionResult = Parsers.toGraphObjective(objectiveNormal);
-                if (!(restrictionConversionResult instanceof Boolean) && !(objectiveConversionResult instanceof Boolean)) {
-                    List<GraphRestriction> restrictionsGraph = (List<GraphRestriction>)restrictionConversionResult;
-                    GraphObjective graphObjective = (GraphObjective)objectiveConversionResult;
-                    GraphOutputData graphOutputData = model.getGraphSolution(restrictionsGraph, graphObjective);
-                    graphOutputDataMutable.setValue(graphOutputData);
-                }
+                new GraphTask().execute();
             break;
         }
-        isLoadingMutable.setValue(false);
+        //isLoadingMutable.setValue(false);
+    }
+
+    private class SimplexTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            SimplexOutputData simplexOutputData = model.getSimplexSolution(
+                                    restrictsMutable.getValue(), objectiveMutable.getValue());
+
+
+            beautifyData(simplexOutputData);
+            return null;
+        }
+    }
+
+    private class GraphTask extends AsyncTask<Void, Void, GraphOutputData> {
+        @Override
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        protected GraphOutputData doInBackground(Void... voids) {
+            Object restrictionConversionResult = Parsers.toGraphRestriction(restrictsMutable.getValue());
+            Object objectiveConversionResult = Parsers.toGraphObjective(objectiveMutable.getValue());
+
+            if(!(restrictionConversionResult instanceof Boolean) && !(objectiveConversionResult instanceof Boolean)) {
+                GraphOutputData graphOutputData = model.getGraphSolution(
+                        (List<GraphRestriction>) restrictionConversionResult,
+                        (GraphObjective) objectiveConversionResult);
+
+                graphOutputDataMutable.postValue(graphOutputData);
+            }
+            return null;
+        }
     }
 }
