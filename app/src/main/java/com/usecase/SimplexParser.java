@@ -248,7 +248,7 @@ public class SimplexParser {
     }
 
     private String getIndexed(String letter, int index){
-        return letter + "<sub><small>" + (index + 1) + "</small></sub>";
+        return letter + index + 1;
     }
 
     private String getIndexed(String letter, String index){
