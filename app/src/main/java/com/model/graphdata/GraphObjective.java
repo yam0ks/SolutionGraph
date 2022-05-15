@@ -16,6 +16,7 @@ public class GraphObjective extends BaseGraphExpression { //Класс для п
     public void setResultCoeff(Float inputResultCoeff){
         resultCoeff = inputResultCoeff;
     }
+    public void changeResultCoeff(Float value) { resultCoeff += value;}
 
     @Override
     public void normalize(){

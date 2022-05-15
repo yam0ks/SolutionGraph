@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
@@ -44,8 +45,12 @@ public class GraphResultFragment extends Fragment {
         if (getActivity() == null) return;
             viewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
 
-        if (getArguments() != null)
-            viewModel.graphOutputData.observe(this.getViewLifecycleOwner(), this::drawGraph);
+        final Observer<GraphOutputData> graphOutputDataObserver = outputData -> {
+            if(outputData != null)
+                drawGraph(outputData);
+        };
+
+        viewModel.graphOutputData.observe(this, graphOutputDataObserver);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -78,20 +83,10 @@ public class GraphResultFragment extends Fragment {
 
         configureViewPort(chart, outputData);
 
-        switch(outputData.getError()){
-            case UNKOWN:
-                showDialog("Неизвестная ошибка!");
-                break;
-            case UNLIMITED:
-                showDialog("Бесконечное множество решений!");
-                break;
-            case NOSOLUTION:
-                showDialog("Решение отсутствует!");
-                break;
-            case NOERROR:
-                break;
-        }
+        if(outputData.getError() != GraphOutputData.ErrorType.NOERROR)
+            reportError(outputData.getError());
 
+        setColorToDefault();
     }
 
     private void setChartProperties(LineChart chart){
@@ -178,7 +173,7 @@ public class GraphResultFragment extends Fragment {
 
         chart.setVisibleXRangeMaximum(xMax);
         chart.setVisibleYRangeMaximum(yMax, YAxis.AxisDependency.LEFT);
-        chart.moveViewTo(moveTo, (outputData.getTopBound() +outputData.getBottomBound()) / 2,
+        chart.moveViewTo(moveTo, (outputData.getTopBound() + outputData.getBottomBound()) / 2,
                 YAxis.AxisDependency.LEFT);
     }
 
@@ -229,13 +224,39 @@ public class GraphResultFragment extends Fragment {
         return Color.parseColor("#4DFF0000");
     }
 
+    private void reportError(GraphOutputData.ErrorType error) {
+
+        switch(error){
+            case UNKOWN:
+                showDialog("Неизвестная ошибка!");
+                break;
+            case UNLIMITED:
+                showDialog("Бесконечное множество решений!");
+                break;
+            case NOSOLUTION:
+                showDialog("Решение отсутствует!");
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    private void setColorToDefault() {
+        currentColor = -1;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        viewModel.setGraphOutputDataMutableToNull();
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.root = inflater.inflate(R.layout.fragment_graph_result, container, false);
-        GraphOutputData outputData = viewModel.graphOutputData.getValue();
-        if (outputData != null) drawGraph(outputData);
         return root;
     }
 }
