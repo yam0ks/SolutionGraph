@@ -39,9 +39,8 @@ public class SimplexResultFragment extends Fragment {
         viewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
 
         final Observer<Section[]> sectionsObserver = sections -> {
-            if(Constants.truly_changed)
+            if(sections != null)
                 drawSections(sections);
-            Constants.truly_changed = false;
         };
 
         viewModel.sections.observe(this, sectionsObserver);
@@ -105,6 +104,12 @@ public class SimplexResultFragment extends Fragment {
             }
         }
         return matrixLayout;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        viewModel.setSectionsMutableToNull();
     }
 
     @Override

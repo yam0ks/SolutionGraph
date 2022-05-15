@@ -21,6 +21,9 @@ public class GraphRestriction extends BaseGraphExpression { //Класс для 
     public boolean checkConditionFulfillment(float x, float y){
         float lhs = xCoeff * x + yCoeff * y;
 
+        if(lhs - resultCoeff < 0.001)
+            return true;
+
         switch(sign){
             case LESS:
                 return Float.compare(lhs, resultCoeff) <= 0;

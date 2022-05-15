@@ -46,9 +46,8 @@ public class GraphResultFragment extends Fragment {
             viewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
 
         final Observer<GraphOutputData> graphOutputDataObserver = outputData -> {
-            if(Constants.truly_changed)
+            if(outputData != null)
                 drawGraph(outputData);
-            Constants.truly_changed = false;
         };
 
         viewModel.graphOutputData.observe(this, graphOutputDataObserver);
@@ -84,21 +83,10 @@ public class GraphResultFragment extends Fragment {
 
         configureViewPort(chart, outputData);
 
-        switch(outputData.getError()){
-            case UNKOWN:
-                showDialog("Неизвестная ошибка!");
-                break;
-            case UNLIMITED:
-                showDialog("Бесконечное множество решений!");
-                break;
-            case NOSOLUTION:
-                showDialog("Решение отсутствует!");
-                break;
-            case NOERROR:
-                break;
-        }
+        if(outputData.getError() != GraphOutputData.ErrorType.NOERROR)
+            reportError(outputData.getError());
 
-        currentColor = -1;
+        setColorToDefault();
     }
 
     private void setChartProperties(LineChart chart){
@@ -234,6 +222,34 @@ public class GraphResultFragment extends Fragment {
                 return Color.parseColor("#4DFFFF00");
         }
         return Color.parseColor("#4DFF0000");
+    }
+
+    private void reportError(GraphOutputData.ErrorType error) {
+
+        switch(error){
+            case UNKOWN:
+                showDialog("Неизвестная ошибка!");
+                break;
+            case UNLIMITED:
+                showDialog("Бесконечное множество решений!");
+                break;
+            case NOSOLUTION:
+                showDialog("Решение отсутствует!");
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    private void setColorToDefault() {
+        currentColor = -1;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        viewModel.setGraphOutputDataMutableToNull();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

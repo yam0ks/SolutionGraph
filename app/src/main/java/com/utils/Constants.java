@@ -31,5 +31,4 @@ public class Constants {
     public static Float GRAPH_Y_BOUNDS_OFFSET;
     public static final int MAX_RESTRICTIONS_NUMBER = 5;
     public static final int MAX_VARIABLES_NUMBER = 5;
-    public static boolean truly_changed = false;
 }

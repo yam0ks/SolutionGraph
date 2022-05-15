@@ -44,7 +44,6 @@ public class GraphSolver { //Ядро графического метода
     public GraphOutputData calculateGraphOutputData(List<GraphRestriction> inputRestrictions,
                                                     GraphObjective inputMainFunc){ // Основной метод для
                                                                               // расчета всех значений
-
         restrictions = uniqueRestrictions(inputRestrictions);
         objective = inputMainFunc;
 

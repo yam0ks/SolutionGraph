@@ -6,10 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import android.icu.text.SymbolTable;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Log;
 
 import com.model.Fraction;
 import com.model.graphdata.GraphOutputData;
@@ -143,7 +141,6 @@ public class SharedViewModel extends ViewModel {
 //            isLoadingMutable.setValue(false);
 //            return;
 //        }
-        Constants.truly_changed = true;
 
         switch (task) {
             case SIMPLEX:
@@ -161,7 +158,6 @@ public class SharedViewModel extends ViewModel {
         protected Void doInBackground(Void... voids) {
             SimplexOutputData simplexOutputData = model.getSimplexSolution(
                                     restrictsMutable.getValue(), objectiveMutable.getValue());
-
 
             beautifyData(simplexOutputData);
             return null;
@@ -184,5 +180,13 @@ public class SharedViewModel extends ViewModel {
             }
             return null;
         }
+    }
+
+    public void setGraphOutputDataMutableToNull(){
+        graphOutputDataMutable.setValue(null);
+    }
+
+    public void setSectionsMutableToNull(){
+        sectionsMutable.setValue(null);
     }
 }
