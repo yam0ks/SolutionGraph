@@ -14,8 +14,8 @@ import java.util.ArrayList;
 public class Simplex {
     private Fraction[][] simplexMatrix;
 
-    private int lastBasedRow = -1;
-    private int lastBasedColumn = -1;
+    private int lastBasedRow;
+    private int lastBasedColumn;
     private int[] indBases;
     private Fraction[] deltas;
     private Fraction[][] finalMatrix;
@@ -24,6 +24,8 @@ public class Simplex {
     public Simplex() {}
 
     public SimplexOutputData getResult(Restriction[] restrictions, Objective objective) {
+        this.lastBasedRow = -1;
+        this.lastBasedColumn = -1;
         this.outputData = new SimplexOutputData();
         this.outputData.setNormalizeData(new ArrayList<>());
         this.outputData.setSolutionData(new ArrayList<>());
@@ -187,6 +189,7 @@ public class Simplex {
                     restrictions[i].getFractionCoeffs()[j] = restrictions[i].getFractionCoeffs()[j].getMultiply(-1);
                     restrictions[i].setSign(Constants.Sign.LESS);
                 }
+                restrictions[i].setResult(restrictions[i].getResult().getMultiply(-1));
             }
         initSimplexData.setChangedRowsSign(changedRows);
 
