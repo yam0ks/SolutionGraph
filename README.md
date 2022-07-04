@@ -1,5 +1,5 @@
 ## About:books:
-This application allows you to solve linear programming problems using the simplex method and the graphical method (similar to the Desmos graphing calculator). 
+With this application you can solve linear programming problems using the simplex method and the graphical method (similar to the Desmos graphing calculator). 
 The user needs to specify the number of constraints and variables in them, then enter the coefficients for each constraint and indicate the sign (≥ / ≤). 
 Next, you should specify the coefficients of the optimization function and the direction (maximize / minimize).
 
@@ -19,7 +19,7 @@ $$
 
 **Then the solution using the graphical method will be as follows:**
 
-![image](https://user-images.githubusercontent.com/78639838/177058880-8b120256-0f40-4414-b920-9f19dd689025.png)
+<img src="https://user-images.githubusercontent.com/78639838/177134906-97fa2fc0-2069-40c6-9b8e-04b42785d4cf.png"/>
 
 **If we change the goal to the minimum:**
 
@@ -33,4 +33,4 @@ $$
 
 **Then the solution using the simplex method will be as follows (no solution):**
 
-![image](https://user-images.githubusercontent.com/78639838/177059012-d16dd0a4-f937-4346-aa83-823b71f843ae.png)
+<img src="https://user-images.githubusercontent.com/78639838/177138047-322f0167-26a9-41fe-9064-92da645363ee.png"/>
